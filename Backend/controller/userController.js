@@ -10,12 +10,14 @@ const createUser = async(req, res) => {
     }
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(req.body.password, salt)
-    const {name, email} = req.body
+    const {name, email,phone,role} = req.body
     try {
         const user = await User.create({
             name: name,
             email: email,
             password: hashedPassword,
+            phone: phone,
+            role:role
         })
         return res.status(200).json(user)
     } catch (err) {
@@ -31,7 +33,7 @@ const loginUser= async(req, res) => {
     }
     try {
         if ( await bcrypt.compare(password, user.password)) {
-            const token = jwt.sign(user.name, process.env.ACCESS_TOKEN_SECRET)
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
             const userData = {token: token, user: user, message: "Logged In"}
             return res.status(200).json(userData)
         } else {

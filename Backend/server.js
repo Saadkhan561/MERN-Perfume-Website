@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const multer = require('multer');
 
 // APP INSTANCE
 const app = express();
@@ -20,7 +21,7 @@ app.use((req, res, next) => {
   next();
 });
 // TO USE THE IMAGES SAVED IN MONGODB WITH THE BACKEND RELATIVE PATH
-app.use('/images', express.static('D:/Project Files/MERN-Perfume-Store/Backend/images'));
+app.use('/images', express.static(`./Backend/images/${category}`));
 // app.use('/images', express.static(path.join('D:/Project Files/MERN-Perfume-Store/Backend/images', 'images')));
 
 // PRODUCT ROUTES

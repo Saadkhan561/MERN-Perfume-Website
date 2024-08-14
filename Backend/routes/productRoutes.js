@@ -1,26 +1,42 @@
 const express = require('express')
-const { getAllProducts, getProductById, fetchAllCategories, postProduct, productPayment, searchResults } = require('../controller/productController')
-
+const multer = require('multer')
+const fs=require("fs")
+const { getAllProducts, getProductById, postProduct, updateProduct, searchResults,trendingProducts, deleteProduct, getProductsByCategory, reStock, setDiscount, pinProduct } = require('../controller/productController')
+const {authenticateToken, isAdmin}=require('../Middleware/auth')
 const router = express.Router()
 
-// FUNCTION TO AUTHORIZE USER 
-function authenticateToken(req, res ,next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if(token == null) return res.sendStatus(400)
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
-        req.user = user
-        next()
-    })
-  }
+// router.get('/getAllProducts', getAllProducts)
+router.get('/getProductsByCategory/:id', getProductsByCategory)
+router.get('/getProducts',getAllProducts)
+router.get('/trendingProducts', trendingProducts)
 
-// router.get('/', (req, res) => {res.status(200).json("Welcome to home page")})
-router.get('/getAllProducts', getAllProducts)
 router.get('/getProductById/:id', getProductById)
-router.get('/getCategories', fetchAllCategories)
-router.post('/newProduct', postProduct)
-router.post('/create-checkout-session', productPayment)
 router.get('/search', searchResults)
+
+
+router.put('/updateProduct/:id',authenticateToken,isAdmin,updateProduct)
+router.put('/deleteProduct/:id/:status', authenticateToken,isAdmin,deleteProduct);
+router.put('/reStock/:id/:quantity', authenticateToken,isAdmin,reStock)
+router.put('/setDiscount/:id/:discount',authenticateToken,isAdmin, setDiscount)
+router.put('/pinProduct/:id',authenticateToken,isAdmin,pinProduct)
+
+router.post('/addProduct', authenticateToken, isAdmin, uploadImages.array('images', 7), postProduct);
+//router.post('/addProduct', authenticateToken, isAdmin, postProduct)
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = `/images/${req.body.category}/`;
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir,{ recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const uploadImages = multer({ storage: storage });
 
 module.exports = router
