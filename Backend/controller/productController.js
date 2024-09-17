@@ -63,6 +63,26 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+// FOR FETCHING NON FILTERED PRODUCTS
+const getProducts = async (req, res) => {
+  try {
+    const products = await Products.aggregate([{
+      $lookup: {
+        from: "perfume_categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "category_details"
+      }
+    },
+    {
+      $unwind: "$category_details"
+    }])
+    res.status(200).json(products)
+  } catch (err) {
+    return res.status(500).json({ error: err.message })
+  }
+}
+
 const trendingProducts = async (req, res) => {
   try {
     const ordersExist = await Order.find();
@@ -445,6 +465,7 @@ const searchResults = async (req, res) => {
 
 module.exports = {
   getAllProducts,
+  getProducts,
   postProduct,
   getProductById,
   getProductsByCategory,

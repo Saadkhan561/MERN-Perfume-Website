@@ -15,6 +15,7 @@ const {
   setDiscount,
   pinProduct,
   getProductImages,
+  getProducts,
 } = require("../controller/productController");
 const { authenticateToken, isAdmin } = require("../Middleware/auth");
 const path = require("path");
@@ -52,6 +53,8 @@ const uploadImages = multer({ storage: storage });
 
 router.get("/getProductsByCategory/:id", getProductsByCategory);
 router.get("/getProducts", getAllProducts);
+// FOR FETCHING NON FILTERED PRODUCTS
+router.get("/getAllProducts", getProducts)
 router.get("/trendingProducts", trendingProducts);
 router.get("/images/:category/:productName", getProductImages);
 router.get("/getProductById/:id", getProductById);

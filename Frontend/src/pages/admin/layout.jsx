@@ -5,7 +5,7 @@ import React from 'react'
 
 const AdminLayout = ({children}) => {
   return (
-    <div className='flex h-screen w-screen'>
+    <div className='flex h-screen font-sans'>
       <Sidebar />
       <div className='flex-1'>
         <AdminHeader />

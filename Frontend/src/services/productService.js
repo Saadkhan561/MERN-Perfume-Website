@@ -10,6 +10,15 @@ export const fetchAllproducts = async () => {
   }
 };
 
+export const fetchNonFilteredProducts = async() => {
+  try {
+    const products = await axios.get(`${BASE_URL}/getAllProducts`);
+    return products.data;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
 export const fetchAllCategories = async () => {
   try {
     const categories = await axios.get(`${BASE_URL}/getCategories`);

@@ -1,6 +1,7 @@
 import {
   fetchAllCategories,
   fetchAllproducts,
+  fetchNonFilteredProducts,
   fetchProductById,
   fetchProductImages,
   fetchTrendingProducts,
@@ -25,6 +26,14 @@ export const useFetchAllProducts = (options) => {
     queryFn: fetchAllproducts,
   });
 };
+
+export const useFetchNonFilteredProducts = (options) => {
+  return useQuery({
+    ...options,
+    queryFn: fetchNonFilteredProducts,
+    queryKey: ["Non filtered products"]
+  })
+}
 
 export const useFetchTrendingProducts = (options) => {
   return useQuery({
