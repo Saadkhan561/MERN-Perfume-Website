@@ -157,7 +157,7 @@ const PaymentOption = () => {
               </div>
             </div>
             <div className="flex gap-2 items-center w-full">
-              <button disabled={isOrderPending} className=" bg-black text-white text-base w-full font-semibold  hover:bg-gray-700 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-1">{isOrderPending ? "Place Order":<MoonLoader size={5} color="white" />}</button>
+              <button disabled={isOrderPending} className=" bg-black text-white text-base w-full font-semibold  hover:bg-gray-700 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-1">{isOrderPending ? <MoonLoader size={5} color="white" />:"Place Order"}</button>
               <div onClick={() => paymentOption('payment')} className=" bg-red-500 text-white text-base w-full font-semibold  hover:bg-red-600 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-1">
                 Cancel
               </div>

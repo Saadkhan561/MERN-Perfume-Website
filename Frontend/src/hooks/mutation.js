@@ -1,4 +1,4 @@
-import { paymenyHook, placeOrder } from "@/services/productService";
+import { addProduct, paymenyHook, placeOrder } from "@/services/productService";
 import { loginUser, signupUser } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
 
@@ -26,6 +26,13 @@ export const usePaymentHook = (options) => {
 export const usePlaceOrder = (options) => {
   return useMutation({
     mutationFn: placeOrder,
+    ...options
+  })
+}
+
+export const useAddProduct = (options) => {
+  return useMutation({
+    mutationFn: addProduct,
     ...options
   })
 }

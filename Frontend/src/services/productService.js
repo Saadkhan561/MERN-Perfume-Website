@@ -19,6 +19,15 @@ export const fetchNonFilteredProducts = async() => {
   }
 }
 
+export const addProduct = async(data) => {
+  try {
+    const res = await axios.post(`${BASE_URL}/addProduct`, data)
+    return res.data
+  } catch(err) {
+    throw new Error(err.message)
+  }
+}
+
 export const fetchAllCategories = async () => {
   try {
     const categories = await axios.get(`${BASE_URL}/getCategories`);

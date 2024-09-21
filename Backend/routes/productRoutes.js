@@ -27,7 +27,7 @@ const upload = multer()
 const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
     try {
-      const category = await Category.findById(req.body.category);
+      const category = await Category.findOne({name: req.body.category})
       if (!category) {
         console.log('Category not found');
         return cb(new Error('Category not found'), null);

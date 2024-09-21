@@ -2,10 +2,12 @@ import { withProtectedWrapper } from '@/components/Protected Route/protectedRout
 import AdminHeader from '@/components/adminPanel/header'
 import Sidebar from '@/components/adminPanel/sidebar'
 import React from 'react'
+import { ToastContainer } from 'react-toastify'
 
 const AdminLayout = ({children}) => {
   return (
     <div className='flex h-screen font-sans'>
+      <ToastContainer position='top-center' />
       <Sidebar />
       <div className='flex-1'>
         <AdminHeader />

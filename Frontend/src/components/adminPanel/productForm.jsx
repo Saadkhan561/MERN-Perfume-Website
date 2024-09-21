@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { productFormSchema } from "@/validationSchema/productFormSchema";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash, X } from "lucide-react";
+import { useAddProduct } from "@/hooks/mutation";
+import { ClipLoader } from "react-spinners";
 
 const ProductForm = () => {
   const [options, setOptions] = useState({});
@@ -17,8 +19,49 @@ const ProductForm = () => {
 
   const [images, setImages] = useState([]);
   const [imgError, setImgError] = useState(null);
+  const [imgLengthError, setImgLengthError] = useState(null);
 
-  console.log(images);
+  const imageRef = useRef(null);
+  const optionsRef = useRef(null);
+
+  const { mutate: addProduct, isPending } = useAddProduct({
+    onSuccess(data) {
+      toast.success(data, {
+        // position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+      reset();
+      setOptions({});
+      setImages([]);
+      if (images.length === 0) {
+        imageRef.current.value = null;
+      }
+      if (Object.entries(options).length === 0) {
+        optionsRef.current.value = null;
+      }
+    },
+    onError(error) {
+      toast.error(error, {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -46,8 +89,7 @@ const ProductForm = () => {
     Array.from(images).forEach((image) => {
       formData.append("images", image);
     });
-
-    console.log(formData)
+    addProduct(formData);
   };
 
   const handleAmount = (value) => {
@@ -88,25 +130,47 @@ const ProductForm = () => {
     }
   };
 
+  const handleRemoveOption = (optionVal) => {
+    const { [optionVal]: deletedVal, ...newOptions } = options;
+    setOptions(newOptions);
+  };
+
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
 
     // Validate the selected images before setting them in state
     if (validateImages(selectedFiles)) {
-      setImages(selectedFiles);
-      setImgError(null);
+      if (images.length + selectedFiles.length > 3) {
+        setImgLengthError("Only three images must be uploaded for a product");
+      } else {
+        setImages((prev) => [...prev, ...selectedFiles]);
+        setImgError(null);
+        setImgLengthError(null);
+      }
+    }
+  };
+
+  const handleRemoveImage = (imgToRemove) => {
+    const newImages = [...images.filter((img) => img !== imgToRemove)];
+    setImages(newImages);
+    if (newImages.length === 0) {
+      imageRef.current.value = null;
     }
   };
 
   // Function to validate image files (type and size)
   const validateImages = (files) => {
+    if (files.length > 3) {
+      setImgLengthError("Only three images must be uploaded for a product");
+      return false
+    } else {
+      setImgLengthError(null);
+    }
     for (let file of files) {
-      // Validate file type (JPEG, PNG)
       if (!["image/jpeg", "image/png"].includes(file.type)) {
         setImgError("Only JPEG and PNG images are allowed");
         return false;
       }
-      // Validate file size (limit to 2MB)
       if (file.size > 2 * 1024 * 1024) {
         // 2MB limit
         setImgError("Each image must be smaller than 2MB");
@@ -187,6 +251,7 @@ const ProductForm = () => {
                   Amount
                 </label>
                 <input
+                  ref={optionsRef}
                   type="number"
                   className="product_input"
                   onChange={(e) => handleAmount(e.target.value)}
@@ -197,6 +262,7 @@ const ProductForm = () => {
                   Price
                 </label>
                 <input
+                  ref={optionsRef}
                   type="number"
                   className="product_input"
                   onChange={(e) => handlePrice(e.target.value)}
@@ -207,6 +273,7 @@ const ProductForm = () => {
                   Quantity
                 </label>
                 <input
+                  ref={optionsRef}
                   type="text"
                   className="product_input"
                   onChange={(e) => handleQuantity(e.target.value)}
@@ -234,16 +301,21 @@ const ProductForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(options).map(([key, value]) => (
-                  <tr key={key}>
-                    <td className="p-1">{key}</td>
-                    <td className="p-1">{value.price}</td>
-                    <td className="p-1">{value.quantityAvailable}</td>
-                    <td>
-                      <Trash className="h-3 w-3 text-red-700 cursor-pointer" />
-                    </td>
-                  </tr>
-                ))}
+                {Object.entries(options)
+                  .sort(([keyA], [keyB]) => Number(keyA) - Number(keyB))
+                  .map(([key, value]) => (
+                    <tr key={key}>
+                      <td className="p-1">{key}</td>
+                      <td className="p-1">{value.price}</td>
+                      <td className="p-1">{value.quantityAvailable}</td>
+                      <td>
+                        <Trash
+                          onClick={() => handleRemoveOption(key)}
+                          className="h-3 w-3 text-red-700 cursor-pointer"
+                        />
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           )}
@@ -271,18 +343,44 @@ const ProductForm = () => {
             <label className="text-sm register_mini_div:text-xs  text-slate-500 font-semibold">
               Images:
             </label>
-            <input type="file" multiple onChange={handleImageChange} />
-            {imgError && (
-              <p className="text-red-500 text-xs">{imgError}</p>
+            <input
+              ref={imageRef}
+              type="file"
+              multiple
+              onChange={handleImageChange}
+            />
+            {imgError && <p className="text-red-500 text-xs">{imgError}</p>}
+            {imgLengthError && (
+              <p className="text-red-500 text-xs">{imgLengthError}</p>
             )}
+          </div>
+          <div className="flex flex-wrap mt-2">
+            {images.map((img, index) => (
+              <div key={index} className="text-center relative">
+                {img && (
+                  <img
+                    src={URL.createObjectURL(img)}
+                    alt={`uploaded-preview-${index}`}
+                    className="w-20 h-20 aspect-square m-1 border rounded"
+                  />
+                )}
+                <div
+                  onClick={() => handleRemoveImage(img)}
+                  className="absolute top-0 right-0 p-1 cursor-pointer rounded-full bg-red-500 text-white"
+                >
+                  <X className="h-3 w-3" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
         <div className=" w-full text-end col-span-2 ">
           <button
             type="submit"
+            disabled={isPending}
             className="p-1 w-24 text-sm rounded-lg cursor-pointer text-center bg-black text-white "
           >
-            Submit
+            {isPending ? <ClipLoader size={15} color="white" /> : "Submit"}
           </button>
         </div>
       </form>

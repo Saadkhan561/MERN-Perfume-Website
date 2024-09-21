@@ -13,13 +13,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Filter } from "lucide-react";
+import { Filter, Pencil } from "lucide-react";
 
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ProductForm from "@/components/adminPanel/productForm";
 
 const Products = () => {
   const [filterDropdown, setFilterDropdown] = useState(false);
+  const [restock, setRestock] = useState(false)
   const { data: products, isLoading } = useFetchNonFilteredProducts();
 
   const { data: categories, isLoading: isCategoriesLoading } =
@@ -69,7 +70,9 @@ const Products = () => {
                   </button>
                 </DialogTrigger>
                 <DialogContent className="max-w-[1000px] h-max">
-                  <DialogTitle className="text-2xl font-sans">Add product form</DialogTitle>
+                  <DialogTitle className="text-2xl font-sans">
+                    Add product form
+                  </DialogTitle>
                   <ProductForm />
                 </DialogContent>
               </Dialog>
@@ -112,9 +115,12 @@ const Products = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {Object.entries(product.options).map(
+                      {restock && Object.entries(product.options).map(
                         ([option, value]) => (
-                          <p key={option}>{value.quantityAvailable}</p>
+                          <div key={option} className="flex items-center gap-3">
+                            <p>{value.quantityAvailable}</p>
+                            <Pencil onClick={() => setRestock(!restock)} className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200" />
+                          </div>
                         )
                       )}
                     </TableCell>

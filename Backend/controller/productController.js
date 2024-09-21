@@ -281,26 +281,11 @@ const getProductImages = async (req, res) => {
 };
 
 const postProduct = async (req, res) => {
-  let parsedOptions = {};
-  if (Array.isArray(req.body.options)) {
-    req.body.options.forEach((option) => {
-      try {
-        const parsedOption = JSON.parse(option);
-        // Merge the parsed options into the result object
-        parsedOptions = { ...parsedOptions, ...parsedOption };
-      } catch (error) {
-        console.error("Error parsing option:", error);
-      }
-    });
-  } else {
-    try {
-      parsedOptions = JSON.parse(req.body.options);
-    } catch (error) {
-      console.error("Error parsing option:", error);
-    }
-  }
+  const category = await Category.findOne({name: req.body.category})
+  console.log(typeof JSON.parse(req.body.options))
+  const options = JSON.parse(req.body.options)
   try {
-    const { name, description, category, brand } = req.body;
+    const { name, description, brand } = req.body;
     const imagePaths = req.files.map(
       (file) => `${category}/${file.originalname}`
     );
@@ -309,13 +294,13 @@ const postProduct = async (req, res) => {
       name,
       description,
       brand,
-      category,
-      options: parsedOptions,
+      category: category._id,
+      options,
       imagePaths,
     });
 
     await product.save();
-    res.status(201).json({ message: "Product added successfully" });
+    res.status(200).json({ message: "Product added successfully" });
   } catch (error) {
     res.status(500).json({ message: "Failed to add product", error });
   }
