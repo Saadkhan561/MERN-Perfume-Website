@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { Bounce, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { productFormSchema } from "@/validationSchema/productFormSchema";
 import { Plus, Trash, X } from "lucide-react";
@@ -26,8 +26,7 @@ const ProductForm = () => {
 
   const { mutate: addProduct, isPending } = useAddProduct({
     onSuccess(data) {
-      toast.success(data, {
-        // position: "top-center",
+      toast.success("Product Added!", {
         autoClose: 2000,
         hideProgressBar: true,
         closeOnClick: true,
@@ -48,7 +47,7 @@ const ProductForm = () => {
       }
     },
     onError(error) {
-      toast.error(error, {
+      toast.error("Error occured!", {
         position: "top-center",
         autoClose: 1000,
         hideProgressBar: true,

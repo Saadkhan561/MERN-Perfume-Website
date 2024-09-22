@@ -10,23 +10,23 @@ export const fetchAllproducts = async () => {
   }
 };
 
-export const fetchNonFilteredProducts = async() => {
+export const fetchNonFilteredProducts = async () => {
   try {
     const products = await axios.get(`${BASE_URL}/getAllProducts`);
     return products.data;
   } catch (err) {
     throw new Error(err.message);
   }
-}
+};
 
-export const addProduct = async(data) => {
+export const addProduct = async (data) => {
   try {
-    const res = await axios.post(`${BASE_URL}/addProduct`, data)
-    return res.data
-  } catch(err) {
-    throw new Error(err.message)
+    const res = await axios.post(`${BASE_URL}/addProduct`, data);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.message);
   }
-}
+};
 
 export const fetchAllCategories = async () => {
   try {
@@ -59,7 +59,7 @@ export const paymenyHook = async (data) => {
 };
 
 export const placeOrder = async (data) => {
-  console.log(data)
+  console.log(data);
   try {
     const res = await axios.post(`${BASE_URL}/placeOrder`, data);
     return res.data;
@@ -71,6 +71,24 @@ export const placeOrder = async (data) => {
 export const fetchTrendingProducts = async () => {
   try {
     const res = await axios.get(`${BASE_URL}/trendingProducts`);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.msg);
+  }
+};
+
+export const restockQuantityAvailable = async (data) => {
+  try {
+    const res = await axios.put(`${BASE_URL}/reStock`, data);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.msg);
+  }
+};
+
+export const togglePinStatus = async (data) => {
+  try {
+    const res = await axios.put(`${BASE_URL}/pinProduct`, data);
     return res.data;
   } catch (err) {
     throw new Error(err.msg);

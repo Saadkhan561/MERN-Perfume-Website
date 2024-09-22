@@ -307,10 +307,11 @@ const postProduct = async (req, res) => {
 };
 
 const reStock = async (req, res) => {
+  const {id, option, quantity} = req.body
   try {
     await Products.updateOne(
-      { _id: req.params.id },
-      { $set: { "options.quantityAvailable": req.params.quantity } }
+      { _id: id },
+      { $set: { [`options.${option}.quantityAvailable`]: quantity } }
     );
     return res.json({ message: "updated" });
   } catch (err) {
@@ -319,11 +320,11 @@ const reStock = async (req, res) => {
 };
 
 const pinProduct = async (req, res) => {
-  //change value to of pinned (T-->F,F-->T)
+  const {id, status} = req.body
   try {
     await Products.updateOne(
-      { _id: req.params.id },
-      { pinned: !req.params.status }
+      { _id: id },
+      { pinned: !status }
     );
     return res.status(200).json("updated");
   } catch (err) {
