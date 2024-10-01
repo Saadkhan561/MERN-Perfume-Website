@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Filter, Pencil, Pin } from "lucide-react";
+import { Filter, Pencil, Pin, Trash } from "lucide-react";
 
 import { Bounce, toast } from "react-toastify";
 
@@ -24,7 +24,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductForm from "@/components/adminPanel/productForm";
-import { useRestock, useTogglePinStatus } from "@/hooks/mutation";
+import {
+  useRestock,
+  useSetDiscount,
+  useTogglePinStatus,
+  useToggleProductStatus,
+} from "@/hooks/mutation";
+import { ClipLoader } from "react-spinners";
+import useUserStore from "@/store/user";
 
 const Products = () => {
   const [filterDropdown, setFilterDropdown] = useState(false);
@@ -32,6 +39,14 @@ const Products = () => {
   const [restockId, setRestockId] = useState(null);
   const [restockOption, setRestockOption] = useState(null);
   const [inputVal, setInputVal] = useState(null);
+  const [discountVal, setDiscountVal] = useState(null);
+  const [pinId, setPinId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
+  const [discountId, setDiscountId] = useState(null);
+
+  const { currentUser } = useUserStore();
+  const accessToken = currentUser?.token;
+  const role = currentUser?.user.role;
 
   const {
     data: products,
@@ -49,11 +64,12 @@ const Products = () => {
     setInputVal(value);
   };
 
-  const { mutate: restockQuantity } = useRestock({
+  // MUTATION TO RESTOCK PRODUCT
+  const { mutate: restockQuantity, isPending: isRestockPending } = useRestock({
     onSuccess(data) {
       refetchProducts();
       setRestock(false);
-      toast.success("Updated", {
+      toast.success(data.message, {
         autoClose: 2000,
         hideProgressBar: true,
         closeOnClick: true,
@@ -66,7 +82,7 @@ const Products = () => {
     },
     onError(error) {
       console.log(error);
-      toast.error("Error occured", {
+      toast.error("Error occured" + error, {
         autoClose: 1000,
         hideProgressBar: true,
         closeOnClick: true,
@@ -79,10 +95,73 @@ const Products = () => {
     },
   });
 
-  const { mutate: togglePinStatus } = useTogglePinStatus({
+  // MUTATION TO PIN PRODUCT
+  const { mutate: togglePinStatus, isPending: isPinStatusPending } =
+    useTogglePinStatus({
+      onSuccess(data) {
+        toast.success(data.message, {
+          autoClose: 2000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+        refetchProducts();
+      },
+      onError(error) {
+        console.log(error);
+        toast.error("Error occured" + error, {
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      },
+    });
+
+  // MUTATION TO INACTIVATE PRODUCT
+  const { mutate: deleteProduct, isPending: isDeletePending } =
+    useToggleProductStatus({
+      onSuccess(data) {
+        toast.success(data.message, {
+          autoClose: 2000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+        refetchProducts();
+      },
+      onError(error) {
+        console.log(error);
+        toast.error("Error occured", {
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      },
+    });
+
+  // MUTATION TO SET DISCOUNT
+  const { mutate: setDiscount, isPending: isDiscountPending } = useSetDiscount({
     onSuccess(data) {
-      console.log(data);
-      toast.success("Updated", {
+ 
+      toast.success(data.message, {
         autoClose: 2000,
         hideProgressBar: true,
         closeOnClick: true,
@@ -92,7 +171,9 @@ const Products = () => {
         theme: "dark",
         transition: Bounce,
       });
-      refetchProducts()
+      refetchProducts();
+      setDiscountId(null)
+      setDiscountVal(null)
     },
     onError(error) {
       console.log(error);
@@ -170,6 +251,8 @@ const Products = () => {
                   <TableHead>Price</TableHead>
                   <TableHead>Stock</TableHead>
                   <TableHead>Pinned Status</TableHead>
+                  <TableHead>Active Status</TableHead>
+                  <TableHead>Discount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -228,9 +311,14 @@ const Products = () => {
                                           quantity: inputVal,
                                         })
                                       }
-                                      className="rounded-sm p-1 text-center cursor-pointer bg-blue-500 "
+                                      className="rounded-sm p-1 text-center cursor-pointer duration-200 bg-blue-500"
+                                      disabled={isRestockPending}
                                     >
-                                      Done
+                                      {isRestockPending ? (
+                                        <ClipLoader size={15} color="white" />
+                                      ) : (
+                                        "Done"
+                                      )}
                                     </button>
                                     <button
                                       onClick={() => setRestock(false)}
@@ -267,31 +355,175 @@ const Products = () => {
                       <TableCell>
                         {product.pinned ? (
                           <button
-                            onClick={() =>
+                            onClick={() => {
                               togglePinStatus({
                                 id: product._id,
                                 status: product.pinned,
-                              })
-                            }
-                            className="p-1 flex items-center text-sm cursor-pointer gap-2 bg-blue-500 text-white w-max rounded-lg"
+                              });
+                              setPinId(product._id);
+                            }}
+                            className="p-1 text-sm cursor-pointer bg-blue-500 text-white w-max rounded-lg"
+                            disabled={isPinStatusPending}
                           >
-                            <p>Pinned</p>
-                            <Pin className="h-3 w-3 cursor-pointer" />
+                            {isPinStatusPending && product._id === pinId ? (
+                              <ClipLoader size={15} color="white" />
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <p>Pinned</p>
+                                <Pin className="h-3 w-3 cursor-pointer" />
+                              </div>
+                            )}
                           </button>
                         ) : (
                           <button
-                            onClick={() =>
+                            onClick={() => {
                               togglePinStatus({
                                 id: product._id,
                                 status: product.pinned,
-                              })
-                            }
-                            className="p-1 flex items-center text-sm cursor-pointer gap-2 bg-slate-100 w-max rounded-lg"
+                              });
+                              setPinId(product._id);
+                            }}
+                            className="p-1 text-sm cursor-pointer bg-slate-100 w-max rounded-lg"
+                            disabled={isPinStatusPending}
                           >
-                            <p>Not pinned</p>
-                            <Pin className="h-3 w-3 cursor-pointer" />
+                            {isPinStatusPending && product._id === pinId ? (
+                              <ClipLoader size={15} color="black" />
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <p>Not pinned</p>
+                                <Pin className="h-3 w-3 cursor-pointer" />
+                              </div>
+                            )}
                           </button>
                         )}
+                      </TableCell>
+                      <TableCell className="w-max">
+                        <div className="hover:bg-slate-100 rounded-full duration-200 p-1 w-max">
+                          {isDeletePending && product._id === deleteId ? (
+                            <ClipLoader size={15} color="black" />
+                          ) : product.productStatus ? (
+                            <Trash
+                              disabled={isDeletePending}
+                              onClick={() => {
+                                deleteProduct({
+                                  id: product._id,
+                                  productStatus: product.productStatus,
+                                  token: accessToken,
+                                  role: role,
+                                });
+                                setDeleteId(product._id);
+                              }}
+                              className="h-4 w-4 cursor-pointer text-red-500"
+                            />
+                          ) : (
+                            <p
+                              onClick={() => {
+                                deleteProduct({
+                                  id: product._id,
+                                  productStatus: product.productStatus,
+                                  token: accessToken,
+                                  role: role,
+                                });
+                                setDeleteId(product._id);
+                              }}
+                              className="p-1 rounded-lg text-center text-white bg-red-500 cursor-pointer"
+                            >
+                              In active
+                            </p>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {product._id === discountId ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm "
+                              value={discountVal}
+                              type="text"
+                              onChange={(e) => setDiscountVal(e.target.value)}
+                            />
+                            <button
+                              onClick={() =>
+                                setDiscount({
+                                  id: product._id,
+                                  discount: discountVal,
+                                  role: role,
+                                })
+                              }
+                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-blue-500"
+                            >
+                              {isDiscountPending ? (
+                                <ClipLoader size={15} color="white" />
+                              ) : (
+                                "Done"
+                              )}
+                            </button>
+                            <button
+                              onClick={() => setDiscountId(null)}
+                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-red-500"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-4">
+                            {product.discount ? <p className="text-sm font-semibold text-gray-600">{product.discount}%</p>:(<p className="text-xl">-</p>)}
+                            <Pencil
+                              onClick={() => setDiscountId(product._id)}
+                              className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
+                            />
+                          </div>
+                        )}
+                        {/* {product.discount ? (
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-gray-600 font-semibold">
+                              {product.discount}%
+                            </p>
+                            <Pencil
+                              onClick={() => setDiscountId(product._id)}
+                              className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
+                            />
+                          </div>
+                        ) : product._id === discountId ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm "
+                              value={discountVal}
+                              type="text"
+                              onChange={(e) => setDiscountVal(e.target.value)}
+                            />
+                            <button
+                              onClick={() =>
+                                setDiscount({
+                                  id: product._id,
+                                  discount: discountVal,
+                                  role: role,
+                                })
+                              }
+                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-blue-500"
+                            >
+                              {isDiscountPending ? (
+                                <ClipLoader size={15} color="white" />
+                              ) : (
+                                "Done"
+                              )}
+                            </button>
+                            <button
+                              onClick={() => setDiscountId(null)}
+                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-red-500"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-4">
+                            <p className="text-xl">-</p>
+                            <Pencil
+                              onClick={() => setDiscountId(product._id)}
+                              className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
+                            />
+                          </div>
+                        )} */}
                       </TableCell>
                     </TableRow>
                   ))

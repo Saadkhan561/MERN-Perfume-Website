@@ -1,4 +1,4 @@
-import { addProduct, paymenyHook, placeOrder, restockQuantityAvailable, togglePinStatus } from "@/services/productService";
+import { addProduct, paymenyHook, placeOrder, restockQuantityAvailable, setDiscount, togglePinStatus, toggleProductStatus } from "@/services/productService";
 import { loginUser, signupUser } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
 
@@ -47,6 +47,20 @@ export const useRestock = (options) => {
 export const useTogglePinStatus = (options) => {
   return useMutation({
     mutationFn: togglePinStatus,
+    ...options
+  })
+}
+
+export const useToggleProductStatus = (options) => {
+  return useMutation({
+    mutationFn: toggleProductStatus,
+    ...options
+  })
+}
+
+export const useSetDiscount = (options) => {
+  return useMutation({
+    mutationFn: setDiscount,
     ...options
   })
 }

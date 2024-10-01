@@ -57,7 +57,7 @@ const uploadImages = multer({ storage: storage });
 router.get("/getProductsByCategory/:id", getProductsByCategory);
 router.get("/getProducts", getAllProducts);
 // FOR FETCHING NON FILTERED PRODUCTS
-router.get("/getAllProducts", getProducts);
+router.get("/getAllProducts",authenticateToken, getProducts);
 router.get("/trendingProducts", trendingProducts);
 router.get("/images/:category/:productName", getProductImages);
 router.get("/getProductById/:id", getProductById);
@@ -65,14 +65,14 @@ router.get("/search", searchResults);
 
 router.put("/updateProduct/:id", authenticateToken, isAdmin, updateProduct);
 router.put(
-  "/deleteProduct/:id/:status",
+  "/deleteProduct",
   authenticateToken,
   isAdmin,
   deleteProduct
 );
 router.put("/reStock", reStock, authenticateToken, isAdmin);
 router.put(
-  "/setDiscount/:id/:discount",
+  "/setDiscount",
   authenticateToken,
   isAdmin,
   setDiscount

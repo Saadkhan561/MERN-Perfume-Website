@@ -313,7 +313,7 @@ const reStock = async (req, res) => {
       { _id: id },
       { $set: { [`options.${option}.quantityAvailable`]: quantity } }
     );
-    return res.json({ message: "updated" });
+    return res.json({ message: "Updated" });
   } catch (err) {
     return res.json(err);
   }
@@ -326,7 +326,7 @@ const pinProduct = async (req, res) => {
       { _id: id },
       { pinned: !status }
     );
-    return res.status(200).json("updated");
+    return res.status(200).json({message: "Updated"});
   } catch (err) {
     return res.json(err);
   }
@@ -335,19 +335,20 @@ const pinProduct = async (req, res) => {
 const setDiscount = async (req, res) => {
   try {
     await Products.updateOne(
-      { _id: req.params.id },
-      { discount: req.params.discount }
+      { _id: req.body.id },
+      { discount: req.body.discount }
     );
-    return res.status(200).json("updated");
+    return res.status(200).json({message: "Updated"});
   } catch (err) {
     return res.json(err);
   }
 };
 
 const deleteProduct = async (req, res) => {
+  const {id, productStatus} = req.body
   try {
-    await Products.deleteOne({ _id: req.params.id }, { productStatus: false });
-    return res.status(200).json("updated");
+    await Products.updateOne({ _id: id }, { productStatus: !productStatus });
+    return res.status(200).json({message: "Updated"});
   } catch (err) {
     return res.json(err);
   }
