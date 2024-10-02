@@ -11,10 +11,17 @@ export const fetchAllproducts = async () => {
   }
 };
 
-export const fetchNonFilteredProducts = async () => {
+export const fetchNonFilteredProducts = async (params) => {
   try {
-    const products = await axiosInstance.get("/getAllProducts");
-    return products.data;
+    if (params) {
+      const products = await axiosInstance.get(
+        `/getAllProducts?category=${params.filter || ""}&skip=${params.skip}`
+      );
+      return products.data;
+    } else {
+      const products = await axiosInstance.get("/getAllProducts");
+      return products.data;
+    }
   } catch (err) {
     throw new Error(err.message);
   }

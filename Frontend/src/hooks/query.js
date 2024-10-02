@@ -27,11 +27,11 @@ export const useFetchAllProducts = (options) => {
   });
 };
 
-export const useFetchNonFilteredProducts = (options) => {
+export const useFetchNonFilteredProducts = (params, options) => {
   return useQuery({
     ...options,
-    queryFn: fetchNonFilteredProducts,
-    queryKey: ["Non filtered products"]
+    queryFn:() => fetchNonFilteredProducts(params),
+    queryKey: ["Non filtered products", params]
   })
 }
 

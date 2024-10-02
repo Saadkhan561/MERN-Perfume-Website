@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Filter, Pencil, Pin, Trash } from "lucide-react";
+import { ChevronLeft, Filter, Pencil, Pin, Trash } from "lucide-react";
 
 import { Bounce, toast } from "react-toastify";
 
@@ -35,6 +35,7 @@ import useUserStore from "@/store/user";
 
 const Products = () => {
   const [filterDropdown, setFilterDropdown] = useState(false);
+  const [filterVal, setFilterVal] = useState(null);
   const [restock, setRestock] = useState(false);
   const [restockId, setRestockId] = useState(null);
   const [restockOption, setRestockOption] = useState(null);
@@ -43,6 +44,7 @@ const Products = () => {
   const [pinId, setPinId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [discountId, setDiscountId] = useState(null);
+  const [skip, setSkip] = useState(0)
 
   const { currentUser } = useUserStore();
   const accessToken = currentUser?.token;
@@ -52,7 +54,7 @@ const Products = () => {
     data: products,
     isLoading,
     refetch: refetchProducts,
-  } = useFetchNonFilteredProducts();
+  } = useFetchNonFilteredProducts({ filter: filterVal, skip: skip });
 
   const { data: categories, isLoading: isCategoriesLoading } =
     useFetchAllCategories();
@@ -160,7 +162,6 @@ const Products = () => {
   // MUTATION TO SET DISCOUNT
   const { mutate: setDiscount, isPending: isDiscountPending } = useSetDiscount({
     onSuccess(data) {
- 
       toast.success(data.message, {
         autoClose: 2000,
         hideProgressBar: true,
@@ -172,8 +173,8 @@ const Products = () => {
         transition: Bounce,
       });
       refetchProducts();
-      setDiscountId(null)
-      setDiscountVal(null)
+      setDiscountId(null);
+      setDiscountVal(null);
     },
     onError(error) {
       console.log(error);
@@ -208,7 +209,10 @@ const Products = () => {
                       filterDropdown ? "block" : "hidden"
                     }`}
                   >
-                    <li className="p-1 text-sm hover:bg-slate-100 duration-200 cursor-pointer">
+                    <li
+                      onClick={() => setFilterVal(null)}
+                      className="p-1 text-sm hover:bg-slate-100 duration-200 cursor-pointer"
+                    >
                       See all
                     </li>
                     {isCategoriesLoading ? (
@@ -216,6 +220,7 @@ const Products = () => {
                     ) : (
                       categories?.map((category, index) => (
                         <li
+                          onClick={() => setFilterVal(category.name)}
                           className="p-1 text-sm hover:bg-slate-100 duration-200 cursor-pointer"
                           key={index}
                         >
@@ -258,8 +263,14 @@ const Products = () => {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center">
+                    <TableCell colSpan={10} className="text-center p-4">
                       Loading...
+                    </TableCell>
+                  </TableRow>
+                ) : products?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={10} className="text-center p-4 text-lg">
+                      No products for this category....
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -467,69 +478,39 @@ const Products = () => {
                           </div>
                         ) : (
                           <div className="flex items-center gap-4">
-                            {product.discount ? <p className="text-sm font-semibold text-gray-600">{product.discount}%</p>:(<p className="text-xl">-</p>)}
+                            {product.discount ? (
+                              <p className="text-sm font-semibold text-gray-600">
+                                {product.discount}%
+                              </p>
+                            ) : (
+                              <p className="text-xl">-</p>
+                            )}
                             <Pencil
                               onClick={() => setDiscountId(product._id)}
                               className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
                             />
                           </div>
                         )}
-                        {/* {product.discount ? (
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm text-gray-600 font-semibold">
-                              {product.discount}%
-                            </p>
-                            <Pencil
-                              onClick={() => setDiscountId(product._id)}
-                              className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
-                            />
-                          </div>
-                        ) : product._id === discountId ? (
-                          <div className="flex items-center gap-2">
-                            <input
-                              className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm "
-                              value={discountVal}
-                              type="text"
-                              onChange={(e) => setDiscountVal(e.target.value)}
-                            />
-                            <button
-                              onClick={() =>
-                                setDiscount({
-                                  id: product._id,
-                                  discount: discountVal,
-                                  role: role,
-                                })
-                              }
-                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-blue-500"
-                            >
-                              {isDiscountPending ? (
-                                <ClipLoader size={15} color="white" />
-                              ) : (
-                                "Done"
-                              )}
-                            </button>
-                            <button
-                              onClick={() => setDiscountId(null)}
-                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-red-500"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-4">
-                            <p className="text-xl">-</p>
-                            <Pencil
-                              onClick={() => setDiscountId(product._id)}
-                              className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
-                            />
-                          </div>
-                        )} */}
                       </TableCell>
                     </TableRow>
                   ))
                 )}
               </TableBody>
             </Table>
+            <div className="flex gap-2 mt-10 font-semibold">
+              <div>Page No:</div>
+              <div className="flex gap-2 items-center">
+                <ChevronLeft
+                  onClick={() => setSkip(skip - 2)}
+                  className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5"
+                />
+                <p className="text-sm font-semibold">1</p>
+                <ChevronLeft
+                  onClick={() => setSkip(skip + 2)}
+                  className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5 rotate-180"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -65,23 +65,40 @@ const getAllProducts = async (req, res) => {
 
 // FOR FETCHING NON FILTERED PRODUCTS
 const getProducts = async (req, res) => {
-  try {
-    const products = await Products.aggregate([{
+  const { category, skip } = req.query;
+  console.log(category,skip)
+  const pipeline = [
+    {
       $lookup: {
         from: "perfume_categories",
         localField: "category",
         foreignField: "_id",
-        as: "category_details"
-      }
+        as: "category_details",
+      },
     },
     {
-      $unwind: "$category_details"
-    }])
-    res.status(200).json(products)
-  } catch (err) {
-    return res.status(500).json({ error: err.message })
+      $unwind: "$category_details",
+    },
+  ];
+  if (category) {
+    pipeline.push({
+      $match: {
+        "category_details.name": category,
+      },
+    });
   }
-}
+  if (skip) {
+    pipeline.push({
+      $skip: parseInt(skip),
+    });
+  }
+  try {
+    const products = await Products.aggregate(pipeline);
+    res.status(200).json(products);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
 
 const trendingProducts = async (req, res) => {
   try {
@@ -281,9 +298,9 @@ const getProductImages = async (req, res) => {
 };
 
 const postProduct = async (req, res) => {
-  const category = await Category.findOne({name: req.body.category})
-  console.log(typeof JSON.parse(req.body.options))
-  const options = JSON.parse(req.body.options)
+  const category = await Category.findOne({ name: req.body.category });
+  console.log(typeof JSON.parse(req.body.options));
+  const options = JSON.parse(req.body.options);
   try {
     const { name, description, brand } = req.body;
     const imagePaths = req.files.map(
@@ -307,7 +324,7 @@ const postProduct = async (req, res) => {
 };
 
 const reStock = async (req, res) => {
-  const {id, option, quantity} = req.body
+  const { id, option, quantity } = req.body;
   try {
     await Products.updateOne(
       { _id: id },
@@ -320,13 +337,10 @@ const reStock = async (req, res) => {
 };
 
 const pinProduct = async (req, res) => {
-  const {id, status} = req.body
+  const { id, status } = req.body;
   try {
-    await Products.updateOne(
-      { _id: id },
-      { pinned: !status }
-    );
-    return res.status(200).json({message: "Updated"});
+    await Products.updateOne({ _id: id }, { pinned: !status });
+    return res.status(200).json({ message: "Updated" });
   } catch (err) {
     return res.json(err);
   }
@@ -338,17 +352,17 @@ const setDiscount = async (req, res) => {
       { _id: req.body.id },
       { discount: req.body.discount }
     );
-    return res.status(200).json({message: "Updated"});
+    return res.status(200).json({ message: "Updated" });
   } catch (err) {
     return res.json(err);
   }
 };
 
 const deleteProduct = async (req, res) => {
-  const {id, productStatus} = req.body
+  const { id, productStatus } = req.body;
   try {
     await Products.updateOne({ _id: id }, { productStatus: !productStatus });
-    return res.status(200).json({message: "Updated"});
+    return res.status(200).json({ message: "Updated" });
   } catch (err) {
     return res.json(err);
   }
@@ -365,7 +379,7 @@ const searchResults = async (req, res) => {
     const cleanedQuery = query.trim().replace(/\s+/g, " ");
     const words = cleanedQuery.split(" ").filter((word) => word);
     const regexWords = words.map((word) => new RegExp(word, "i"));
-    console.log(regexWords)
+    console.log(regexWords);
 
     const searchCategory = await Category.find({
       $or: regexWords.map((word) => ({ name: word })),
