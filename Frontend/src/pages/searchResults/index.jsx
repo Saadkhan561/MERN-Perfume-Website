@@ -16,6 +16,8 @@ const SearchResults = () => {
     { enabled: Boolean(queryParam), retry :false }
   );
 
+  console.log(searchResults)
+
   return (
     <Layout>
       <div className="w-full fle justify-center">
@@ -31,7 +33,7 @@ const SearchResults = () => {
                   key={product._id}
                   id={product._id}
                   product={product}
-                  category={product.categryDetails.name}
+                  category={product.categoryDetails.name}
                 />
               ))
             )}

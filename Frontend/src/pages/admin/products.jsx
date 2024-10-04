@@ -44,7 +44,8 @@ const Products = () => {
   const [pinId, setPinId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [discountId, setDiscountId] = useState(null);
-  const [skip, setSkip] = useState(0)
+  const [skip, setSkip] = useState(0);
+  const [pages, setPages] = useState(1);
 
   const { currentUser } = useUserStore();
   const accessToken = currentUser?.token;
@@ -55,6 +56,8 @@ const Products = () => {
     isLoading,
     refetch: refetchProducts,
   } = useFetchNonFilteredProducts({ filter: filterVal, skip: skip });
+
+  let noOfPages = products ? Math.ceil(products?.length / 2) : 0;
 
   const { data: categories, isLoading: isCategoriesLoading } =
     useFetchAllCategories();
@@ -501,12 +504,26 @@ const Products = () => {
               <div>Page No:</div>
               <div className="flex gap-2 items-center">
                 <ChevronLeft
-                  onClick={() => setSkip(skip - 2)}
+                  onClick={() => {
+                    if (skip > 0) {
+                      setSkip(skip - 2);
+                    }
+                    if (pages > 1) {
+                      setPages(pages - 1);
+                    }
+                  }}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5"
                 />
-                <p className="text-sm font-semibold">1</p>
+                <p className="text-sm font-semibold">
+                  {noOfPages !== 0 ? `${pages} / ${noOfPages}`:"0"}
+                </p>
                 <ChevronLeft
-                  onClick={() => setSkip(skip + 2)}
+                  onClick={() => {
+                    if (pages < noOfPages) {
+                      setPages(pages + 1);
+                      setSkip(skip + 2);
+                    }
+                  }}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5 rotate-180"
                 />
               </div>

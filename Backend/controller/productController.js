@@ -66,7 +66,6 @@ const getAllProducts = async (req, res) => {
 // FOR FETCHING NON FILTERED PRODUCTS
 const getProducts = async (req, res) => {
   const { category, skip } = req.query;
-  console.log(category,skip)
   const pipeline = [
     {
       $lookup: {
@@ -92,6 +91,14 @@ const getProducts = async (req, res) => {
       $skip: parseInt(skip),
     });
   }
+
+  // if (productName) {
+  //   pipeline.push({
+  //     $match: {
+  //       'name': productName
+  //     }
+  //   })
+  // }
   try {
     const products = await Products.aggregate(pipeline);
     res.status(200).json(products);
@@ -389,7 +396,7 @@ const searchResults = async (req, res) => {
       const categoryId = searchCategory.map((cat) => cat._id);
       products = await Products.aggregate([
         {
-          $match: { category: { $in: categoryId } }, // Match products in the found categories
+          $match: { category: { $in: categoryId } },
         },
         {
           $lookup: {
@@ -416,43 +423,18 @@ const searchResults = async (req, res) => {
         },
       ]);
     } else {
-      // If no categories match, search directly on products
       products = await Products.aggregate([
         {
           $match: {
-            $and: regexWords.map((word) => ({
-              $or: [
-                { name: { $regex: word, $options: "i" } }, // Case-insensitive search
-                { description: { $regex: word, $options: "i" } },
-                { brand: { $regex: word, $options: "i" } },
-              ],
-            })),
+            $or: [
+              { name: { $regex: regexWords[0], $options: "i" } }, // Match first word (as a test)
+              { description: { $regex: regexWords[0], $options: "i" } },
+              { brand: { $regex: regexWords[0], $options: "i" } },
+            ],
           },
         },
-        // {
-        //   $lookup: {
-        //     from: "perfume_categories", // Collection to join
-        //     localField: "category", // Field from 'Products' collection
-        //     foreignField: "_id", // Field from 'perfume_categories' collection
-        //     as: "categoryDetails", // Name of the output array
-        //   },
-        // },
-        // {
-        //   $unwind: "$categoryDetails", // Unwind to flatten the joined data
-        // },
-        // {
-        //   $project: {
-        //     _id: 1,
-        //     name: 1,
-        //     description: 1,
-        //     brand: 1,
-        //     price: 1,
-        //     imagePaths: 1,
-        //     discount: 1,
-        //     "categoryDetails.name": 1, // Include category name in the result
-        //   },
-        // },
       ]);
+      console.log(products);
     }
     if (products.length === 0) {
       res.status(404).json({ msg: "No results found..." });

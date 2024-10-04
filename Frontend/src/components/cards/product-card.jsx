@@ -6,7 +6,6 @@ import { useFetchProductImages } from "@/hooks/query";
 const Card = ({ product, category }) => {
 
   const {data} = useFetchProductImages({category, productName:product.name})
-  console.log(category, product.name)
   const price = product?.options && Object.keys(product.options).length > 0 
   ? product.options[Object.keys(product.options)[0]].price 
   : undefined;
