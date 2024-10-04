@@ -15,7 +15,7 @@ export const fetchNonFilteredProducts = async (params) => {
   try {
     if (params) {
       const products = await axiosInstance.get(
-        `/getAllProducts?category=${params.filter || ""}&skip=${params.skip}`
+        `/getAllProducts?category=${params.filter || ""}&skip=${params.skip}&searchTerm=${params.searchTerm}`
       );
       return products.data;
     } else {

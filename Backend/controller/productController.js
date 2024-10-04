@@ -65,7 +65,7 @@ const getAllProducts = async (req, res) => {
 
 // FOR FETCHING NON FILTERED PRODUCTS
 const getProducts = async (req, res) => {
-  const { category, skip } = req.query;
+  const { category, skip, searchTerm } = req.query;
   const pipeline = [
     {
       $lookup: {
@@ -92,13 +92,22 @@ const getProducts = async (req, res) => {
     });
   }
 
-  // if (productName) {
-  //   pipeline.push({
-  //     $match: {
-  //       'name': productName
-  //     }
-  //   })
-  // }
+  if (searchTerm) {
+
+    const queryWords = searchTerm.split(" ").filter((word) => word);
+    const regexWords = queryWords.map((word) => new RegExp(word));
+    console.log(searchTerm, regexWords)
+    pipeline.push({
+      $match: {
+        $or: regexWords.map((word) => ({
+          $or: [
+            { name: { $regex: word, $options: "i" } },
+            { description: { $regex: word, $options: "i" } },
+          ],
+        })),
+      },
+    });
+  }
   try {
     const products = await Products.aggregate(pipeline);
     res.status(200).json(products);
@@ -383,16 +392,15 @@ const updateProduct = async (req, res) => {
 const searchResults = async (req, res) => {
   const query = req.query.q;
   try {
-    const cleanedQuery = query.trim().replace(/\s+/g, " ");
-    const words = cleanedQuery.split(" ").filter((word) => word);
-    const regexWords = words.map((word) => new RegExp(word, "i"));
-    console.log(regexWords);
+    const words = query.split(" ").filter((word) => word);
+    const regexWords = words.map((word) => new RegExp(word));
 
     const searchCategory = await Category.find({
       $or: regexWords.map((word) => ({ name: word })),
     });
     let products = [];
     if (searchCategory.length > 0) {
+      console.log("inside category search");
       const categoryId = searchCategory.map((cat) => cat._id);
       products = await Products.aggregate([
         {
@@ -400,14 +408,14 @@ const searchResults = async (req, res) => {
         },
         {
           $lookup: {
-            from: "perfume_categories", // Join with the perfume_categories collection
-            localField: "category", // Field from 'Products' collection
-            foreignField: "_id", // Field from 'perfume_categories' collection
-            as: "categoryDetails", // Name of the output array
+            from: "perfume_categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "categoryDetails",
           },
         },
         {
-          $unwind: "$categoryDetails", // Unwind to flatten the joined data
+          $unwind: "$categoryDetails",
         },
         {
           $project: {
@@ -418,7 +426,7 @@ const searchResults = async (req, res) => {
             price: 1,
             imagePaths: 1,
             discount: 1,
-            "categoryDetails.name": 1, // Include category name in the result
+            "categoryDetails.name": 1,
           },
         },
       ]);
@@ -426,15 +434,39 @@ const searchResults = async (req, res) => {
       products = await Products.aggregate([
         {
           $match: {
-            $or: [
-              { name: { $regex: regexWords[0], $options: "i" } }, // Match first word (as a test)
-              { description: { $regex: regexWords[0], $options: "i" } },
-              { brand: { $regex: regexWords[0], $options: "i" } },
-            ],
+            $or: regexWords.map((word) => ({
+              $or: [
+                { name: { $regex: word, $options: "i" } },
+                { description: { $regex: word, $options: "i" } },
+                { brand: { $regex: word, $options: "i" } },
+              ],
+            })),
+          },
+        },
+        {
+          $lookup: {
+            from: "perfume_categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "categoryDetails",
+          },
+        },
+        {
+          $unwind: "$categoryDetails",
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            description: 1,
+            brand: 1,
+            price: 1,
+            imagePaths: 1,
+            discount: 1,
+            "categoryDetails.name": 1,
           },
         },
       ]);
-      console.log(products);
     }
     if (products.length === 0) {
       res.status(404).json({ msg: "No results found..." });

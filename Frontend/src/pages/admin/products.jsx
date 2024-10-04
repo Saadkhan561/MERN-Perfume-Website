@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronLeft, Filter, Pencil, Pin, Trash } from "lucide-react";
+import { ChevronLeft, Filter, Pencil, Pin, Search, Trash } from "lucide-react";
 
 import { Bounce, toast } from "react-toastify";
 
@@ -47,15 +47,19 @@ const Products = () => {
   const [skip, setSkip] = useState(0);
   const [pages, setPages] = useState(1);
 
+  const [query, setQuery] = useState("");
+
   const { currentUser } = useUserStore();
   const accessToken = currentUser?.token;
   const role = currentUser?.user.role;
+
+  console.log(query)
 
   const {
     data: products,
     isLoading,
     refetch: refetchProducts,
-  } = useFetchNonFilteredProducts({ filter: filterVal, skip: skip });
+  } = useFetchNonFilteredProducts({ filter: filterVal, skip: skip , searchTerm: query});
 
   let noOfPages = products ? Math.ceil(products?.length / 2) : 0;
 
@@ -201,6 +205,29 @@ const Products = () => {
           <div className="flex items-center p-4 justify-between">
             <p className="text-xl">Products</p>
             <div className="flex items-center gap-4">
+              {/* SEARCH DIV */}
+              <div>
+                <div>
+                  <form className="flex gap-2 items-center border border-slate-500 rounded-r-full p-1">
+                    <Search
+                      // onClick={() =>
+                      //   query === ""
+                      //     ? router.push("products")
+                      //     : router.push(`/searchResults?q=${query}`)
+                      // }
+                      height={15}
+                      width={15}
+                    />
+                    <input
+                      className="focus:outline-none text-sm"
+                      type="text"
+                      placeholder="Search..."
+                      onChange={(e) => setQuery(e.target.value)}
+                      //   onKeyDown={handleKeyPress}
+                    />
+                  </form>
+                </div>
+              </div>
               <div>
                 <div className="relative ">
                   <Filter
@@ -515,7 +542,7 @@ const Products = () => {
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5"
                 />
                 <p className="text-sm font-semibold">
-                  {noOfPages !== 0 ? `${pages} / ${noOfPages}`:"0"}
+                  {noOfPages !== 0 ? `${pages} / ${noOfPages}` : "0"}
                 </p>
                 <ChevronLeft
                   onClick={() => {
