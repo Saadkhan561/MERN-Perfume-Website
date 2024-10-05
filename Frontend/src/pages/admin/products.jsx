@@ -202,8 +202,11 @@ const Products = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       setQuery(searchVal);
+      setSkip(0);
     }
   };
+
+  console.log(products, skip);
 
   return (
     <AdminLayout>
@@ -535,7 +538,11 @@ const Products = () => {
               <div>Page No:</div>
               <div className="flex gap-2 items-center">
                 <ChevronLeft
-                  onClick={() => setSkip(skip - 2)}
+                  onClick={() => {
+                    if (skip > 0) {
+                      setSkip(skip - 2);
+                    }
+                  }}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5"
                 />
                 <p className="text-sm font-semibold">
@@ -548,7 +555,11 @@ const Products = () => {
                   )}
                 </p>
                 <ChevronLeft
-                  onClick={() => setSkip(skip + 2)}
+                  onClick={() => {
+                    if (products.currentPage < products.totalPages) {
+                      setSkip(skip + 2);
+                    }
+                  }}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5 rotate-180"
                 />
               </div>

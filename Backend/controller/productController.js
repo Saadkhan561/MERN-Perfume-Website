@@ -9,55 +9,81 @@ const fs = require("fs");
 
 //get pinned product first
 const getAllProducts = async (req, res) => {
+  let { categoryId } = req.query;
+  if (categoryId === "null" || categoryId === "") {
+    categoryId = null;
+  }
+  const pipeline = [
+    {
+      $lookup: {
+        from: "perfume_categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "categoryDetails",
+      },
+    },
+    {
+      $unwind: "$categoryDetails",
+    },
+    {
+      $match: {
+        productStatus: true,
+      },
+    },
+    {
+      $sort: {
+        pinned: -1, // Sort pinned products first (assuming pinned is a boolean)
+        createdAt: -1, // Then sort by creation date (most recent first)
+      },
+    },
+    {
+      $group: {
+        _id: "$categoryDetails._id",
+        category_name: { $first: "$categoryDetails.name" },
+        products: { $push: "$$ROOT" },
+      },
+    },
+  ];
   //image handling
   try {
-    //const products = await Product.find({}).sort({ createdAt: -1 });
-    const products = await Products.aggregate([
-      {
-        $lookup: {
-          from: "perfume_categories",
-          localField: "category",
-          foreignField: "_id",
-          as: "categoryDetails",
-        },
-      },
-      {
-        $unwind: "$categoryDetails",
-      },
-      {
+    if (categoryId) {
+      console.log("inside category");
+      pipeline.push({
         $match: {
-          productStatus: true,
+          category: categoryId,
         },
-      },
-      {
-        $sort: {
-          pinned: -1, // Sort pinned products first (assuming pinned is a boolean)
-          createdAt: -1, // Then sort by creation date (most recent first)
-        },
-      },
-      {
-        $group: {
-          _id: "$categoryDetails._id",
-          category_name: { $first: "$categoryDetails.name" },
-          products: { $push: "$$ROOT" },
-        },
-      },
-      {
+      });
+      pipeline.push({
         $project: {
           category: "$categoryDetails._id",
           category_name: 1,
           products: 1, // Include the products array
         },
-      },
-    ]);
+      });
+      const products = await Products.aggregate(pipeline);
+      if (products.length === 0) {
+        return res
+          .status(200)
+          .json({ message: "No products for this category" });
+      } else {
+        return res.status(200).json(products);
+      }
+    } else {
+      pipeline.push({
+        $project: {
+          products: 1, // Include the products array
+        },
+      });
+      const products = await Products.aggregate(pipeline);
+      return res.status(200).json(products);
+    }
+
     // const productsWithImages = products.map(product => ({
     //   ...product.toObject(),
     //   imageUrls: product.imagePaths.map(path => `${req.protocol}://${req.get('host')}/uploads/${path.split('/').pop()}`)
     // }));
 
     // res.json(productsWithImages);
-
-    return res.status(200).json(products);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -91,17 +117,13 @@ const getProducts = async (req, res) => {
     if (searchTerm) {
       const queryWords = searchTerm.split(" ").filter((word) => word);
       const regexWords = queryWords.map((word) => new RegExp(word));
-      pipeline.push(
-        {
-          $match: {
-            $or: regexWords.map((word) => ({
-              $or: [
-                { name: { $regex: word, $options: "i" } },
-              ],
-            })),
-          },
+      pipeline.push({
+        $match: {
+          $or: regexWords.map((word) => ({
+            $or: [{ name: { $regex: word, $options: "i" } }],
+          })),
         },
-      );
+      });
       const totalPipeline = [...pipeline];
 
       totalPipeline.push({
@@ -109,9 +131,10 @@ const getProducts = async (req, res) => {
       });
 
       const totalCountResult = await Products.aggregate(totalPipeline);
-      const totalProducts = totalCountResult.length > 0 ? totalCountResult[0].totalProducts : 0;
+      const totalProducts =
+        totalCountResult.length > 0 ? totalCountResult[0].totalProducts : 0;
       const totalPages = Math.ceil(totalProducts / limit);
-      
+
       pipeline.push({ $skip: parseInt(skip) });
       pipeline.push({ $limit: parseInt(limit) });
 
@@ -437,11 +460,10 @@ const searchResults = async (req, res) => {
     });
     let products = [];
     if (searchCategory.length > 0) {
-      console.log("inside category search");
       const categoryId = searchCategory.map((cat) => cat._id);
       products = await Products.aggregate([
         {
-          $match: { category: { $in: categoryId } },
+          $match: { category: { $in: categoryId }, productStatus: true },
         },
         {
           $lookup: {
@@ -478,6 +500,7 @@ const searchResults = async (req, res) => {
                 { brand: { $regex: word, $options: "i" } },
               ],
             })),
+            productStatus: true,
           },
         },
         {

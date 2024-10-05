@@ -2,9 +2,9 @@
 // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 import axiosInstance from "../../axiosConfig";
 
-export const fetchAllproducts = async () => {
+export const fetchAllproducts = async (params) => {
   try {
-    const products = await axiosInstance.get("/getProducts");
+    const products = await axiosInstance.get(`/getProducts?categoryId=${params.categoryId}`);
     return products.data;
   } catch (err) {
     throw new Error(err.message);

@@ -1,39 +1,21 @@
 import Card from "@/components/cards/product-card";
-import {
-  useFetchAllCategories,
-  useFetchAllProducts,
-  useFetchSearchResults,
-} from "@/hooks/query";
+import { useFetchAllCategories, useFetchAllProducts } from "@/hooks/query";
 import Layout from "@/layout/layout";
 import { useRouter } from "next/router";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 
 const Products = () => {
   const [selected, setSelected] = useState(0);
+  const [categoryId, setCategoryId] = useState(null);
   const router = useRouter();
-
-  const { data: products, isLoading: isProductsLoading } = useFetchAllProducts();
-  console.log(products);
 
   const { data: categories, isLoading: isCategoryLoading } =
     useFetchAllCategories();
-  console.log(categories);
 
-  // useEffect(() => {
-  //   const { category: queryCategory } = router.query;
-  //   if (queryCategory) {
-  //     const filtered =
-  //       products &&
-  //       queryCategory &&
-  //       products.filter((product) => product.category === queryCategory);
-  //     setFilteredProducts(filtered);
-  //   } else {
-  //     setFilteredProducts(products);
-  //     refetch();
-  //     router.push("/products");
-  //   }
-  // }, [router.query.category, products]);
+  const { data: products, isLoading: isProductsLoading } = useFetchAllProducts({
+    categoryId: categoryId
+  });
+  console.log(products);
 
   return (
     <Layout>
@@ -43,7 +25,10 @@ const Products = () => {
             {categories?.map((category, index) => (
               <div
                 key={index}
-                onClick={() => setSelected(index)}
+                onClick={() => {
+                  setCategoryId(category._id)
+                  setSelected(index);
+                }}
                 className={
                   selected == index
                     ? "p-1 underline duration-200 cursor-pointer text-lg"
@@ -59,17 +44,14 @@ const Products = () => {
               <div>Loading...</div>
             ) : (
               products &&
-              categories &&
-              products
-                .find((product) => product._id === categories[selected]._id)
-                ?.products.map((item) => (
-                  <Card
-                    key={item._id}
-                    id={item._id}
-                    product={item}
-                    category={categories[selected].name}
-                  />
-                ))
+              products.products?.map((item) => (
+                <Card
+                  key={item._id}
+                  id={item._id}
+                  product={item}
+                  category={categories[selected].name}
+                />
+              ))
             )}
           </div>
         </div>

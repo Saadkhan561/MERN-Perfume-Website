@@ -19,11 +19,11 @@ import { useQuery } from "@tanstack/react-query";
 //   });
 // };
 
-export const useFetchAllProducts = (options) => {
+export const useFetchAllProducts = (params, options) => {
   return useQuery({
     ...options,
-    queryKey: ["products"],
-    queryFn: fetchAllproducts,
+    queryKey: ["products",params],
+    queryFn: () => fetchAllproducts(params),
   });
 };
 

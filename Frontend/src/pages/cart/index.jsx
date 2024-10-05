@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Layout from "@/layout/layout";
 import useCartStore from "@/store/cart";
 import { useRouter } from "next/router";
-import { usePlaceOrder } from "@/hooks/mutation";
-import { withProtectedWrapper } from "@/components/Protected Route/protectedRoute";
 import CartItem from "@/components/cartComponents/cartItems";
 import CartItemDetails from "@/components/cartComponents/cartItemDetails";
 
@@ -85,4 +83,4 @@ const Cart = () => {
   );
 };
 
-export default withProtectedWrapper(Cart);
+export default Cart;
