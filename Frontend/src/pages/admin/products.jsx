@@ -45,7 +45,7 @@ const Products = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [discountId, setDiscountId] = useState(null);
   const [skip, setSkip] = useState(0);
-  const [pages, setPages] = useState(1);
+  const [searchVal, setSearchVal] = useState("");
 
   const [query, setQuery] = useState("");
 
@@ -53,15 +53,15 @@ const Products = () => {
   const accessToken = currentUser?.token;
   const role = currentUser?.user.role;
 
-  console.log(query)
-
   const {
     data: products,
     isLoading,
     refetch: refetchProducts,
-  } = useFetchNonFilteredProducts({ filter: filterVal, skip: skip , searchTerm: query});
-
-  let noOfPages = products ? Math.ceil(products?.length / 2) : 0;
+  } = useFetchNonFilteredProducts({
+    filter: filterVal,
+    skip: skip,
+    searchTerm: query,
+  });
 
   const { data: categories, isLoading: isCategoriesLoading } =
     useFetchAllCategories();
@@ -198,6 +198,13 @@ const Products = () => {
     },
   });
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setQuery(searchVal);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-4 bg-slate-200 h-full ">
@@ -210,20 +217,17 @@ const Products = () => {
                 <div>
                   <form className="flex gap-2 items-center border border-slate-500 rounded-r-full p-1">
                     <Search
-                      // onClick={() =>
-                      //   query === ""
-                      //     ? router.push("products")
-                      //     : router.push(`/searchResults?q=${query}`)
-                      // }
+                      onClick={() => setQuery(searchVal)}
                       height={15}
                       width={15}
                     />
                     <input
                       className="focus:outline-none text-sm"
                       type="text"
+                      value={searchVal}
                       placeholder="Search..."
-                      onChange={(e) => setQuery(e.target.value)}
-                      //   onKeyDown={handleKeyPress}
+                      onChange={(e) => setSearchVal(e.target.value)}
+                      onKeyDown={handleKeyPress}
                     />
                   </form>
                 </div>
@@ -297,14 +301,14 @@ const Products = () => {
                       Loading...
                     </TableCell>
                   </TableRow>
-                ) : products?.length === 0 ? (
+                ) : products?.products?.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={10} className="text-center p-4 text-lg">
-                      No products for this category....
+                      No products to show....
                     </TableCell>
                   </TableRow>
                 ) : (
-                  products?.map((product, index) => (
+                  products?.products?.map((product, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">
                         {product.name}
@@ -531,26 +535,20 @@ const Products = () => {
               <div>Page No:</div>
               <div className="flex gap-2 items-center">
                 <ChevronLeft
-                  onClick={() => {
-                    if (skip > 0) {
-                      setSkip(skip - 2);
-                    }
-                    if (pages > 1) {
-                      setPages(pages - 1);
-                    }
-                  }}
+                  onClick={() => setSkip(skip - 2)}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5"
                 />
                 <p className="text-sm font-semibold">
-                  {noOfPages !== 0 ? `${pages} / ${noOfPages}` : "0"}
+                  {isLoading ? (
+                    <ClipLoader size={15} />
+                  ) : products?.products?.length === 0 ? (
+                    "0"
+                  ) : (
+                    `${products?.currentPage} / ${products?.totalPages}`
+                  )}
                 </p>
                 <ChevronLeft
-                  onClick={() => {
-                    if (pages < noOfPages) {
-                      setPages(pages + 1);
-                      setSkip(skip + 2);
-                    }
-                  }}
+                  onClick={() => setSkip(skip + 2)}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5 rotate-180"
                 />
               </div>

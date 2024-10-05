@@ -65,7 +65,7 @@ const getAllProducts = async (req, res) => {
 
 // FOR FETCHING NON FILTERED PRODUCTS
 const getProducts = async (req, res) => {
-  const { category, skip, searchTerm } = req.query;
+  const { category, skip = 0, searchTerm, limit = 2 } = req.query;
   const pipeline = [
     {
       $lookup: {
@@ -86,31 +86,68 @@ const getProducts = async (req, res) => {
       },
     });
   }
-  if (skip) {
-    pipeline.push({
-      $skip: parseInt(skip),
-    });
-  }
 
-  if (searchTerm) {
-
-    const queryWords = searchTerm.split(" ").filter((word) => word);
-    const regexWords = queryWords.map((word) => new RegExp(word));
-    console.log(searchTerm, regexWords)
-    pipeline.push({
-      $match: {
-        $or: regexWords.map((word) => ({
-          $or: [
-            { name: { $regex: word, $options: "i" } },
-            { description: { $regex: word, $options: "i" } },
-          ],
-        })),
-      },
-    });
-  }
   try {
+    if (searchTerm) {
+      const queryWords = searchTerm.split(" ").filter((word) => word);
+      const regexWords = queryWords.map((word) => new RegExp(word));
+      pipeline.push(
+        {
+          $match: {
+            $or: regexWords.map((word) => ({
+              $or: [
+                { name: { $regex: word, $options: "i" } },
+              ],
+            })),
+          },
+        },
+      );
+      const totalPipeline = [...pipeline];
+
+      totalPipeline.push({
+        $count: "totalProducts",
+      });
+
+      const totalCountResult = await Products.aggregate(totalPipeline);
+      const totalProducts = totalCountResult.length > 0 ? totalCountResult[0].totalProducts : 0;
+      const totalPages = Math.ceil(totalProducts / limit);
+      
+      pipeline.push({ $skip: parseInt(skip) });
+      pipeline.push({ $limit: parseInt(limit) });
+
+      const products = await Products.aggregate(pipeline);
+
+      return res.status(200).json({
+        products,
+        totalProducts,
+        totalPages,
+        currentPage: Math.ceil(skip / limit) + 1,
+      });
+    }
+
+    const totalPipeline = [...pipeline];
+
+    totalPipeline.push({
+      $count: "totalProducts",
+    });
+
+    const totalCountResult = await Products.aggregate(totalPipeline);
+
+    const totalProducts =
+      totalCountResult.length > 0 ? totalCountResult[0].totalProducts : 0;
+
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    pipeline.push({ $skip: parseInt(skip) });
+    pipeline.push({ $limit: parseInt(limit) });
+
     const products = await Products.aggregate(pipeline);
-    res.status(200).json(products);
+    res.status(200).json({
+      products,
+      totalProducts,
+      totalPages,
+      currentPage: Math.ceil(skip / limit) + 1,
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
