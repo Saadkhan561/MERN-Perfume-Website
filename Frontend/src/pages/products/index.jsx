@@ -7,7 +7,6 @@ import React, { useState } from "react";
 const Products = () => {
   const [selected, setSelected] = useState(0);
   const [categoryId, setCategoryId] = useState(null);
-  const router = useRouter();
 
   const { data: categories, isLoading: isCategoryLoading } =
     useFetchAllCategories();
@@ -15,18 +14,17 @@ const Products = () => {
   const { data: products, isLoading: isProductsLoading } = useFetchAllProducts({
     categoryId: categoryId
   });
-  console.log(products);
 
   return (
     <Layout>
       <div className="flex justify-center mt-2 mob_display:mt-2 duration-200 w-4/5 h-screen">
         <div className="flex flex-col flex-start w-full">
-          <div className="flex justify-center gap-2">
+          <ul className="flex justify-center items-center gap-2">
             {categories?.map((category, index) => (
-              <div
+              <li
                 key={index}
                 onClick={() => {
-                  setCategoryId(category._id)
+                  setCategoryId(category._id);
                   setSelected(index);
                 }}
                 className={
@@ -36,15 +34,22 @@ const Products = () => {
                 }
               >
                 {category.name}
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
           <div className="flex gap-4 mt-10 flex-wrap mob_display:justify-center mob_display_product:flex-col">
             {isProductsLoading ? (
               <div>Loading...</div>
+            ) : products?.message ? (
+              <div className="flex justify-center items-center w-full h-full">
+                <div className="flex justify-center p-4 gap-2 items-center">
+                  <p>404</p>
+                  <p>{products.message}</p>
+                </div>
+              </div>
             ) : (
-              products &&
-              products.products?.map((item) => (
+              categories &&
+              products[0].products?.map((item) => (
                 <Card
                   key={item._id}
                   id={item._id}

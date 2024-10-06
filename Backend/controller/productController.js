@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const { ObjectId } = require("mongodb");
 const Products = require("../models/productModel");
 const Category = require("../models/categoryModel");
@@ -6,14 +5,23 @@ const Order = require("../models/orderModel");
 
 const path = require("path");
 const fs = require("fs");
+const { default: mongoose } = require("mongoose");
 
 //get pinned product first
 const getAllProducts = async (req, res) => {
   let { categoryId } = req.query;
   if (categoryId === "null" || categoryId === "") {
     categoryId = null;
+  } else {
+    categoryId = ObjectId.createFromHexString(categoryId);
   }
   const pipeline = [
+    {
+      $match: {
+        productStatus: true,
+        ...(categoryId && { category: categoryId }),
+      },
+    },
     {
       $lookup: {
         from: "perfume_categories",
@@ -24,11 +32,6 @@ const getAllProducts = async (req, res) => {
     },
     {
       $unwind: "$categoryDetails",
-    },
-    {
-      $match: {
-        productStatus: true,
-      },
     },
     {
       $sort: {
@@ -44,20 +47,14 @@ const getAllProducts = async (req, res) => {
       },
     },
   ];
-  //image handling
   try {
     if (categoryId) {
       console.log("inside category");
       pipeline.push({
-        $match: {
-          category: categoryId,
-        },
-      });
-      pipeline.push({
         $project: {
           category: "$categoryDetails._id",
           category_name: 1,
-          products: 1, // Include the products array
+          products: 1,
         },
       });
       const products = await Products.aggregate(pipeline);
@@ -69,6 +66,7 @@ const getAllProducts = async (req, res) => {
         return res.status(200).json(products);
       }
     } else {
+      console.log("inside all products");
       pipeline.push({
         $project: {
           products: 1, // Include the products array
@@ -455,79 +453,116 @@ const searchResults = async (req, res) => {
     const words = query.split(" ").filter((word) => word);
     const regexWords = words.map((word) => new RegExp(word));
 
-    const searchCategory = await Category.find({
-      $or: regexWords.map((word) => ({ name: word })),
-    });
-    let products = [];
-    if (searchCategory.length > 0) {
-      const categoryId = searchCategory.map((cat) => cat._id);
-      products = await Products.aggregate([
-        {
-          $match: { category: { $in: categoryId }, productStatus: true },
+    // const searchCategory = await Category.find({
+    //   $or: regexWords.map((word) => ({ name: word })),
+    // });
+    // let products = [];
+    // if (searchCategory.length > 0) {
+    //   const categoryId = searchCategory.map((cat) => cat._id);
+    //   products = await Products.aggregate([
+    //     {
+    //       $match: { category: { $in: categoryId }, productStatus: true },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "perfume_categories",
+    //         localField: "category",
+    //         foreignField: "_id",
+    //         as: "categoryDetails",
+    //       },
+    //     },
+    //     {
+    //       $unwind: "$categoryDetails",
+    //     },
+    //     {
+    //       $project: {
+    //         _id: 1,
+    //         name: 1,
+    //         description: 1,
+    //         brand: 1,
+    //         price: 1,
+    //         imagePaths: 1,
+    //         discount: 1,
+    //         "categoryDetails.name": 1,
+    //       },
+    //     },
+    //   ]);
+    // } else {
+    //   products = await Products.aggregate([
+    //     {
+    //       $match: {
+    //         $or: regexWords.map((word) => ({
+    //           $or: [
+    //             { name: { $regex: word, $options: "i" } },
+    //             { description: { $regex: word, $options: "i" } },
+    //             { brand: { $regex: word, $options: "i" } },
+    //           ],
+    //         })),
+    //         productStatus: true,
+    //       },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "perfume_categories",
+    //         localField: "category",
+    //         foreignField: "_id",
+    //         as: "categoryDetails",
+    //       },
+    //     },
+    //     {
+    //       $unwind: "$categoryDetails",
+    //     },
+    //     {
+    //       $project: {
+    //         _id: 1,
+    //         name: 1,
+    //         description: 1,
+    //         brand: 1,
+    //         price: 1,
+    //         imagePaths: 1,
+    //         discount: 1,
+    //         "categoryDetails.name": 1,
+    //       },
+    //     },
+    //   ]);
+    // }
+    const products = await Products.aggregate([
+      {
+        $match: {
+          $or: regexWords.map((word) => ({
+            $or: [
+              { name: { $regex: word, $options: "i" } },
+              { description: { $regex: word, $options: "i" } },
+              { brand: { $regex: word, $options: "i" } },
+            ],
+          })),
+          productStatus: true,
         },
-        {
-          $lookup: {
-            from: "perfume_categories",
-            localField: "category",
-            foreignField: "_id",
-            as: "categoryDetails",
-          },
+      },
+      {
+        $lookup: {
+          from: "perfume_categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "categoryDetails",
         },
-        {
-          $unwind: "$categoryDetails",
+      },
+      {
+        $unwind: "$categoryDetails",
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          description: 1,
+          brand: 1,
+          price: 1,
+          imagePaths: 1,
+          discount: 1,
+          "categoryDetails.name": 1,
         },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            description: 1,
-            brand: 1,
-            price: 1,
-            imagePaths: 1,
-            discount: 1,
-            "categoryDetails.name": 1,
-          },
-        },
-      ]);
-    } else {
-      products = await Products.aggregate([
-        {
-          $match: {
-            $or: regexWords.map((word) => ({
-              $or: [
-                { name: { $regex: word, $options: "i" } },
-                { description: { $regex: word, $options: "i" } },
-                { brand: { $regex: word, $options: "i" } },
-              ],
-            })),
-            productStatus: true,
-          },
-        },
-        {
-          $lookup: {
-            from: "perfume_categories",
-            localField: "category",
-            foreignField: "_id",
-            as: "categoryDetails",
-          },
-        },
-        {
-          $unwind: "$categoryDetails",
-        },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            description: 1,
-            brand: 1,
-            price: 1,
-            imagePaths: 1,
-            discount: 1,
-            "categoryDetails.name": 1,
-          },
-        },
-      ]);
-    }
+      },
+    ]);
     if (products.length === 0) {
       res.status(404).json({ msg: "No results found..." });
     } else {

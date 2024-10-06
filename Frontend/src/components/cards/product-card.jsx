@@ -27,10 +27,10 @@ const Card = ({ product, category }) => {
         <div className=" text-white bg-slate-800 p-2 flex flex-col gap-1">
           <p>{product?.name}</p>
           <p>{price} /Rs</p>
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <p className="text-xs">Add to wishlist</p>
             <Heart className="h-3 w-3" />
-          </div>
+          </div> */}
         </div>
       </div>
     </>
