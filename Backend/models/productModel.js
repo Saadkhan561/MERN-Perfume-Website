@@ -14,9 +14,9 @@ const productSchema = mongoose.Schema({
     of: {
       price: { type: Number },
       quantityAvailable: { type: Number },
+      discount: { type: Number, default: 0 },
     },
   },
-  discount: { type: Number, default: 0 },
   pinned: { type: Boolean, default: false }, //for featuring products
   productStatus: { type: Boolean, default: true }, //for soft delete
 });

@@ -410,6 +410,19 @@ const reStock = async (req, res) => {
   }
 };
 
+const setDiscount = async (req, res) => {
+    const { id, option, discount } = req.body;
+  try {
+    await Products.updateOne(
+      { _id: req.body.id },
+      { $set: { [`options.${option}.discount`]: discount } }
+    );
+    return res.status(200).json({ message: "Updated" });
+  } catch (err) {
+    return res.json(err);
+  }
+};
+
 const pinProduct = async (req, res) => {
   const { id, status } = req.body;
   try {
@@ -420,17 +433,6 @@ const pinProduct = async (req, res) => {
   }
 };
 
-const setDiscount = async (req, res) => {
-  try {
-    await Products.updateOne(
-      { _id: req.body.id },
-      { discount: req.body.discount }
-    );
-    return res.status(200).json({ message: "Updated" });
-  } catch (err) {
-    return res.json(err);
-  }
-};
 
 const deleteProduct = async (req, res) => {
   const { id, productStatus } = req.body;

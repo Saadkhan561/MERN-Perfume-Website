@@ -17,6 +17,8 @@ const ProductForm = () => {
   });
   const [optionError, setOptionError] = useState(null);
 
+  console.log(options, optionError)
+
   const [images, setImages] = useState([]);
   const [imgError, setImgError] = useState(null);
   const [imgLengthError, setImgLengthError] = useState(null);
@@ -88,7 +90,12 @@ const ProductForm = () => {
     Array.from(images).forEach((image) => {
       formData.append("images", image);
     });
-    addProduct(formData);
+    if (Object.entries(options).length === 0 ) {
+      setOptionError("Options required!")
+    } else {
+      addProduct(formData);
+      setOptionError(null)
+    }
   };
 
   const handleAmount = (value) => {
@@ -159,7 +166,7 @@ const ProductForm = () => {
 
   // Function to validate image files (type and size)
   const validateImages = (files) => {
-    if (files.length > 3) {
+    if (files.length > 5) {
       setImgLengthError("Only three images must be uploaded for a product");
       return false
     } else {
@@ -315,6 +322,9 @@ const ProductForm = () => {
                       </td>
                     </tr>
                   ))}
+                  {optionError && (
+                    <p>{optionError}</p>
+                  )}
               </tbody>
             </table>
           )}

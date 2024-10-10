@@ -36,14 +36,21 @@ import useUserStore from "@/store/user";
 const Products = () => {
   const [filterDropdown, setFilterDropdown] = useState(false);
   const [filterVal, setFilterVal] = useState(null);
+
+  // STATES FOR RESTOCK PRODUCT QUANTITY
   const [restock, setRestock] = useState(false);
   const [restockId, setRestockId] = useState(null);
   const [restockOption, setRestockOption] = useState(null);
-  const [inputVal, setInputVal] = useState(null);
-  const [discountVal, setDiscountVal] = useState(null);
+  const [restockInputVal, setRestockInputVal] = useState(null);
+
   const [pinId, setPinId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+
+  // STATES FOR SETTING PRODUCTS DISCOUNT
+  const [discountVal, setDiscountVal] = useState(null);
   const [discountId, setDiscountId] = useState(null);
+  const [discoutOption, setDiscountOption] = useState(null);
+
   const [skip, setSkip] = useState(0);
   const [searchVal, setSearchVal] = useState("");
 
@@ -70,7 +77,13 @@ const Products = () => {
     setRestockId(index);
     setRestockOption(option);
     setRestock(true);
-    setInputVal(value);
+    setRestockInputVal(value);
+  };
+
+  const handleDiscount = (index, option, value) => {
+    setDiscountId(index);
+    setDiscountOption(option);
+    setDiscountVal(value);
   };
 
   // MUTATION TO RESTOCK PRODUCT
@@ -205,8 +218,6 @@ const Products = () => {
       setSkip(0);
     }
   };
-
-  console.log(products, skip);
 
   return (
     <AdminLayout>
@@ -345,9 +356,9 @@ const Products = () => {
                                   <input
                                     className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     type="number"
-                                    value={inputVal}
+                                    value={restockInputVal}
                                     onChange={(e) =>
-                                      setInputVal(e.target.value)
+                                      setRestockInputVal(e.target.value)
                                     }
                                   />
                                   <div className="text-xs text-white flex items-center gap-2">
@@ -356,7 +367,7 @@ const Products = () => {
                                         restockQuantity({
                                           id: product._id,
                                           option: option,
-                                          quantity: inputVal,
+                                          quantity: restockInputVal,
                                         })
                                       }
                                       className="rounded-sm p-1 text-center cursor-pointer duration-200 bg-blue-500"
@@ -482,7 +493,67 @@ const Products = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {product._id === discountId ? (
+                        {Object.entries(product.options).map(
+                          ([option, value]) => {
+                            if (
+                              index === discountId &&
+                              option === discoutOption
+                            ) {
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm "
+                                    value={discountVal}
+                                    type="text"
+                                    onChange={(e) =>
+                                      setDiscountVal(e.target.value)
+                                    }
+                                  />
+                                  <button
+                                    onClick={() =>
+                                      setDiscount({
+                                        id: product._id,
+                                        discount: discountVal,
+                                        role: role,
+                                        option: option
+                                      })
+                                    }
+                                    className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-blue-500"
+                                  >
+                                    {isDiscountPending ? (
+                                      <ClipLoader size={15} color="white" />
+                                    ) : (
+                                      "Done"
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() => setDiscountId(null)}
+                                    className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-red-500"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              );
+                            } else {
+                              return (
+                                <div className="flex items-center gap-4">
+                                  {value.discount ? (
+                                    <p className="text-sm font-semibold text-gray-600">
+                                      {value.discount}%
+                                    </p>
+                                  ) : (
+                                    <p className="text-xl">-</p>
+                                  )}
+                                  <Pencil
+                                    onClick={() => handleDiscount(index, option, value.discount)}
+                                    className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
+                                  />
+                                </div>
+                              );
+                            }
+                          }
+                        )}
+                        {/* {Object.entries(product.options).map(([option, value]) => )  (
                           <div className="flex items-center gap-2">
                             <input
                               className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm "
@@ -527,7 +598,7 @@ const Products = () => {
                               className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
                             />
                           </div>
-                        )}
+                        )} */}
                       </TableCell>
                     </TableRow>
                   ))

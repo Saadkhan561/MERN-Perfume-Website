@@ -14,8 +14,9 @@ const authenticateToken = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
+  console.log(req.body)
   if (req.body.role !== "admin") {
-    return res.sendStatus(403); // Forbidden
+    return res.sendStatus(403); 
   }
   next();
 };

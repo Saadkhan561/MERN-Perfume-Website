@@ -1,7 +1,7 @@
 "use client";
 
 import useUserStore from "@/store/user";
-import { LayoutDashboard, LogOut } from "lucide-react";
+import { LayoutDashboard, LogOut, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -44,6 +44,19 @@ const Sidebar = () => {
           >
             <LayoutDashboard className="h-5 w-5" />
             <p>Products</p>
+          </li>
+        </Link>
+        <Link href={"/admin/orders"}>
+          <li
+            className={`sidebar_li   ${
+              active == "products"
+                ? "bg-slate-700 border  border-slate-800 text-white"
+                : ""
+            }`}
+            onClick={() => setActive("products")}
+          >
+            <ShoppingCart className="h-5 w-5" />
+            <p>Orders</p>
           </li>
         </Link>
         <div onClick={handleLogout} className="sidebar_li bg-red-500">

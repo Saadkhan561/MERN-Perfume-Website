@@ -8,7 +8,7 @@ router.post('/placeOrder', placeOrder)
 router.put('/updateOrder/:id', authenticateToken, updateOrder)
 router.delete('/cancelOrder/:id', authenticateToken, cancelOrder)
 router.get('/getUserOrder/:id', getUserOrders)
-router.get('/getOrders', authenticateToken, isAdmin, getOrders)
+router.get('/getOrders', authenticateToken, getOrders)
 router.put('/orderStatus/:id',authenticateToken, isAdmin,deliverOrder)
 
 module.exports = router

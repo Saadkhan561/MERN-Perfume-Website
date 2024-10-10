@@ -1,3 +1,4 @@
+import { getOrders } from "@/services/orderService";
 import {
   fetchAllCategories,
   fetchAllproducts,
@@ -71,5 +72,13 @@ export const useFetchSearchResults = (param, options) =>  {
     ...options,
     queryKey: ["searchResults", param],
     queryFn: () => searchResults(param)
+  })
+}
+
+export const useFetchOrders = (options) => {
+  return useQuery({
+    ...options,
+    queryKey: ["orders"],
+    queryFn: getOrders
   })
 }
