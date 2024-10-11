@@ -31,16 +31,48 @@ const getOrders = async (req, res) => {
     const orders = await Order.aggregate([
       {
         $lookup: {
-          from: "perfume_users",
+          from: "perfume_users", 
           localField: "customer",
           foreignField: "_id",
-          as: "customerDetails"
-        }
+          as: "customerDetails",
+        },
       },
-      // {
-      //   $unwind: "$categoryDetails"
-      // }
-    ])
+      {
+        $unwind: "$customerDetails",  
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "perfume_products",
+          localField: "products.product", 
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      {
+        $unwind: "$productDetails", 
+      },
+      {
+        $group: {
+          _id: "$_id", 
+          customerDetails: { $first: "$customerDetails" },
+          totalAmount: { $first: "$totalAmount" },
+          discount: { $first: "$discount" },
+          orderStatus: { $first: "$orderStatus" },
+          shippingAddress: { $first: "$shippingAddress" },
+          products: {
+            $push: {
+              product: "$productDetails.name", 
+              quantity: "$products.quantity",
+              option: "$products.option",
+              price: "$products.price",
+            },
+          },
+        },
+      },
+    ]);
     if (orders.length === 0) {
       return res.json({ message: "No orders are placed yet" });
     }
