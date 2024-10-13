@@ -1,5 +1,5 @@
 const Order = require("../models/orderModel");
-const Products = require("../models/productModel");
+const { ObjectId } = require("mongodb");
 
 const placeOrder = async (req, res) => {
   console.log(req.body);
@@ -27,56 +27,119 @@ const updateOrder = async (req, res) => {
 };
 
 const getOrders = async (req, res) => {
-  try {
-    const orders = await Order.aggregate([
-      {
-        $lookup: {
-          from: "perfume_users", 
-          localField: "customer",
-          foreignField: "_id",
-          as: "customerDetails",
-        },
+  const { searchTerm, skip = 0, limit = 2 } = req.query;
+
+  const pipeline = [
+    {
+      $lookup: {
+        from: "perfume_users",
+        localField: "customer",
+        foreignField: "_id",
+        as: "customerDetails",
       },
-      {
-        $unwind: "$customerDetails",  
+    },
+    {
+      $unwind: "$customerDetails",
+    },
+    {
+      $unwind: "$products",
+    },
+    {
+      $lookup: {
+        from: "perfume_products",
+        localField: "products.product",
+        foreignField: "_id",
+        as: "productDetails",
       },
-      {
-        $unwind: "$products",
-      },
-      {
-        $lookup: {
-          from: "perfume_products",
-          localField: "products.product", 
-          foreignField: "_id",
-          as: "productDetails",
-        },
-      },
-      {
-        $unwind: "$productDetails", 
-      },
-      {
-        $group: {
-          _id: "$_id", 
-          customerDetails: { $first: "$customerDetails" },
-          totalAmount: { $first: "$totalAmount" },
-          discount: { $first: "$discount" },
-          orderStatus: { $first: "$orderStatus" },
-          shippingAddress: { $first: "$shippingAddress" },
-          products: {
-            $push: {
-              product: "$productDetails.name", 
-              quantity: "$products.quantity",
-              option: "$products.option",
-              price: "$products.price",
-            },
+    },
+    {
+      $unwind: "$productDetails",
+    },
+    {
+      $group: {
+        _id: "$_id",
+        customerDetails: { $first: "$customerDetails" },
+        totalAmount: { $first: "$totalAmount" },
+        discount: { $first: "$discount" },
+        orderStatus: { $first: "$orderStatus" },
+        shippingAddress: { $first: "$shippingAddress" },
+        products: {
+          $push: {
+            product: "$productDetails.name",
+            quantity: "$products.quantity",
+            option: "$products.option",
+            price: "$products.price",
           },
         },
+        createdAt: { $first: "$createdAt" },
       },
-    ]);
-    if (orders.length === 0) {
-      return res.json({ message: "No orders are placed yet" });
+    },
+    {
+      $sort: { createdAt: -1 },
+    },
+  ];
+  try {
+    if (searchTerm) {
+      const orderId = ObjectId.createFromHexString(searchTerm);
+      pipeline.push({
+        $match: {
+          _id: orderId,
+        },
+      });
+
+      const totalPipeline = [...pipeline];
+      totalPipeline.push({
+        $count: "orders",
+      });
+
+      const totalCountResult = await Order.aggregate(totalPipeline);
+
+      const totalOrders =
+        totalCountResult.length > 0 ? totalCountResult[0].orders : 0;
+
+      const totalPages = Math.ceil(totalOrders / limit);
+
+      pipeline.push({ $skip: parseInt(skip) });
+      pipeline.push({ $limit: parseInt(limit) });
+
+      const orders = await Order.aggregate(pipeline);
+      if (orders.length === 0) {
+        return res.json({ message: "No order found..." });
+      }
+
+      return res.status(200).json({
+        orders,
+        totalOrders,
+        totalPages,
+        currentPage: Math.ceil(skip / limit) + 1,
+      });
     }
-    return res.status(200).json(orders);
+    const totalPipeline = [...pipeline];
+    totalPipeline.push({
+      $count: "orders",
+    });
+
+    const totalCountResult = await Order.aggregate(totalPipeline);
+
+    const totalOrders =
+      totalCountResult.length > 0 ? totalCountResult[0].orders : 0;
+
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    pipeline.push({ $skip: parseInt(skip) });
+    pipeline.push({ $limit: parseInt(limit) });
+
+    const orders = await Order.aggregate(pipeline);
+    if (orders.length === 0) {
+      return res.json({ message: "No orders are placed yet..." });
+    }
+
+    return res.status(200).json({
+      orders,
+      totalOrders,
+      totalPages,
+      currentPage: Math.ceil(skip / limit) + 1,
+    });
   } catch (err) {
     return res.json(err);
   }

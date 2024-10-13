@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import AdminLayout from "./layout";
-import { ChevronDown, Filter, Search } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  Ellipsis,
+  Filter,
+  Search,
+} from "lucide-react";
 
 import {
   Table,
@@ -11,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFetchOrders } from "@/hooks/query";
+import { ClipLoader } from "react-spinners";
 
 const Orders = () => {
   const [searchVal, setSearchVal] = useState("");
@@ -18,13 +25,27 @@ const Orders = () => {
   const [status, setStatus] = useState(false);
   const [statusId, setStatusId] = useState(null);
 
+  const [skip, setSkip] = useState(0);
+  const [query, setQuery] = useState("");
+
   const orderStatus = ["completed", "pending", "cancelled"];
 
-  const { data: orders, isLoading: isOrdersLoading } = useFetchOrders();
+  const { data: orders, isLoading: isOrdersLoading } = useFetchOrders({
+    searchTerm: query,
+    skip: skip,
+  });
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setQuery(searchVal);
+      setSkip(0);
+    }
+  };
 
   return (
     <AdminLayout>
-      <div className="p-4 bg-slate-200 h-full ">
+      <div className="p-4 bg-slate-200 h-[90%] ">
         <div className="bg-white rounded-lg">
           <div className="flex items-center p-4 justify-between">
             <p className="text-xl">Orders</p>
@@ -44,12 +65,13 @@ const Orders = () => {
                       value={searchVal}
                       placeholder="Search..."
                       onChange={(e) => setSearchVal(e.target.value)}
-                      //   onKeyDown={handleKeyPress}
+                      onKeyDown={handleKeyPress}
                     />
                   </form>
                 </div>
               </div>
-              <div>
+              {/* FILTER DIV */}
+              {/* <div>
                 <div className="relative ">
                   <Filter
                     onClick={() => setFilterDropdown(!filterDropdown)}
@@ -68,7 +90,7 @@ const Orders = () => {
                     </li>
                   </ul>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="p-4 relative">
@@ -77,13 +99,13 @@ const Orders = () => {
                 <TableRow>
                   <TableHead>Id</TableHead>
                   <TableHead>Items</TableHead>
-                  <TableHead>Customer name</TableHead>
+                  <TableHead>Customer</TableHead>
                   <TableHead>Shipping address</TableHead>
                   <TableHead>Order status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders?.length === 0 ? (
+                {orders?.orders?.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={10} className="text-center p-4 text-lg">
                       No orders are placed yet....
@@ -96,7 +118,7 @@ const Orders = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  orders?.map((order, index) => (
+                  orders?.orders?.map((order, index) => (
                     <TableRow key={index}>
                       <TableCell className="font-semibold">
                         {order._id}
@@ -117,30 +139,28 @@ const Orders = () => {
                         {order.shippingAddress.address} -{" "}
                         {order.shippingAddress.city}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className='flex items-center gap-4'>
                         <div
-                          className={`p-1 relative flex items-center gap-2 justify-center w-24 rounded-lg cursor-pointer text-white ${
+                          className={`p-1 relative border text-center justify-center w-24 rounded-lg cursor-pointer text-white ${
                             order.orderStatus === "completed"
-                              ? "bg-green-600"
+                              ? "border-green-600 text-green-600"
                               : order.orderStatus === "cancelled"
-                              ? "bg-red-600"
-                              : "bg-yellow-500"
+                              ? "border-red-600 text-red-600"
+                              : "border-yellow-500 text-yellow-500"
                           }`}
                         >
-                          <p>
-                            {order.orderStatus}
-                          </p>
+                          <p>{order?.orderStatus}</p>
                           {status && index === statusId && (
                             <ul className="absolute top-0 right-24 bg-white z-10 w-24 p-2 shadow-2xl border text-white ">
                               {orderStatus.map((status, index) =>
                                 order.orderStatus !== status ? (
                                   <li
-                                    className={`p-1 mb-1 cursor-pointer text-center rounded-lg duration-200 ${
+                                    className={`p-1 mb-1 border cursor-pointer text-center rounded-lg duration-200 ${
                                       status === "completed"
-                                        ? "bg-green-600"
+                                        ? "border-green-600 text-green-600"
                                         : status === "cancelled"
-                                        ? "bg-red-600"
-                                        : "bg-yellow-500"
+                                        ? "border-red-600 text-red-600"
+                                        : "border-yellow-500 text-yellow-500"
                                     }`}
                                     key={index}
                                   >
@@ -152,20 +172,50 @@ const Orders = () => {
                               )}
                             </ul>
                           )}
-                          <ChevronDown
-                            onClick={() => {
-                              setStatus(!status);
-                              setStatusId(index);
-                            }}
-                            className="h-3 w-3"
-                          />
                         </div>
+                        <Ellipsis
+                          onClick={() => {
+                            setStatus(!status);
+                            setStatusId(index);
+                          }}
+                          className="h-3 w-3 cursor-pointer text-gray-500"
+                        />
                       </TableCell>
                     </TableRow>
                   ))
                 )}
               </TableBody>
             </Table>
+            <div className="flex gap-2 mt-10 font-semibold">
+              <div>Page No:</div>
+              <div className="flex gap-2 items-center">
+                <ChevronLeft
+                  onClick={() => {
+                    if (skip > 0) {
+                      setSkip(skip - 2);
+                    }
+                  }}
+                  className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5"
+                />
+                <p className="text-sm font-semibold">
+                  {isOrdersLoading ? (
+                    <ClipLoader size={15} />
+                  ) : orders?.orders?.length === 0 ? (
+                    "0"
+                  ) : (
+                    `${orders?.currentPage} / ${orders?.totalPages}`
+                  )}
+                </p>
+                <ChevronLeft
+                  onClick={() => {
+                    if (orders.currentPage < orders.totalPages) {
+                      setSkip(skip + 2);
+                    }
+                  }}
+                  className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5 rotate-180"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

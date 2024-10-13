@@ -15,7 +15,7 @@ const Sidebar = () => {
     deleteUserInfo();
   };
   return (
-    <aside className="duration-300 p-6 bg-slate-900 text-white w-[250px] sm:block hidden h-screen border-r border-r-slate-300 relative">
+    <aside className="duration-300 p-6 bg-slate-900 text-white w-[250px] sm:block hidden h-full border-r border-r-slate-300 relative">
       <div className="text-center mb-10 text-3xl w-full">
         <p>Perfume Store</p>
       </div>

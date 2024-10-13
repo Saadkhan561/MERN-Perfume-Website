@@ -75,10 +75,10 @@ export const useFetchSearchResults = (param, options) =>  {
   })
 }
 
-export const useFetchOrders = (options) => {
+export const useFetchOrders = (params, options) => {
   return useQuery({
     ...options,
-    queryKey: ["orders"],
-    queryFn: getOrders
+    queryKey: ["orders", params],
+    queryFn: () => getOrders(params)
   })
 }

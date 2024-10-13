@@ -5,7 +5,6 @@ const Order = require("../models/orderModel");
 
 const path = require("path");
 const fs = require("fs");
-const { default: mongoose } = require("mongoose");
 
 //get pinned product first
 const getAllProducts = async (req, res) => {
@@ -66,10 +65,9 @@ const getAllProducts = async (req, res) => {
         return res.status(200).json(products);
       }
     } else {
-      console.log("inside all products");
       pipeline.push({
         $project: {
-          products: 1, // Include the products array
+          products: 1, 
         },
       });
       const products = await Products.aggregate(pipeline);

@@ -21,7 +21,7 @@ const orderSchema = mongoose.Schema(
     },
     totalAmount: { type: Number, required: true },
     discount: { type: Number, default: 0 },
-    orderStatus: { type: Boolean, default: false },
+    orderStatus: { type: String, default: "pending" },
     shippingAddress: {
       city: { type: String, required: true },
       address: { type: String, required: true },
