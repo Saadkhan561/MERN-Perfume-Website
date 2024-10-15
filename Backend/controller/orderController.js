@@ -161,13 +161,14 @@ const getUserOrders = async (req, res) => {
 };
 
 //change order Status and verify user on email/number
-const deliverOrder = async (req, res) => {
+const changeOrderStatus = async (req, res) => {
+  const {id, orderStatus} = req.body
   try {
     await Order.updateOne(
-      { _id: req.params.id },
-      { $set: { orderStatus: true } }
+      { _id:id },
+      { $set: { orderStatus: orderStatus } }
     );
-    return res.json("Order Fulfilled");
+    return res.status(200).json({message: "Updated"});
   } catch (err) {
     return res.json(err);
   }
@@ -179,5 +180,5 @@ module.exports = {
   updateOrder,
   getOrders,
   getUserOrders,
-  deliverOrder,
+  changeOrderStatus,
 };

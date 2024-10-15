@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "./layout";
 import {
-  ChevronDown,
   ChevronLeft,
   Ellipsis,
   Filter,
@@ -18,10 +17,12 @@ import {
 } from "@/components/ui/table";
 import { useFetchOrders } from "@/hooks/query";
 import { ClipLoader } from "react-spinners";
+import { useChangeOrderStatus } from "@/hooks/mutation";
+import { Bounce, toast } from "react-toastify";
+import useUserStore from "@/store/user";
 
 const Orders = () => {
   const [searchVal, setSearchVal] = useState("");
-  const [filterDropdown, setFilterDropdown] = useState(false);
   const [status, setStatus] = useState(false);
   const [statusId, setStatusId] = useState(null);
 
@@ -30,7 +31,11 @@ const Orders = () => {
 
   const orderStatus = ["completed", "pending", "cancelled"];
 
-  const { data: orders, isLoading: isOrdersLoading } = useFetchOrders({
+  const {
+    data: orders,
+    isLoading: isOrdersLoading,
+    refetch: refetchOrders,
+  } = useFetchOrders({
     searchTerm: query,
     skip: skip,
   });
@@ -42,6 +47,33 @@ const Orders = () => {
       setSkip(0);
     }
   };
+
+  const { currentUser } = useUserStore();
+  const role = currentUser?.user.role;
+
+  // MUTATION TO CHANGE ORDER STATUS
+  const { mutate: changeOrderStatus, isPending: isOrderStatusPending } =
+    useChangeOrderStatus({
+      onSuccess(data) {
+        console.log(data);
+        toast.success(data.message);
+        refetchOrders();
+        setStatus(false);
+      },
+      onError(err) {
+        console.log(err);
+        toast.error("Error occured", {
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      },
+    });
 
   return (
     <AdminLayout>
@@ -139,17 +171,23 @@ const Orders = () => {
                         {order.shippingAddress.address} -{" "}
                         {order.shippingAddress.city}
                       </TableCell>
-                      <TableCell className='flex items-center gap-4'>
+                      <TableCell className="flex items-center gap-4">
                         <div
-                          className={`p-1 relative border text-center justify-center w-24 rounded-lg cursor-pointer text-white ${
-                            order.orderStatus === "completed"
+                          className={`p-1 relative border text-center justify-center w-24 rounded-lg cursor-pointer ${
+                            order?.orderStatus === "completed"
                               ? "border-green-600 text-green-600"
-                              : order.orderStatus === "cancelled"
+                              : order?.orderStatus === "cancelled"
                               ? "border-red-600 text-red-600"
-                              : "border-yellow-500 text-yellow-500"
+                              : "border-yellow-600 text-yellow-600"
                           }`}
                         >
-                          <p>{order?.orderStatus}</p>
+                          <p>
+                            {isOrderStatusPending && index === statusId ? (
+                              <ClipLoader size={15} color="gray" />
+                            ) : (
+                              order?.orderStatus
+                            )}
+                          </p>
                           {status && index === statusId && (
                             <ul className="absolute top-0 right-24 bg-white z-10 w-24 p-2 shadow-2xl border text-white ">
                               {orderStatus.map((status, index) =>
@@ -157,12 +195,19 @@ const Orders = () => {
                                   <li
                                     className={`p-1 mb-1 border cursor-pointer text-center rounded-lg duration-200 ${
                                       status === "completed"
-                                        ? "border-green-600 text-green-600"
+                                        ? "border-green-600 text-green-500"
                                         : status === "cancelled"
-                                        ? "border-red-600 text-red-600"
+                                        ? "border-red-600 text-red-500"
                                         : "border-yellow-500 text-yellow-500"
                                     }`}
                                     key={index}
+                                    onClick={() =>
+                                      changeOrderStatus({
+                                        id: order._id,
+                                        orderStatus: status,
+                                        role: role
+                                      })
+                                    }
                                   >
                                     {status}
                                   </li>

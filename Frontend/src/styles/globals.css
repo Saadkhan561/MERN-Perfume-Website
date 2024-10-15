@@ -31,7 +31,7 @@ body {
 }
 
 .sidebar_li {
-  @apply rounded-lg p-2 mb-1 text-lg flex items-center gap-2 cursor-pointer
+  @apply rounded-lg p-2 mb-1 flex items-center gap-2 cursor-pointer
 }
 
 @layer base {

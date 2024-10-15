@@ -33,8 +33,6 @@ export default function Home() {
 
   const { data: trendingProducts, isLoading: trendingProductsLoading } =
     useFetchTrendingProducts();
-
-  console.log(trendingProducts)
   useEffect(() => {
     AOS.init({});
   }, []);
@@ -104,8 +102,12 @@ export default function Home() {
             <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
               {trendingProductsLoading ? (
                 <div>Loading...</div>
+              ) : trendingProducts?.message ? (
+                <div className="flex w-full justify-center items-center text-xl">
+                  <p>{trendingProducts?.message}</p>
+                </div>
               ) : (
-                trendingProducts?.message ? (<div className="flex w-full justify-center items-center text-xl"><p>{trendingProducts?.message}</p></div>) : trendingProducts?.map((item) => (
+                trendingProducts?.map((item) => (
                   <Card
                     key={item._id}
                     id={item._id}

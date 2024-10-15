@@ -14,3 +14,12 @@ export const getOrders = async (params) => {
     throw new Error(err.message);
   }
 };
+
+export const changeOrderStatus = async (data) => {
+  try {
+    const res = await axiosInstance.put("/orderStatus", data);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};

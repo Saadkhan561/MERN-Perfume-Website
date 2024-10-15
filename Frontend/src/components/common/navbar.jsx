@@ -58,7 +58,7 @@ const Navbar = () => {
         </div>
         <div>
           <ul className="flex items-center gap-6 p-1 text-lg">
-            <li>
+            {/* <li>
               <Link
                 className="hover:underline duration-200 cursor-pointer"
                 href={"/"}
@@ -73,7 +73,7 @@ const Navbar = () => {
               >
                 Products
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href={"/cart"} className="relative">
                 <div className="absolute -top-2 -right-2 font-semibold border bg-black text-white p-1 text-center rounded-full text-xs">
@@ -114,6 +114,12 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
+      </div>
+      <div className="flex justify-center p-4">
+        <ul className="flex items-center gap-4 text-lg ">
+          <li>Home</li>
+          <li>Categories</li>
+        </ul>
       </div>
       <div className="flex justify-between items-center p-4 full_screen:hidden">
         <p className="text-3xl">Perfume Shop</p>

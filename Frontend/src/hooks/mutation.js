@@ -1,3 +1,4 @@
+import { changeOrderStatus } from "@/services/orderService";
 import { addProduct, paymenyHook, placeOrder, restockQuantityAvailable, setDiscount, togglePinStatus, toggleProductStatus } from "@/services/productService";
 import { loginUser, signupUser } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
@@ -64,3 +65,11 @@ export const useSetDiscount = (options) => {
     ...options
   })
 }
+
+
+export const useChangeOrderStatus = (options) => {
+  return useMutation({
+    mutationFn: changeOrderStatus,
+    ...options
+  })
+};
