@@ -6,6 +6,7 @@ import PaymentOption from "@/components/paymentOption";
 import SideBar from "@/components/common/side-bar";
 import { withProtectedWrapper } from "@/components/Protected Route/protectedRoute";
 import { ToastContainer } from "react-toastify";
+import Link from "next/link";
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -19,14 +20,30 @@ const Layout = ({ children }) => {
             : "flex flex-col justify-center min-h-screen relative duration-20"
         }
       >
-        <div className="flex justify-center pb-4 border-b  border-b-slate-500 bg-white fixed top-0 left-0 z-10 w-full h-20">
+        <div className="flex flex-col items-center border-b  border-b-slate-300 bg-white fixed top-0 left-0 z-10 w-full h-20">
           <Navbar />
+          <div className="flex justify-center border-2 bg-white w-4/5 h-max border-b  border-b-slate-300">
+            <ul className="flex items-center gap-4 text-lg ">
+              <Link
+                className="hover:border-b border-slate-500 duration-100"
+                href="/"
+              >
+                Home
+              </Link>
+              <Link
+                className="hover:border-b border-slate-500 duration-100"
+                href="/categories"
+              >
+                Categories
+              </Link>
+            </ul>
+          </div>
         </div>
         <div
           className={
             router.query.payment
-              ? "opacity-50 duration-200 flex justify-center mt-20"
-              : "flex justify-center mt-20"
+              ? "opacity-50 duration-200 flex justify-center mt-28"
+              : "flex justify-center mt-20 border-2 border-green-500"
           }
         >
           {children}

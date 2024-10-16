@@ -48,14 +48,12 @@ const Navbar = () => {
   const { cart } = useCartStore();
 
   return (
-    <nav className="w-4/5 mob_display:w-11/12">
-      <div className="flex justify-around items-center p-4 mob_display:hidden">
+    <nav className="w-4/5 mob_display:w-11/12 border-2">
+      <div className="flex justify-around items-center p-2 mob_display:hidden">
         <div>
           <SearchDiv />
         </div>
-        <div className="text-5xl font-didot">
-          Perfume Shop
-        </div>
+        <div className="text-3xl font-didot">Perfume Shop</div>
         <div>
           <ul className="flex items-center gap-6 p-1 text-lg">
             {/* <li>
@@ -114,12 +112,6 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-      </div>
-      <div className="flex justify-center p-4">
-        <ul className="flex items-center gap-4 text-lg ">
-          <li>Home</li>
-          <li>Categories</li>
-        </ul>
       </div>
       <div className="flex justify-between items-center p-4 full_screen:hidden">
         <p className="text-3xl">Perfume Shop</p>

@@ -20,6 +20,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ReviewCard from "@/components/cards/review-card";
 import ServiceCard from "@/components/cards/service-card";
+import { settings } from "../../carouselConfig";
 
 export default function Home() {
   const [selected, setSelected] = useState(0);
@@ -37,25 +38,13 @@ export default function Home() {
     AOS.init({});
   }, []);
 
-  var settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    nextArrow: false,
-    prevArrow: false,
-  };
-
   const router = useRouter();
 
   return (
     <Layout>
-      <div className="w-11/12">
+      <div className="w-11/12 flex flex-col gap-4">
         {/* MAIN AD DIV */}
-        <div className="flex mob_display:mt-0 mob_display:flex-col mob_display:gap-20 rounded-lg h-screen">
+        {/* <div className="flex mob_display:mt-0 mob_display:flex-col mob_display:gap-20 rounded-lg h-screen">
           <div className="flex flex-col mob_display:items-center gap-2 justify-center pt-10 pl-10 w-full">
             <div className="text-5xl mob_display:text-3xl uppercase">
               Discover the Scent of Luxury
@@ -90,6 +79,35 @@ export default function Home() {
               />
             </Slider>
           </div>
+        </div> */}
+
+        <div className="flex justify-center h-max mob_display:pt-0">
+          <Slider className="w-full h-[400px] z-20" {...settings}>
+            <Image
+              className="h-full w-full"
+              src="/images/ad_1.jpg"
+              alt=""
+              width={1600}
+              height={900}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+            <Image
+              className="h-full w-full"
+              src="/images/ad_2.jpg"
+              alt=""
+              width={1600}
+              height={900}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+            <Image
+              className="h-full w-full"
+              src="/images/ad_3.jpg"
+              alt=""
+              width={1600}
+              height={900}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </Slider>
         </div>
         <div className="flex flex-col mob_display:items-center mob_display:mt-20 gap-32">
           {/* TRENDING DIV */}
