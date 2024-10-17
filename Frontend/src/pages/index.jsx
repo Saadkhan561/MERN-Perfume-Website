@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="w-11/12 flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-16">
         {/* MAIN AD DIV */}
         {/* <div className="flex mob_display:mt-0 mob_display:flex-col mob_display:gap-20 rounded-lg h-screen">
           <div className="flex flex-col mob_display:items-center gap-2 justify-center pt-10 pl-10 w-full">
@@ -109,93 +109,95 @@ export default function Home() {
             />
           </Slider>
         </div>
-        <div className="flex flex-col mob_display:items-center mob_display:mt-20 gap-32">
-          {/* TRENDING DIV */}
-          <div>
-            <div className="flex flex-col items-center gap-3">
-              <p className="text-4xl mb-4 mob_display:text-2xl">
-                Select from our trending items!
-              </p>
-            </div>
-            <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
-              {trendingProductsLoading ? (
-                <div>Loading...</div>
-              ) : trendingProducts?.message ? (
-                <div className="flex w-full justify-center items-center text-xl">
-                  <p>{trendingProducts?.message}</p>
-                </div>
-              ) : (
-                trendingProducts?.map((item) => (
-                  <Card
-                    key={item._id}
-                    id={item._id}
-                    product={item}
-                    category={item.categoryDetails.name}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-          {/* PRODUCTS DIV */}
-          <div>
-            <div className="flex flex-col items-center gap-3">
-              <p className="text-4xl mb-4 mob_display:text-2xl underline">
-                View By Categories
-              </p>
-              <div className="flex gap-2">
-                {categories?.map((category, index) => (
-                  <p
-                    key={index}
-                    onClick={() => setSelected(index)}
-                    className={
-                      selected == index
-                        ? "p-1 border border-slate-800 cursor-pointer bg-slate-800 text-white duration-100 text-center rounded-lg"
-                        : "p-1 border border-slate-800 cursor-pointer text-slate-800 hover:bg-slate-800 hover:text-white duration-100 text-center rounded-lg"
-                    }
-                  >
-                    {category.name}
-                  </p>
-                ))}
+        <div className="flex justify-center gap-16 mob_display:items-center mob_display:mt-20">
+          <div className="w-4/5 flex flex-col items-center gap-32 ">
+            {/* TRENDING DIV */}
+            <div>
+              <div className="flex flex-col items-center gap-3">
+                <p className="text-4xl mb-4 mob_display:text-2xl">
+                  Select from our trending items!
+                </p>
               </div>
-            </div>
-            <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
-              {isProductsLoading ? (
-                <div>Loading...</div>
-              ) : (
-                products &&
-                categories &&
-                products
-                  .find((product) => product._id === categories[selected]._id)
-                  ?.products.map((item) => (
+              <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
+                {trendingProductsLoading ? (
+                  <div>Loading...</div>
+                ) : trendingProducts?.message ? (
+                  <div className="flex w-full justify-center items-center text-xl">
+                    <p>{trendingProducts?.message}</p>
+                  </div>
+                ) : (
+                  trendingProducts?.map((item) => (
                     <Card
                       key={item._id}
                       id={item._id}
                       product={item}
-                      category={categories[selected].name}
+                      category={item.categoryDetails.name}
                     />
                   ))
-              )}
+                )}
+              </div>
             </div>
-          </div>
-          {/* REVIEWS DIV */}
-          <div className="flex flex-col items-center gap-10">
-            <p className="text-4xl mob_display:text-2xl">
-              See What Our Customers Are Saying!
-            </p>
-            <div
-              data-aos="fade-up"
-              className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col gap-8"
-            >
-              <ReviewCard />
-              <ReviewCard />
-              <ReviewCard />
+            {/* PRODUCTS DIV */}
+            <div>
+              <div className="flex flex-col items-center gap-3">
+                <p className="text-4xl mb-4 mob_display:text-2xl underline">
+                  View By Categories
+                </p>
+                <div className="flex gap-2">
+                  {categories?.map((category, index) => (
+                    <p
+                      key={index}
+                      onClick={() => setSelected(index)}
+                      className={
+                        selected == index
+                          ? "p-1 border border-slate-800 cursor-pointer bg-slate-800 text-white duration-100 text-center rounded-lg"
+                          : "p-1 border border-slate-800 cursor-pointer text-slate-800 hover:bg-slate-800 hover:text-white duration-100 text-center rounded-lg"
+                      }
+                    >
+                      {category.name}
+                    </p>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
+                {isProductsLoading ? (
+                  <div>Loading...</div>
+                ) : (
+                  products &&
+                  categories &&
+                  products
+                    .find((product) => product._id === categories[selected]._id)
+                    ?.products.map((item) => (
+                      <Card
+                        key={item._id}
+                        id={item._id}
+                        product={item}
+                        category={categories[selected].name}
+                      />
+                    ))
+                )}
+              </div>
             </div>
-          </div>
-          {/* SERVICES DIV */}
-          <div className="flex flex-col items-center gap-10">
-            <p className="text-4xl">Services provided by us!</p>
-            <div data-aos="fade-up" className="">
-              <ServiceCard />
+            {/* REVIEWS DIV */}
+            <div className="flex flex-col items-center gap-10">
+              <p className="text-4xl mob_display:text-2xl">
+                See What Our Customers Are Saying!
+              </p>
+              <div
+                data-aos="fade-up"
+                className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col gap-8"
+              >
+                <ReviewCard />
+                <ReviewCard />
+                <ReviewCard />
+              </div>
+            </div>
+            {/* SERVICES DIV */}
+            <div className="flex flex-col items-center gap-10">
+              <p className="text-4xl">Services provided by us!</p>
+              <div data-aos="fade-up" className="">
+                <ServiceCard />
+              </div>
             </div>
           </div>
         </div>

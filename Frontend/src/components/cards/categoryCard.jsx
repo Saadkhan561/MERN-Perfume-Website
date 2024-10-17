@@ -1,13 +1,15 @@
 import Image from "next/image";
 import React from "react";
 import { categoryImages } from "../../../categoryImages";
+import { useRouter } from "next/navigation";
 
-const CategoryCard = ({ name, index }) => {
+const CategoryCard = ({ name, index, id }) => {
+  const router = useRouter()
   return (
-    <div className="h-[500px] w-[400px] rounded-lg flex flex-col gap-4 items-center p-4">
+    <div onClick={() => router.push(`/products?id=${id}`)} className="h-[600px] w-[500px] rounded-lg flex flex-col gap-4 items-center p-4 hover:scale-105 cursor-pointer duration-500 group">
       <p className="text-3xl font-semibold">{name}</p>
       <Image
-        className="aspect-square"
+        className="aspect-square group-hover:opacity-90 duration-200"
         src={`/images/${categoryImages[index]}.jpg`}
         alt="product"
         width={1600}

@@ -4,8 +4,6 @@ import React from "react";
 import { useRouter } from "next/router";
 import PaymentOption from "@/components/paymentOption";
 import SideBar from "@/components/common/side-bar";
-import { withProtectedWrapper } from "@/components/Protected Route/protectedRoute";
-import { ToastContainer } from "react-toastify";
 import Link from "next/link";
 
 const Layout = ({ children }) => {
@@ -20,9 +18,11 @@ const Layout = ({ children }) => {
             : "flex flex-col justify-center min-h-screen relative duration-20"
         }
       >
-        <div className="flex flex-col items-center border-b  border-b-slate-300 bg-white fixed top-0 left-0 z-10 w-full h-20">
-          <Navbar />
-          <div className="flex justify-center border-2 bg-white w-4/5 h-max border-b  border-b-slate-300">
+        <div className="flex flex-col items-center  bg-white fixed top-0 left-0 z-30 w-full h-20">
+          <div className="border-b border-slate-400 w-full flex justify-center">
+            <Navbar />
+          </div>
+          <div className="flex justify-center bg-white w-full h-max">
             <ul className="flex items-center gap-4 text-lg ">
               <Link
                 className="hover:border-b border-slate-500 duration-100"
@@ -43,7 +43,7 @@ const Layout = ({ children }) => {
           className={
             router.query.payment
               ? "opacity-50 duration-200 flex justify-center mt-28"
-              : "flex justify-center mt-20 border-2 border-green-500"
+              : "flex justify-center mt-24"
           }
         >
           {children}

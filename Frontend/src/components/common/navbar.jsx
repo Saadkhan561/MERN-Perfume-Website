@@ -48,7 +48,7 @@ const Navbar = () => {
   const { cart } = useCartStore();
 
   return (
-    <nav className="w-4/5 mob_display:w-11/12 border-2">
+    <nav className="w-4/5 mob_display:w-11/12">
       <div className="flex justify-around items-center p-2 mob_display:hidden">
         <div>
           <SearchDiv />
