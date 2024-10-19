@@ -22,24 +22,27 @@ const Categories = () => {
           <div className="absolute top-0 w-full h-full left-0">
             <div className="flex flex-col gap-2 h-full text-white items-center justify-center">
               <p className="text-5xl font-semibold">Categories</p>
-              <div>
-                <p>
-                  <Link className="hover:underliner" href="/">Home</Link> &gt; Categories
-                </p>
+              <div className="flex gap-2 items-center">
+                <Link className="hover:underliner" href="/">
+                  Home
+                </Link>
+                <p>&gt;</p> Categories
               </div>
             </div>
           </div>
         </div>
         <div className="flex gap-4 w-full flex-wrap justify-evenly p-8">
-          {isCategoryLoading ? (<div>
-            
-          </div>): categories?.map((category, index) => (
-            <CategoryCard
-              id={category._id}
-              name={category.name}
-              index={index}
-            />
-          ))}
+          {isCategoryLoading ? (
+            <div></div>
+          ) : (
+            categories?.map((category, index) => (
+              <CategoryCard
+                id={category._id}
+                name={category.name}
+                index={index}
+              />
+            ))
+          )}
         </div>
       </div>
     </Layout>

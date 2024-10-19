@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const CategoryCard = ({ name, index, id }) => {
   const router = useRouter()
   return (
-    <div onClick={() => router.push(`/products?id=${id}`)} className="h-[600px] w-[500px] rounded-lg flex flex-col gap-4 items-center p-4 hover:scale-105 cursor-pointer duration-500 group">
+    <div onClick={() => router.push(`/products?id=${id}`)} className="sm:w-[500px] w-[400px] rounded-lg flex flex-col gap-4 items-center p-4 hover:scale-105 cursor-pointer duration-500 group">
       <p className="text-3xl font-semibold">{name}</p>
       <Image
         className="aspect-square group-hover:opacity-90 duration-200"

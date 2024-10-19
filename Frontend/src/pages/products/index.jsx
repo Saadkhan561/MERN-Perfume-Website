@@ -31,41 +31,21 @@ const Products = () => {
           <div className="absolute top-0 w-full h-full left-0">
             <div className="flex flex-col gap-2 h-full text-white items-center justify-center">
               <p className="text-5xl font-semibold">Products</p>
-              <div>
-                <p>
-                  <Link className="hover:underliner" href="/">
-                    Home
-                  </Link> 
-                  &gt;
-                   <Link className="hover:underliner" href="/categories">
-                    Categories
-                  </Link>
-                  &gt; Products
-                </p>
+              <div className="flex items-center gap-2">
+                <Link className="hover:underliner" href="/">
+                  Home
+                </Link>
+                <p>&gt;</p>
+                <Link className="hover:underliner" href="/categories">
+                  Categories
+                </Link>
+                <p>&gt;</p> Products
               </div>
             </div>
           </div>
         </div>
-        <div className="flex justify-center mt-2 mob_display:mt-2 duration-200 w-full h-screen">
+        <div className="flex justify-center mt-2 mob_display:mt-2 duration-200 w-full h-full">
           <div className="flex flex-col flex-start w-4/5">
-            {/* <ul className="flex justify-center items-center gap-2">
-            {categories?.map((category, index) => (
-              <li
-                key={index}
-                onClick={() => {
-                  setCategoryId(category._id);
-                  setSelected(index);
-                }}
-                className={
-                  selected == index
-                    ? "p-1 underline duration-200 cursor-pointer text-lg"
-                    : "p-1 hover:underline duration-200 cursor-pointer text-lg"
-                }
-              >
-                {category.name}
-              </li>
-            ))}
-          </ul> */}
             <div className="flex gap-4 mt-10 flex-wrap mob_display:justify-center mob_display_product:flex-col">
               {isProductsLoading ? (
                 <div>Loading...</div>
