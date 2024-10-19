@@ -33,25 +33,36 @@ const Card = ({ product, category }) => {
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         </div>
-        <div className="p-2 flex flex-col">
+        <div className="p-2 flex flex-col gap-1">
           <p className="font-semibold text-lg">{product?.name}</p>
           {Object.entries(product?.options).map(([option, value]) => (
-            <div  key={option} className="flex text-gray-700 text-sm justify-between">
+            <div
+              key={option}
+              className="flex text-gray-700 text-xs font-semibold justify-between"
+            >
               {value.discount !== 0 ? (
                 <div className="flex gap-2">
-                  <p className="line-through">{value.price} Rs</p>
-                  <p className="font-semibold">{value.price - (value.price * (value.discount/100))} Rs</p>
+                  <p className="line-through text-gray-500">
+                    Rs. {value.price}
+                  </p>
+                  <p className="font-semibold">
+                    Rs. {value.price - value.price * (value.discount / 100)}
+                  </p>
                 </div>
               ) : (
-                <p>{value.price} Rs</p>
+                <p>Rs. {value.price}</p>
               )}
               <p>({option} ml)</p>
             </div>
           ))}
         </div>
-        <p className="absolute top-5 right-2 p-1 text-sm text-white bg-red-600 rounded-lg">
-          Sale
-        </p>
+        {Object.entries(product.options).map(([option, value]) =>
+          value.discount !== 0 ? (
+            <p className="absolute top-5 right-2 p-1 text-sm text-white bg-red-600 rounded-lg">
+              Sale
+            </p>
+          ) : null
+        )}
       </div>
     </>
   );

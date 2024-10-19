@@ -227,7 +227,7 @@ const trendingProducts = async (req, res) => {
         },
       },
       { $sort: { order_count: -1 } },
-      { $limit: 10 },
+      { $limit: 5 },
     ]);
 
     return res.status(200).json(order);

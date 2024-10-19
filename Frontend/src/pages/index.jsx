@@ -21,6 +21,7 @@ import Image from "next/image";
 import ReviewCard from "@/components/cards/review-card";
 import ServiceCard from "@/components/cards/service-card";
 import { settings } from "../../carouselConfig";
+import CategoryCard from "@/components/cards/categoryCard";
 
 export default function Home() {
   const [selected, setSelected] = useState(0);
@@ -29,7 +30,7 @@ export default function Home() {
   const { data: products, isLoading: isProductsLoading } =
     useFetchAllProducts();
 
-  const { data: categories, isLoading: isCategoriesLoading } =
+  const { data: categories, isLoading: isCategoryLoading } =
     useFetchAllCategories();
 
   const { data: trendingProducts, isLoading: trendingProductsLoading } =
@@ -42,7 +43,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="w-full flex flex-col gap-16">
+      <div className="w-full flex flex-col gap-4 sm:gap-8">
         {/* MAIN AD DIV */}
         {/* <div className="flex mob_display:mt-0 mob_display:flex-col mob_display:gap-20 rounded-lg h-screen">
           <div className="flex flex-col mob_display:items-center gap-2 justify-center pt-10 pl-10 w-full">
@@ -82,9 +83,12 @@ export default function Home() {
         </div> */}
 
         <div className="flex justify-center h-max mob_display:pt-0">
-          <Slider className="w-full h-[400px] z-20" {...settings}>
+          <Slider
+            className="w-full sm:h-[300px] md:h-[400px] h-[200px] z-20"
+            {...settings}
+          >
             <Image
-              className="h-full w-full"
+              className="sm:h-[300px] md:h-[400px] h-[200px] w-full"
               src="/images/ad_1.jpg"
               alt=""
               width={1600}
@@ -92,7 +96,7 @@ export default function Home() {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <Image
-              className="h-full w-full"
+              className="sm:h-[300px] md:h-[400px] h-[200px] w-full"
               src="/images/ad_2.jpg"
               alt=""
               width={1600}
@@ -100,7 +104,7 @@ export default function Home() {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <Image
-              className="h-full w-full"
+              className="sm:h-[300px] md:h-[400px] h-[200px] w-full"
               src="/images/ad_3.jpg"
               alt=""
               width={1600}
@@ -110,7 +114,7 @@ export default function Home() {
           </Slider>
         </div>
         <div className="flex justify-center gap-16 mob_display:items-center mob_display:mt-20">
-          <div className="w-4/5 flex flex-col items-center gap-32 ">
+          <div className="w-11/12 flex flex-col items-center gap-32 ">
             {/* TRENDING DIV */}
             <div>
               <div className="flex flex-col items-center gap-3">
@@ -138,12 +142,24 @@ export default function Home() {
               </div>
             </div>
             {/* PRODUCTS DIV */}
-            <div>
-              <div className="flex flex-col items-center gap-3">
-                <p className="text-4xl mb-4 mob_display:text-2xl underline">
-                  View By Categories
-                </p>
-                <div className="flex gap-2">
+            <div className="flex flex-col items-center gap-3 w-full">
+              <p className="text-4xl mb-4 mob_display:text-2xl underline">
+                View By Categories
+              </p>
+              <div className="flex w-full justify-evenly flex-wrap">
+                {isCategoryLoading ? (
+                  <div></div>
+                ) : (
+                  categories?.map((category, index) => (
+                    <CategoryCard
+                      id={category._id}
+                      name={category.name}
+                      index={index}
+                    />
+                  ))
+                )}
+              </div>
+              {/* <div className="flex gap-2">
                   {categories?.map((category, index) => (
                     <p
                       key={index}
@@ -157,9 +173,9 @@ export default function Home() {
                       {category.name}
                     </p>
                   ))}
-                </div>
-              </div>
-              <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
+                </div> */}
+            </div>
+            {/* <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
                 {isProductsLoading ? (
                   <div>Loading...</div>
                 ) : (
@@ -176,8 +192,7 @@ export default function Home() {
                       />
                     ))
                 )}
-              </div>
-            </div>
+              </div> */}
             {/* REVIEWS DIV */}
             <div className="flex flex-col items-center gap-10">
               <p className="text-4xl mob_display:text-2xl">

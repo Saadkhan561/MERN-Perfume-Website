@@ -31,7 +31,7 @@ export var settings = {
   speed: 500,
   slidesToShow: 1,
   slidesToScroll: 1,
-  autoplay: false,
+  autoplay: true,
   autoplaySpeed: 2000,
   nextArrow: <NextArrow />,
   prevArrow: <PrevArrow />,
