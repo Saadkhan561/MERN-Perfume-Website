@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
   const router = useRouter();
 
   return (
-    <div className="w-full relative overflow-x-hidden font-sans">
+    <div className="w-full h-sreen relative overflow-x-hidden font-sans">
       <div
         className={
           Boolean(router.query.sideBar) || Boolean(router.query.payment)
@@ -40,11 +40,12 @@ const Layout = ({ children }) => {
           </div>
         </div>
         <div
-          className={
-            router.query.payment
-              ? "opacity-50 duration-200 flex justify-center mt-28"
-              : "flex justify-center mt-24"
-          }
+          // className={
+          //   router.query.payment
+          //     ? "opacity-50 duration-200 flex justify-center mt-28"
+          //     : "flex justify-center mt-24"
+          // }
+          className="flex justify-center mt-24"
         >
           {children}
         </div>

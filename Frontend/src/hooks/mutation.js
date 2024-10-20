@@ -1,6 +1,14 @@
 import { changeOrderStatus } from "@/services/orderService";
-import { addProduct, paymenyHook, placeOrder, restockQuantityAvailable, setDiscount, togglePinStatus, toggleProductStatus } from "@/services/productService";
-import { loginUser, signupUser } from "@/services/userService";
+import {
+  addProduct,
+  paymenyHook,
+  placeOrder,
+  restockQuantityAvailable,
+  setDiscount,
+  togglePinStatus,
+  toggleProductStatus,
+} from "@/services/productService";
+import { loginUser, resetPassword, signupUser } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
 
 export const useLoginMutation = (options) => {
@@ -20,56 +28,62 @@ export const useSignupMutation = (options) => {
 export const usePaymentHook = (options) => {
   return useMutation({
     mutationFn: paymenyHook,
-    ...options
-  })
-}
+    ...options,
+  });
+};
 
 export const usePlaceOrder = (options) => {
   return useMutation({
     mutationFn: placeOrder,
-    ...options
-  })
-}
+    ...options,
+  });
+};
 
 export const useAddProduct = (options) => {
   return useMutation({
     mutationFn: addProduct,
-    ...options
-  })
-}
+    ...options,
+  });
+};
 
 export const useRestock = (options) => {
   return useMutation({
     mutationFn: restockQuantityAvailable,
-    ...options
-  })
-}
+    ...options,
+  });
+};
 
 export const useTogglePinStatus = (options) => {
   return useMutation({
     mutationFn: togglePinStatus,
-    ...options
-  })
-}
+    ...options,
+  });
+};
 
 export const useToggleProductStatus = (options) => {
   return useMutation({
     mutationFn: toggleProductStatus,
-    ...options
-  })
-}
+    ...options,
+  });
+};
 
 export const useSetDiscount = (options) => {
   return useMutation({
     mutationFn: setDiscount,
-    ...options
-  })
-}
-
+    ...options,
+  });
+};
 
 export const useChangeOrderStatus = (options) => {
   return useMutation({
     mutationFn: changeOrderStatus,
-    ...options
-  })
+    ...options,
+  });
+};
+
+export const useResetPassword = (options) => {
+  return useMutation({
+    mutationFn: resetPassword,
+    ...options,
+  });
 };

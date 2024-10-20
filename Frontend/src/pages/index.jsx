@@ -194,7 +194,7 @@ export default function Home() {
                 )}
               </div> */}
             {/* REVIEWS DIV */}
-            <div className="flex flex-col items-center gap-10">
+            {/* <div className="flex flex-col items-center gap-10">
               <p className="text-4xl mob_display:text-2xl">
                 See What Our Customers Are Saying!
               </p>
@@ -206,7 +206,7 @@ export default function Home() {
                 <ReviewCard />
                 <ReviewCard />
               </div>
-            </div>
+            </div> */}
             {/* SERVICES DIV */}
             <div className="flex flex-col items-center gap-10">
               <p className="text-4xl">Services provided by us!</p>
