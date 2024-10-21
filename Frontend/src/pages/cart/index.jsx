@@ -16,15 +16,6 @@ const Cart = () => {
 
   const router = useRouter();
 
-  const paymentOption = (name) => {
-    if (router.query[name]) {
-      delete router.query[name];
-    } else {
-      router.query[name] = true;
-    }
-    router.push(router, undefined, { shallow: true });
-  };
-
   useEffect(() => {
     const amount = Object.values(cart).reduce((total, item) => {
       return total + item.totalPrice;
@@ -82,7 +73,7 @@ const Cart = () => {
           </div>
           <div className="border-l cart:border-l-0 cart:border-t  border-slate-200 pt-14 p-4 cart:w-full w-4/5 cart:p-1 cart:pt-4">
             <div className="p-2 border border-slate-300  mt-4 rounded-lg">
-              <div className="h-[240px] overflow-y-auto">
+              <div className="h-[220px] overflow-y-auto">
                 {Object.entries(cart).map(([key, value]) => (
                   <CartItemDetails key={key} value={value} />
                 ))}

@@ -20,7 +20,7 @@ const createUser = async (req, res) => {
         phone: phone,
         isGuest: true,
       });
-      return res.status(200).json(user);
+      return res.status(200).json({message: "Guest account created", user: user});
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -54,14 +54,14 @@ const createUser = async (req, res) => {
 
       res.status(200).json({
         message:
-          "You placed an order once as a guest. In order to create an account you need to set your password with the same email. A link i sent to the same email to set the password!",
+          "Account already exist with this gmail. Check your email!",
       });
     } catch (error) {
       res.status(500).json({ error: err.message });
     }
   } else if (existedUser !== null && existedUser.isGuest === false) {
     // CONDITION WHEN A USER IS LOGOUT AND TRIES TO PLACE AN ORDER
-    return res.status(200).json(existedUser);
+    return res.status(200).json({message: "Account already exist with this email", user: existedUser});
   } else {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -74,7 +74,7 @@ const createUser = async (req, res) => {
         password: hashedPassword,
         phone: phone,
       });
-      return res.status(200).json(user);
+      return res.status(200).json({message: "Account created", user: user});
     } catch (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -84,7 +84,6 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email: email });
-  console.log(user);
   if (user === null) {
     return res.status(404).json({ error: "User does not exist" });
   }

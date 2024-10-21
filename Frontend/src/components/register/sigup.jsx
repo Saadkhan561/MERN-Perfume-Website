@@ -5,8 +5,9 @@ import * as yup from "yup";
 import { useSignupMutation } from "@/hooks/mutation";
 import { useRouter } from "next/router";
 
-import { Bounce, Slide, toast, ToastContainer } from "react-toastify";
+import { Bounce, toast } from "react-toastify";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
+import { MoonLoader } from "react-spinners";
 
 const SignUp = () => {
   const [passHidden, setPassHidden] = useState(true);
@@ -49,35 +50,15 @@ const SignUp = () => {
 
   // MUTATION HOOK
   const router = useRouter();
-  const { mutate: user } = useSignupMutation({
+  const { mutate: user, isPending: isSignupPending } = useSignupMutation({
     onSuccess(data) {
       console.log(data);
-      toast.success("Account Created", {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Slide,
-      });
+      toast.success(data.message);
       router.push("register?login=true");
     },
     onError(error) {
       console.log(error);
-      toast.error(error, {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Slide,
-      });
+      toast.error(error);
     },
   });
 
@@ -87,7 +68,6 @@ const SignUp = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-1/2 register_small_div:w-full pt-10">
-      <ToastContainer />
       <div className="text-3xl font-semibold register_mini_div:text-2xl">
         Sign Up
       </div>
@@ -217,10 +197,15 @@ const SignUp = () => {
         </div>
         <div className="text-end">
           <button
-            className="font-semibold bg-gray-900 text-white p-1 pl-2 pr-2 rounded-md"
+            className="font-semibold bg-gray-900 w-40 text-white p-1 px-2 rounded-md"
             type="submit"
+            disabled={isSignupPending}
           >
-            Submit
+            {isSignupPending ? (
+              <MoonLoader className="w-full text-center" size={15} color="white" />
+            ) : (
+              "Submit"
+            )}
           </button>
         </div>
       </form>

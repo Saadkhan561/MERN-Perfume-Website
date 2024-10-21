@@ -6,12 +6,14 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MoonLoader } from "react-spinners";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SetPassword = () => {
   const [passHidden, setPassHidden] = useState(true);
-  const router = useRouter()
-  const token = router.query.resetToken
-  console.log(token)
+  const router = useRouter();
+  const token = router.query.resetToken;
+  console.log(token);
 
   const initialValues = {
     password: "",
@@ -20,7 +22,6 @@ const SetPassword = () => {
     register,
     handleSubmit,
     reset,
-    getValues,
     formState: { errors },
   } = useForm({
     values: initialValues,
@@ -28,23 +29,34 @@ const SetPassword = () => {
   });
 
   const onSubmit = (data) => {
-    data["token"] = token && token
-    console.log(token)
-    resetPassword(data)
+    data["token"] = token && token;
+    console.log(token);
+    resetPassword(data);
   };
 
   const { mutate: resetPassword, isPending: isSetPasswordPending } =
     useResetPassword({
       onSuccess(data) {
         console.log(data);
+        toast.success("Password set");
+        toast.success(data.message);
+        reset();
+        router.push("/register?login=true");
       },
       onError(err) {
         console.log(err);
+        toast.error(err.error);
       },
     });
 
   return (
     <div className="w-full h-screen flex items-center justify-center font-sans">
+      <ToastContainer
+        position="top-center"
+        transition={Bounce}
+        autoClose={1000}
+        hideProgressBar={true}
+      />
       <div className="w-1/4 rounded-lg shadow-2xl p-4 flex flex-col gap-4">
         <p className="text-2xl font-semibold">Set your password</p>
         <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
@@ -87,9 +99,14 @@ const SetPassword = () => {
               <p className="text-red-500 text-xs">{errors.password.message}</p>
             )}
           </div>
-          <button className="p-1 rounded-lg bg-black text-white font-semibold">
+          <button
+            disabled={isSetPasswordPending}
+            className="p-1 rounded-lg  bg-black text-white text-center font-semibold"
+          >
             {isSetPasswordPending ? (
-              <MoonLoader size={5} color="white" />
+              <div className="flex justify-center">
+                <MoonLoader size={15} color="white" />
+              </div>
             ) : (
               "Set password"
             )}

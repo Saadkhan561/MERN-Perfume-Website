@@ -2,7 +2,7 @@ import Login from "@/components/register/login";
 import SignUp from "@/components/register/sigup";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
@@ -16,19 +16,29 @@ const Register = () => {
   }, [router.isReady, router.query]);
 
   const toggleLogin = () => {
-    const updatedQuery = { ...router.query }; 
+    const updatedQuery = { ...router.query };
 
     if (isLogin) {
-      delete updatedQuery.login; 
+      delete updatedQuery.login;
     } else {
-      updatedQuery.login = "true"; 
+      updatedQuery.login = "true";
     }
-    router.replace({ pathname: router.pathname, query: updatedQuery }, undefined, { shallow: true });
+    router.replace(
+      { pathname: router.pathname, query: updatedQuery },
+      undefined,
+      { shallow: true }
+    );
     setIsLogin(!isLogin);
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen font-sans">
+      <ToastContainer
+        position="top-center"
+        transition={Bounce}
+        closeOnClick={true}
+        hideProgressBar={true}
+      />
       {/* MAIN DIV FOR FULL SCREEN */}
       <div className="relative w-4/5 h-[640px] rounded-md shadow-2xl bg-slate-100 register_small_div:hidden">
         <div className="flex">
@@ -45,13 +55,27 @@ const Register = () => {
           }
         >
           {!isLogin ? (
-            <div onClick={toggleLogin} className="flex gap-2 flex-wrap cursor-pointer">
+            <div
+              onClick={toggleLogin}
+              className="flex gap-2 flex-wrap cursor-pointer"
+            >
               <div>Already have an account? Login</div>
-              <img src="/images/white-right-arrow.png" alt="arrow" height={30} width={30} />
+              <img
+                src="/images/white-right-arrow.png"
+                alt="arrow"
+                height={30}
+                width={30}
+              />
             </div>
           ) : (
             <div onClick={toggleLogin} className="flex gap-2 cursor-pointer">
-              <img className="rotate-180" src="/images/white-right-arrow.png" alt="arrow" height={30} width={30} />
+              <img
+                className="rotate-180"
+                src="/images/white-right-arrow.png"
+                alt="arrow"
+                height={30}
+                width={30}
+              />
               <div>Don't have an account? Sign Up</div>
             </div>
           )}

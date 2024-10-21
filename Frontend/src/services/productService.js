@@ -3,6 +3,7 @@
 import axiosInstance from "../../axiosConfig";
 
 export const fetchAllproducts = async (params) => {
+  console.log(params)
   try {
     const products = await axiosInstance.get(`/getProducts?categoryId=${params.categoryId}`);
     return products.data;

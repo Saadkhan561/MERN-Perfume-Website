@@ -1,5 +1,5 @@
 import Layout from "@/layout/layout";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Card from "@/components/cards/product-card";
 import {
@@ -17,22 +17,24 @@ import useCartStore from "@/store/cart";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import { Minus, Plus } from "lucide-react";
 
 const ProductDetails = () => {
   const [counter, setCounter] = useState(1);
   const [amount, setAmount] = useState(50);
   const router = useRouter();
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  // const [product, setProduct] = useState(null);
-
-  const { data: products, isLoading: isProductsLoading } =
-    useFetchAllProducts();
 
   const id = router.query.id;
   const { data: product, isLoading: isProductLoading } =
     useFetchProductById(id);
-  console.log(product);
+  console.log(typeof product?.category);
 
+  const categoryId = product?.category;
+  const { data: products, isLoading: isProductsLoading } = useFetchAllProducts({
+    categoryId: categoryId,
+  });
+  console.log(products);
+  
   const { data: productImages } = useFetchProductImages({
     category: product?.categoryDetails.name,
     productName: product?.name,
@@ -52,20 +54,6 @@ const ProductDetails = () => {
       setCounter(counter - 1);
     }
   };
-
-  // useEffect(() => {
-  //   const productsArray =
-  //     products &&
-  //     data &&
-  //     products
-  //       .filter((product) => product.category === data.category)
-  //       .slice(0, 5);
-  //   setFilteredProducts(productsArray);
-
-  //   if (data) {
-  //     setProduct(data);
-  //   }
-  // }, [products, data]);
 
   const initialValues = {
     amount: null,
@@ -111,13 +99,16 @@ const ProductDetails = () => {
 
   return (
     <Layout>
-      <div className="w-4/5 mob_display:w-full flex flex-col gap-32 h-screen">
+      <div className="w-11/12 mob_display:w-full flex flex-col gap-32 h-full">
         <div className="flex flex-col items-center mt-8 duration-200">
           {/* DETAILS DIV */}
-          <div className="flex items-center gap-10 mob_display:flex-col mob_display_product:gap-6">
+          <div className="flex items-center gap-4 mob_display:flex-col mob_display_product:gap-6">
             <div className="w-full">
               <div className="flex justify-center  mob_display:pt-0 w-full">
-                <Slider className="w-[400px] h-[400px] mob_display:h-[250px] mob_display:w-[250px]" {...settings}>
+                <Slider
+                  className="w-[500px] h-[500px] mob_display:h-[250px] mob_display:w-[250px]"
+                  {...settings}
+                >
                   {productImages?.map((base64Image, index) => (
                     <img
                       className="aspect-square object-contain"
@@ -131,17 +122,40 @@ const ProductDetails = () => {
             </div>
             {/* PRODUCT DETAILS DIV */}
             {product && (
-              <div className="p-4 flex flex-col gap-3 w-full mob_display:w-11/12">
-                <div className="flex justify-between items-center flex-wrap">
-                  <p className="text-2xl mob_display:text-xl font-semibold">
-                    {product.name}
-                  </p>
-                  <div className="text-lg text-slate-600 mob_display:text-base flex flex-col">
-                    <div className="flex gap-1">
-                      <p>{product.options[amount].price}</p>
-                      <p className="test-md">/Rs</p>
-                    </div>
-                    <div className="text-xs">(For {amount}ml)</div>
+              <div className="flex flex-col gap-3 w-full mob_display:w-11/12">
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <p className="text-3xl mob_display:text-xl font-semibold">
+                      {product.name}
+                    </p>
+                    <p className="text-red-500 font-semibold">
+                      {product.options[amount].discount} % Off
+                    </p>
+                  </div>
+                  <div className="text-lg  text-slate-600 mob_display:text-base flex flex-col">
+                    {product.options[amount].discount !== 0 ? (
+                      <div className="flex gap-2 items-center">
+                        <div className="flex gap-1 font-semibold">
+                          <p>
+                            {product.options[amount].price -
+                              (product.options[amount].price *
+                                product.options[amount].discount) /
+                                100}
+                          </p>
+                          <p className="test-md">/Rs</p>
+                        </div>
+                        <div className="flex gap-1 line-through text-gray-500 text-sm">
+                          <p>{product.options[amount].price}</p>
+                          <p className="test-md">/Rs</p>
+                        </div>{" "}
+                      </div>
+                    ) : (
+                      <div className="flex gap-1 font-semibold">
+                        <p>{product.options[amount].price}</p>
+                        <p className="test-md">/Rs</p>
+                      </div>
+                    )}
+                    <div className="text-sm">(For {amount}ml)</div>
                   </div>
                 </div>
                 <div>
@@ -181,39 +195,29 @@ const ProductDetails = () => {
                     )}
                   </div>
                   <div className="mt-4">
-                    <div className="text-xs text-gray-500 font-semibold mb-2">
+                    <div className="text-gray-500 font-semibold mb-2">
                       Quantity
                     </div>
-                    <div className="w-fit flex gap-4 p-1 pl-2 pr-2 border border-slate-200 items-center">
-                      <div
+                    <div className="w-fit flex gap-4 p-1 pl-2 pr-2 border border-slate-300 items-center">
+                      <Minus
                         onClick={decrementCounter}
-                        className="hover:bg-slate-100 duration-500 cursor-pointer"
-                      >
-                        <img
-                          src="/images/minus.png"
-                          alt=""
-                          height={15}
-                          width={15}
-                        />
-                      </div>
-                      <div>{counter}</div>
-                      <div
+                        size={30}
+                        color="black"
+                        className="p-1 cursor-pointer"
+                      />
+                      <div className="text-lg">{counter}</div>
+                      <Plus
                         onClick={incrementCounter}
-                        className="hover:bg-slate-100 duration-500 cursor-pointer"
-                      >
-                        <img
-                          src="/images/plus.png"
-                          alt=""
-                          height={15}
-                          width={15}
-                        />
-                      </div>
+                        size={30}
+                        color="black"
+                        className="p-1 cursor-pointer"
+                      />
                     </div>
                     <div className="text-xs text-gray-500 font-semibold mt-2">
                       Available : {product.options[amount].quantityAvailable}
                     </div>
                   </div>
-                  <button className="mt-4 bg-black text-white w-[200px] text-base font-semibold  hover:bg-gray-700 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-1">
+                  <button className="mt-4 bg-black text-white w-11/12 text-lg font-semibold  hover:bg-gray-700 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-2">
                     Add to cart
                   </button>
                 </form>
@@ -227,9 +231,14 @@ const ProductDetails = () => {
             More Recommendations
           </div>
           <div className="flex gap-5 flex-wrap p-4 mt-8 mob_display_product:flex-col">
-            {filteredProducts?.map((item) => (
+            {products?.map((item) => (
               <div>
-                <Card key={item._id} product={item} />
+                <Card
+                  key={item._id}
+                  id={item._id}
+                  product={item}
+                  category={item.categoryDetails.name}
+                />
               </div>
             ))}
           </div>

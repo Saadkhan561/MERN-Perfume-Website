@@ -4,11 +4,9 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Card from "@/components/cards/product-card";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
-const BASE_URL = "http://localhost:4000";
 
 import { useRouter } from "next/router";
 import {
@@ -16,7 +14,6 @@ import {
   useFetchAllProducts,
   useFetchTrendingProducts,
 } from "@/hooks/query";
-import Link from "next/link";
 import Image from "next/image";
 import ReviewCard from "@/components/cards/review-card";
 import ServiceCard from "@/components/cards/service-card";
@@ -26,10 +23,6 @@ import CategoryCard from "@/components/cards/categoryCard";
 export default function Home() {
   const [selected, setSelected] = useState(0);
 
-  // QUERY TO FETCH ALL PRODUCTS
-  const { data: products, isLoading: isProductsLoading } =
-    useFetchAllProducts();
-
   const { data: categories, isLoading: isCategoryLoading } =
     useFetchAllCategories();
 
@@ -38,8 +31,6 @@ export default function Home() {
   useEffect(() => {
     AOS.init({});
   }, []);
-
-  const router = useRouter();
 
   return (
     <Layout>

@@ -42,7 +42,7 @@ const Checkout = () => {
           };
         });
       });
-      const customer_id = data._id;
+      const customer_id = data.user._id;
       const formValues = getValues();
       const newOrder = {
         customer: customer_id,
@@ -71,6 +71,7 @@ const Checkout = () => {
   const { mutate: placeOrder, isPending: isOrderPending } = usePlaceOrder({
     onSuccess(data) {
       console.log(data);
+      reset();
       clearCart();
       setTimeout(() => {
         router.push("/success");
@@ -297,17 +298,19 @@ const Checkout = () => {
               </div>
               <div className="flex gap-2 items-center w-full">
                 <button
+                  type="submit"
                   disabled={isOrderPending || isUserPending}
                   className=" bg-black text-white text-base w-full font-semibold  hover:bg-gray-700 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-1"
                 >
                   {isOrderPending || isUserPending ? (
-                    <MoonLoader size={5} color="white" />
+                    <MoonLoader size={15} color="white" />
                   ) : (
                     "Place Order"
                   )}
                 </button>
                 <div
-                  onClick={() => paymentOption("payment")}
+                  onClick={() => router.push("/cart")}
+                  type="button"
                   className=" bg-red-500 text-white text-base w-full font-semibold  hover:bg-red-600 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-1"
                 >
                   Cancel

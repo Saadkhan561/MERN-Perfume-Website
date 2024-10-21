@@ -47,6 +47,8 @@ const Navbar = () => {
 
   const { cart } = useCartStore();
 
+  console.log(currentUser)
+
   return (
     <nav className="w-4/5 mob_display:w-11/12">
       <div className="flex justify-around items-center p-2 mob_display:hidden">
@@ -82,34 +84,38 @@ const Navbar = () => {
                 </div>
               </Link>
             </li>
-            <li className="relative">
-              <ul
-                className={
-                  accountDiv
-                    ? "absolute top-12 shadow-2xl -left-5 bg-white text-sm w-[120px] p-2"
-                    : "absolute hidden top-12 shadow-2xl -left-5 bg-white text-sm w-[120px] p-2"
-                }
-              >
-                <li
-                  onClick={() => router.push("/account")}
-                  className="cursor-pointer text-black hover:bg-slate-100 duration-200 p-1 rounded-lg"
+            {currentUser ? (
+              <li className="relative">
+                <ul
+                  className={
+                    accountDiv
+                      ? "absolute top-12 shadow-2xl -left-5 bg-white text-sm w-[120px] p-2"
+                      : "absolute hidden top-12 shadow-2xl -left-5 bg-white text-sm w-[120px] p-2"
+                  }
                 >
-                  My Account
-                </li>
-                <li
-                  onClick={logout}
-                  className="cursor-pointer text-red-500 hover:bg-slate-100  duration-200 p-1 rounded-lg"
+                  <li
+                    onClick={() => router.push("/account")}
+                    className="cursor-pointer text-black hover:bg-slate-100 duration-200 p-1 rounded-lg"
+                  >
+                    My Account
+                  </li>
+                  <li
+                    onClick={logout}
+                    className="cursor-pointer text-red-500 hover:bg-slate-100  duration-200 p-1 rounded-lg"
+                  >
+                    Logout
+                  </li>
+                </ul>
+                <div
+                  onClick={() => setAccountDiv(!accountDiv)}
+                  className="rounded-t-3xl border border-slate-500 p-2 pt-3 cursor-pointer"
                 >
-                  Logout
-                </li>
-              </ul>
-              <div
-                onClick={() => setAccountDiv(!accountDiv)}
-                className="rounded-t-3xl border border-slate-500 p-2 pt-3 cursor-pointer"
-              >
-                <UserRound className="h-4 w-4" />
-              </div>
-            </li>
+                  <UserRound className="h-4 w-4" />
+                </div>
+              </li>
+            ) : (
+              <Link className="text-sm font-semibold" href="/register?login=true">Login / Sign Up</Link>
+            )}
           </ul>
         </div>
       </div>

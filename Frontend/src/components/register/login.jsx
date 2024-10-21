@@ -6,6 +6,7 @@ import { useLoginMutation } from "@/hooks/mutation";
 import { useRouter } from "next/router";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import useUserStore from "@/store/user";
+import { MoonLoader } from "react-spinners";
 
 const Login = () => {
   const [passHidden, setPassHidden] = useState(true);
@@ -32,50 +33,29 @@ const Login = () => {
 
   // MUTATION HOOK
   const router = useRouter();
-  const {addUserInfo} = useUserStore()
-  const { mutate: user } = useLoginMutation({
+  const { addUserInfo } = useUserStore();
+  const { mutate: user, isPending: isLoginPending } = useLoginMutation({
     onSuccess(data) {
-      addUserInfo(data)
-      toast.success("Logged In", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-      reset()
+      addUserInfo(data);
+      toast.success("Logged In");
+      reset();
       setTimeout(() => {
         router.push("/");
       }, 2000);
     },
     onError(error) {
       console.log(error);
-      toast.error(error, {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
+      toast.error(error);
     },
   });
 
   const onSubmit = (data) => {
-    console.log(data)
+    console.log(data);
     user(data);
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-1/2 register_small_div:w-full pt-10">
-      <ToastContainer />;
       <div className="text-3xl font-semibold register_mini_div:text-2xl">
         Login
       </div>
@@ -154,8 +134,9 @@ const Login = () => {
           <button
             className="font-semibold bg-gray-900 text-white p-1 pl-2 pr-2 rounded-md"
             type="submit"
+            disabled={isLoginPending}
           >
-            Submit
+            {isLoginPending ? <MoonLoader size={15} color="white" /> : "Submit"}
           </button>
         </div>
       </form>

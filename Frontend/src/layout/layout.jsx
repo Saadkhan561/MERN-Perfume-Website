@@ -5,12 +5,19 @@ import { useRouter } from "next/router";
 import PaymentOption from "@/components/paymentOption";
 import SideBar from "@/components/common/side-bar";
 import Link from "next/link";
+import { Bounce, ToastContainer } from "react-toastify";
 
 const Layout = ({ children }) => {
   const router = useRouter();
 
   return (
     <div className="w-full h-sreen relative overflow-x-hidden font-sans">
+      <ToastContainer
+        position="top-center"
+        transition={Bounce}
+        autoClose={1000}
+        hideProgressBar={true}
+      />
       <div
         className={
           Boolean(router.query.sideBar) || Boolean(router.query.payment)
