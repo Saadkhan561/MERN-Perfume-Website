@@ -59,11 +59,16 @@ const Cart = () => {
           </div>
         </div>
         <div className="flex cart:flex-col w-11/12 h-screen">
-          <div className="p-4 cart:p-1 h-[400px] overflow-y-auto w-full cart:pb-10">
+          <div className="p-4 cart:p-1 overflow-y-auto w-full cart:pb-10">
             <div className="flex flex-col gap-2 p-2">
-              <div className="text-2xl font-semibold p-1">Your Cart Items</div>
+              <div className="text-3xl font-semibold p-1">Your Cart Items</div>
               {cartLength === 0 ? (
-                <div>Your cart is empty</div>
+                <div className="flex flex-col gap-2">
+                  <p className="text-lg font-semibold">Your cart is empty</p>
+                  <Link className="p-1 text-sm font-semibold border-2 rounded-lg w-max" href="/categories">
+                    Back to shopping
+                  </Link>
+                </div>
               ) : (
                 Object.entries(cart).map(([itemKey, itemValue]) => (
                   <CartItem itemKey={itemKey} itemValue={itemValue} />
@@ -73,7 +78,7 @@ const Cart = () => {
           </div>
           <div className="border-l cart:border-l-0 cart:border-t  border-slate-200 pt-14 p-4 cart:w-full w-4/5 cart:p-1 cart:pt-4">
             <div className="p-2 border border-slate-300  mt-4 rounded-lg">
-              <div className="h-[220px] overflow-y-auto">
+              <div className="h-[] overflow-y-auto p-2">
                 {Object.entries(cart).map(([key, value]) => (
                   <CartItemDetails key={key} value={value} />
                 ))}

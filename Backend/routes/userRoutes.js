@@ -1,5 +1,6 @@
 const express = require('express')
-const { createUser, loginUser, resetPassword } = require('../controller/userController')
+const { createUser, loginUser, resetPassword, addAddress } = require('../controller/userController')
+const { authenticateToken } = require('../Middleware/auth')
 const router = express.Router()
 // FUNCTION TO AUTHORIZE USER 
 
@@ -7,5 +8,6 @@ const router = express.Router()
 router.post('/createUser',createUser)
 router.post('/loginUser', loginUser)
 router.post('/resetPassword', resetPassword)
+router.post('/addAddress', authenticateToken, addAddress)
 
 module.exports = router

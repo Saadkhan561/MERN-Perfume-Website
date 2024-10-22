@@ -8,7 +8,7 @@ import {
   togglePinStatus,
   toggleProductStatus,
 } from "@/services/productService";
-import { loginUser, resetPassword, signupUser } from "@/services/userService";
+import { addAddress, loginUser, resetPassword, signupUser } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
 
 export const useLoginMutation = (options) => {
@@ -87,3 +87,10 @@ export const useResetPassword = (options) => {
     ...options,
   });
 };
+
+export const useAddAddress = (options) => {
+  return useMutation({
+    mutationFn: addAddress,
+    ...options
+  })
+}

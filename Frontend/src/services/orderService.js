@@ -23,3 +23,12 @@ export const changeOrderStatus = async (data) => {
     throw new Error(err.message);
   }
 };
+
+export const getUserOrders = async (params) => {
+  try {
+    const res = await axiosInstance.get(`/getUserOrder?userId=${params.userId}&limit=${params.limit}`);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};

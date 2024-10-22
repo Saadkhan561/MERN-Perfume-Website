@@ -4,7 +4,6 @@ import Layout from "@/layout/layout";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 const Products = () => {
@@ -52,7 +51,6 @@ const Products = () => {
               ) : products?.message ? (
                 <div className="flex justify-center items-center w-full h-full">
                   <div className="flex justify-center p-4 gap-2 items-center">
-                    <p>404</p>
                     <p>{products.message}</p>
                   </div>
                 </div>

@@ -11,6 +11,8 @@ const userSchema = mongoose.Schema({
     },
   },
   phone: { type: Number, required: true },
+  address: { type: String, default: undefined },
+  city: { type: String, default: undefined },
   role: { type: String, default: "user" },
   isGuest: { type: Boolean, default: false },
   passwordResetToken: { type: String, default: undefined },

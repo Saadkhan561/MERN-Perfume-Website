@@ -1,4 +1,4 @@
-import { getOrders } from "@/services/orderService";
+import { getOrders, getUserOrders } from "@/services/orderService";
 import {
   fetchAllCategories,
   fetchAllproducts,
@@ -80,5 +80,13 @@ export const useFetchOrders = (params, options) => {
     ...options,
     queryKey: ["orders", params],
     queryFn: () => getOrders(params)
+  })
+}
+
+export const useGetUserOrders = (params,options) => {
+  return useQuery({
+    ...options,
+    queryKey: ["user_orders", params],
+    queryFn: () => getUserOrders(params)
   })
 }

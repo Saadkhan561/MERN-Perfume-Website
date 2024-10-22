@@ -1,45 +1,76 @@
+import { useGetUserOrders } from "@/hooks/query";
 import Layout from "@/layout/layout";
+import useUserStore from "@/store/user";
 import { Pencil } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 const Account = () => {
+  const [limit, setLimit] = useState(5);
+  const { currentUser } = useUserStore();
+  const { data: orders, isLoading: isOrdersLoading } = useGetUserOrders(
+    currentUser?.user?._id && {
+      userId: currentUser?.user?._id,
+      limit: limit,
+    }
+  );
+
   return (
     <Layout>
       <div className="flex justify-center w-full">
         <div className="w-4/5 p-10 flex flex-col gap-10 h-screen">
           <p className="text-5xl">My Account</p>
           <div className="flex">
-            <div className="w-full font-semibold">
+            <div className="w-full  font-semibold ">
               <div className="text-xl">My Order History</div>
-              <div className="border mt-4 text-sm border-slate-200 p-4 rounded-lg flex justify-between items-center">
-                <div>Order Id: 1241352352341</div>
-                <button className="text-center text-sm border border-slate-300 hover:bg-slate-100 duration-200 p-1 rounded-lg cursor-pointer font-normal">
-                  View Details
-                </button>
+              <div className="overflow-y-auto h-[430px] p-4">
+                {isOrdersLoading ? (
+                  <div>Loading...</div>
+                ) : (
+                  orders?.orders?.map((order) => (
+                    <div
+                      key={order._id}
+                      className="border shadow-sm mt-4 text-sm border-slate-200 p-4 rounded-lg flex justify-between items-center"
+                    >
+                      <p>
+                        Order Id :{" "}
+                        <span className="font-normal">{order._id}</span>
+                      </p>
+                      <button className="text-center bg-black text-white font-normal px-2 rounded-lg p-1">
+                        View Details
+                      </button>
+                    </div>
+                  ))
+                )}
               </div>
-              <div className="border mt-4 text-sm border-slate-200 p-4 rounded-lg flex justify-between items-center">
-                <div>Order Id: 1241352352341</div>
-                <button className="text-center text-sm border border-slate-300 hover:bg-slate-100 duration-200 p-1 rounded-lg cursor-pointer font-normal">
-                  View Details
-                </button>
-              </div>
-              <div className="border mt-4 text-sm border-slate-200 p-4 rounded-lg flex justify-between items-center">
-                <div>Order Id: 1241352352341</div>
-                <button className="text-center text-sm border border-slate-300 hover:bg-slate-100 duration-200 p-1 rounded-lg cursor-pointer font-normal">
-                  View Details
+              <div className="w-full text-center">
+                <button
+                  onClick={() => setLimit(limit + 5)}
+                  className="w-max text-center rounded-lg p-1 border-2"
+                >
+                  Load more...
                 </button>
               </div>
             </div>
             <div className="w-full flex flex-col items-end gap-2 ml-10">
-              <div>
+              <div className="flex flex-col gap-2">
                 <p className="text-3xl font-semibold mb-5">Account Details</p>
-                <p className="text-lg font-semibold">Saad Nadeem Khan</p>
-                <p>Karachi, Pakistan.</p>
-                <div className="flex gap-2 items-center">
-                    <p>Address: </p>
-                  <p>H-353 Sabir Colony, Malir.</p>
-                  <Pencil className="h-4 w-4 cursor-pointer" />
-                </div>
+                <p className="text-lg font-semibold">
+                  {currentUser.user.first_name} {currentUser.user.last_name}
+                </p>
+                {currentUser.address ? (
+                  <div>
+                    <p>Karachi, Pakistan.</p>
+                    <div className="flex gap-2 items-center">
+                      <p>Address: </p>
+                      <p>H-353 Sabir Colony, Malir.</p>
+                      <Pencil className="h-4 w-4 cursor-pointer" />
+                    </div>
+                  </div>
+                ) : (
+                  <button className="p-1 rounded-lg border-2 border-black text-center font-semibold">
+                    Add address
+                  </button>
+                )}
               </div>
             </div>
           </div>

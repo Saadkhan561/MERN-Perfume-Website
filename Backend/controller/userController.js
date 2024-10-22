@@ -123,4 +123,17 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { createUser, loginUser, resetPassword };
+const addAddress = async(req, res) => {
+  const {userId, address, city} = req.body
+  try {
+    const user = await User.findOne({_id: userId})
+    user.address = address
+    user.city = city
+    await user.save()
+    return res.status(200).json({message: "Address updated"})
+  } catch(err){ 
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+module.exports = { createUser, loginUser, resetPassword, addAddress };

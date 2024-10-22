@@ -5,9 +5,10 @@ import * as yup from "yup";
 import { useSignupMutation } from "@/hooks/mutation";
 import { useRouter } from "next/router";
 
-import { Bounce, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
 import { MoonLoader } from "react-spinners";
+import { signupSchema } from "@/schema/registerSchema";
 
 const SignUp = () => {
   const [passHidden, setPassHidden] = useState(true);
@@ -19,24 +20,6 @@ const SignUp = () => {
     password: "",
     phone: "",
   };
-
-  const signupSchema = yup.object({
-    email: yup.string().email().required("Email is required"),
-    first_name: yup.string().required("First name is required"),
-    last_name: yup.string().required("Last name is required"),
-    password: yup
-      .string()
-      .min(8, "Password must be atleast 8 characters long")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-      )
-      .required("Password is required"),
-    phone: yup
-      .string()
-      .matches(/^\+?[\d\s\-()]{10,15}$/, "Phone number is not valid")
-      .required("Phone number is required"),
-  });
 
   const {
     register,
@@ -73,7 +56,7 @@ const SignUp = () => {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-4/5 pt-5 flex flex-col gap-5"
+        className={`w-4/5 pt-5 flex flex-col ${Object.keys(errors).length !== 0 ? "gap-3":"gap-5"}`}
       >
         <div className="flex flex-col gap-2">
           <label

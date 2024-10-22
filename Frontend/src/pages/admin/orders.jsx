@@ -237,7 +237,7 @@ const Orders = () => {
                 <ChevronLeft
                   onClick={() => {
                     if (skip > 0) {
-                      setSkip(skip - 2);
+                      setSkip(skip - 5);
                     }
                   }}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5"
@@ -254,7 +254,7 @@ const Orders = () => {
                 <ChevronLeft
                   onClick={() => {
                     if (orders.currentPage < orders.totalPages) {
-                      setSkip(skip + 2);
+                      setSkip(skip + 5);
                     }
                   }}
                   className=" border border-slate-300 cursor-pointer hover:bg-slate-200 duration-200 h-5 w-5 rotate-180"

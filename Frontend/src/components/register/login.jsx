@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import useUserStore from "@/store/user";
 import { MoonLoader } from "react-spinners";
+import { loginSchema } from "@/schema/registerSchema";
 
 const Login = () => {
   const [passHidden, setPassHidden] = useState(true);
@@ -15,11 +16,6 @@ const Login = () => {
     email: "",
     password: "",
   };
-
-  const loginSchema = yup.object({
-    email: yup.string().required("Email is required"),
-    password: yup.string().required("Password is required"),
-  });
 
   const {
     register,

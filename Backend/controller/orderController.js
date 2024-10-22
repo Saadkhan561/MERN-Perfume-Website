@@ -2,7 +2,6 @@ const Order = require("../models/orderModel");
 const { ObjectId } = require("mongodb");
 
 const placeOrder = async (req, res) => {
-  console.log(req.body);
   try {
     const order = await Order.create(req.body);
     //update quantity of products after placing order
@@ -12,7 +11,9 @@ const placeOrder = async (req, res) => {
     //     { $inc: { quantityAvailable: -item.quantity } }
     //   );
     // }
-    res.status(200).json("Your order has been placed");
+    res
+      .status(200)
+      .json({ message: "Your order has been placed", order: order });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -27,7 +28,7 @@ const updateOrder = async (req, res) => {
 };
 
 const getOrders = async (req, res) => {
-  const { searchTerm, skip = 0, limit = 2 } = req.query;
+  const { searchTerm, skip = 0, limit = 5 } = req.query;
 
   const pipeline = [
     {
@@ -146,15 +147,28 @@ const getOrders = async (req, res) => {
 };
 
 const getUserOrders = async (req, res) => {
-  //latest order first
+  const { userId, limit } = req.query;
+  const id = ObjectId.createFromHexString(userId);
+  const limitInt = parseInt(limit, 10);
+
+  const pipeline = [
+    {
+      $match: {
+        customer: id,
+      },
+    },
+    { $sort: { createdAt: -1 } },
+  ];
+
+  if (limitInt) {
+    pipeline.push({ $limit: limitInt });
+  }
   try {
-    const orders = await Orders.find({ customer: req.params.id }).sort({
-      createdAt: -1,
-    }); // Sort by createdAt in Descending order
+    const orders = await Order.aggregate(pipeline);
     if (orders.length <= 0) {
-      return res.json("You have no order");
+      return res.json({ message: "You have no orders..." });
     }
-    return res.json(orders);
+    return res.json({ message: "Orders", orders: orders });
   } catch (err) {
     return res.json(err);
   }
@@ -162,13 +176,10 @@ const getUserOrders = async (req, res) => {
 
 //change order Status and verify user on email/number
 const changeOrderStatus = async (req, res) => {
-  const {id, orderStatus} = req.body
+  const { id, orderStatus } = req.body;
   try {
-    await Order.updateOne(
-      { _id:id },
-      { $set: { orderStatus: orderStatus } }
-    );
-    return res.status(200).json({message: "Updated"});
+    await Order.updateOne({ _id: id }, { $set: { orderStatus: orderStatus } });
+    return res.status(200).json({ message: "Updated" });
   } catch (err) {
     return res.json(err);
   }

@@ -19,7 +19,7 @@ const Checkout = () => {
   const { currentUser } = useUserStore();
   const [totalAmount, setTotalAmount] = useState(0);
 
-  console.log(currentUser);
+  console.log(cart);
 
   useEffect(() => {
     const amount = Object.values(cart).reduce((total, item) => {
@@ -70,11 +70,10 @@ const Checkout = () => {
 
   const { mutate: placeOrder, isPending: isOrderPending } = usePlaceOrder({
     onSuccess(data) {
-      console.log(data);
       reset();
       clearCart();
       setTimeout(() => {
-        router.push("/success");
+        router.push(`/success?orderId=${data.order._id}`);
       }, 2000);
     },
     onError(error) {
@@ -134,9 +133,9 @@ const Checkout = () => {
       <div className="flex justify-center items-center w-full h-full">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className=" rounded-lg p-8 h-screen w-11/12"
+          className=" rounded-lg p-8 h-full sm:w-11/12 w-full"
         >
-          <div className="grid grid-cols-2 gap-8 p-4">
+          <div className="grid sm:grid-cols-2 grid-rows-2 gap-8 p-4">
             <div>
               <div className="text-3xl text-center mb-6 font-semibold">
                 Delivery Details
@@ -287,7 +286,8 @@ const Checkout = () => {
               </div>
             </div>
             <div className="flex flex-col justify-between">
-              <div>
+              <div className="flex flex-col gap-2">
+                <p className="text-2xl font-semibold">Item details</p>
                 {Object.entries(cart).map(([key, value]) => (
                   <CartItemDetails key={key} value={value} />
                 ))}
@@ -299,8 +299,8 @@ const Checkout = () => {
               <div className="flex gap-2 items-center w-full">
                 <button
                   type="submit"
-                  disabled={isOrderPending || isUserPending}
-                  className=" bg-black text-white text-base w-full font-semibold  hover:bg-gray-700 hover:cursor-pointer duration-200 flex justify-center mob_display:text-sm p-1"
+                  disabled={isOrderPending || isUserPending || Object.keys(cart).length === 0}
+                  className={` bg-black text-white text-base w-full font-semibold duration-200 flex justify-center mob_display:text-sm p-1 ${Object.keys(cart).length === 0 ? "opacity-50 ":"hover:bg-gray-700  hover:cursor-pointer "}`}
                 >
                   {isOrderPending || isUserPending ? (
                     <MoonLoader size={15} color="white" />

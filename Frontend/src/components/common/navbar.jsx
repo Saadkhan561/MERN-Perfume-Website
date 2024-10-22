@@ -47,8 +47,6 @@ const Navbar = () => {
 
   const { cart } = useCartStore();
 
-  console.log(currentUser)
-
   return (
     <nav className="w-4/5 mob_display:w-11/12">
       <div className="flex justify-around items-center p-2 mob_display:hidden">

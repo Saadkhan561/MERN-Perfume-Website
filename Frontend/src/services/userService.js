@@ -28,3 +28,12 @@ export const resetPassword = async (data) => {
     throw err.response.data.error;
   }
 };
+
+export const addAddress = async(data) => {
+  try{
+    const res = await axiosInstance.post(`${BASE_URL}/addAddress`, data)
+    return res.data
+  } catch(err){
+    throw err.response.data.error
+  }
+}

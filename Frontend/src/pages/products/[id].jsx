@@ -27,14 +27,16 @@ const ProductDetails = () => {
   const id = router.query.id;
   const { data: product, isLoading: isProductLoading } =
     useFetchProductById(id);
-  console.log(typeof product?.category);
 
   const categoryId = product?.category;
-  const { data: products, isLoading: isProductsLoading } = useFetchAllProducts({
-    categoryId: categoryId,
-  });
-  console.log(products);
-  
+  const { data: products, isLoading: isProductsLoading } = useFetchAllProducts(
+    categoryId
+      ? {
+          categoryId: categoryId,
+        }
+      : null
+  );
+
   const { data: productImages } = useFetchProductImages({
     category: product?.categoryDetails.name,
     productName: product?.name,
@@ -128,9 +130,11 @@ const ProductDetails = () => {
                     <p className="text-3xl mob_display:text-xl font-semibold">
                       {product.name}
                     </p>
-                    <p className="text-red-500 font-semibold">
-                      {product.options[amount].discount} % Off
-                    </p>
+                    {product.options[amount].discount !== 0 && (
+                      <p className="text-red-500 font-semibold">
+                        {product.options[amount].discount} % Off
+                      </p>
+                    )}
                   </div>
                   <div className="text-lg  text-slate-600 mob_display:text-base flex flex-col">
                     {product.options[amount].discount !== 0 ? (
@@ -226,23 +230,27 @@ const ProductDetails = () => {
           </div>
         </div>
         {/* RECOMMENDATIONS DIV */}
-        {/* <div>
+        <div>
           <div className="text-3xl mob_display_product:text-center">
             More Recommendations
           </div>
           <div className="flex gap-5 flex-wrap p-4 mt-8 mob_display_product:flex-col">
-            {products?.map((item) => (
-              <div>
-                <Card
-                  key={item._id}
-                  id={item._id}
-                  product={item}
-                  category={item.categoryDetails.name}
-                />
-              </div>
-            ))}
+            {isProductsLoading ? (
+              <div>Loading...</div>
+            ) : (
+              products[0]?.products?.map((item) => (
+                <div>
+                  <Card
+                    key={item._id}
+                    id={item._id}
+                    product={item}
+                    category={item.categoryDetails.name}
+                  />
+                </div>
+              ))
+            )}
           </div>
-        </div> */}
+        </div>
       </div>
     </Layout>
   );
