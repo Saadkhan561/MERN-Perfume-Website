@@ -10,8 +10,21 @@ const useUserStore = create(
       // cart: {}
       currentUser: null,
       isLoading: true,
-      addUserInfo: (newUserInfo) => set(() => ({ currentUser: newUserInfo, isLoading: false })),
-      deleteUserInfo: () => set(() => ({ currentUser: null, isLoading: false })),
+      addUserInfo: (newUserInfo) =>
+        set(() => ({ currentUser: newUserInfo, isLoading: false })),
+      deleteUserInfo: () =>
+        set(() => ({ currentUser: null, isLoading: false })),
+      addUserAddress: (addressObj) =>
+        set((state) => ({
+          currentUser: {
+            ...state.currentUser, 
+            user: {
+              ...state.currentUser?.user, 
+              address: addressObj.address,
+              city: addressObj.city 
+            },
+          },
+        })),
     }),
     { name: "current-user" }
   )

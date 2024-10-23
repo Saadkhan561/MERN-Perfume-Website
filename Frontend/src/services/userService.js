@@ -31,7 +31,7 @@ export const resetPassword = async (data) => {
 
 export const addAddress = async(data) => {
   try{
-    const res = await axiosInstance.post(`${BASE_URL}/addAddress`, data)
+    const res = await axiosInstance.put(`${BASE_URL}/addAddress`, data)
     return res.data
   } catch(err){
     throw err.response.data.error

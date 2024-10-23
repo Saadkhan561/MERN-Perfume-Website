@@ -6,6 +6,7 @@ const {
   getUserOrders,
   getOrders,
   changeOrderStatus,
+  getUserOrderById,
 } = require("../controller/orderController");
 const { authenticateToken, isAdmin } = require("../Middleware/auth");
 const router = express.Router();
@@ -16,5 +17,6 @@ router.delete("/cancelOrder/:id", authenticateToken, cancelOrder);
 router.get("/getUserOrder", authenticateToken, getUserOrders);
 router.get("/getOrders", authenticateToken, getOrders);
 router.put("/orderStatus", authenticateToken, isAdmin, changeOrderStatus);
+router.get("/getUserOrderById", authenticateToken, getUserOrderById);
 
 module.exports = router;

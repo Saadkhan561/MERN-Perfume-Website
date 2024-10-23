@@ -130,7 +130,7 @@ const addAddress = async(req, res) => {
     user.address = address
     user.city = city
     await user.save()
-    return res.status(200).json({message: "Address updated"})
+    return res.status(200).json({message: "Address updated", userAddress: {address: user.address, city: user.city}})
   } catch(err){ 
     return res.status(500).json({ error: err.message });
   }

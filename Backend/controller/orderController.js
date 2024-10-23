@@ -185,6 +185,16 @@ const changeOrderStatus = async (req, res) => {
   }
 };
 
+const getUserOrderById = async(req, res) => {
+  const orderId = await Object.createFromHexString(req.query.orderId)
+  try {
+    const order = await Order.findOne({_id: orderId})
+    return res.status(200).json(order)
+  } catch(err) {
+    return res.status(500).json(err)
+  }
+}
+
 module.exports = {
   placeOrder,
   cancelOrder,
@@ -192,4 +202,5 @@ module.exports = {
   getOrders,
   getUserOrders,
   changeOrderStatus,
+  getUserOrderById
 };
