@@ -185,15 +185,70 @@ const changeOrderStatus = async (req, res) => {
   }
 };
 
-const getUserOrderById = async(req, res) => {
-  const orderId = await Object.createFromHexString(req.query.orderId)
+const getUserOrderById = async (req, res) => {
+  const orderId = ObjectId.createFromHexString(req.query.orderId);
+
+  const pipeline = [
+    {
+      $match: { _id: orderId },
+    },
+    {
+      $unwind: "$products", 
+    },
+    {
+      $lookup: {
+        from: "perfume_products",
+        localField: "products.product", 
+        foreignField: "_id",
+        as: "productDetails",
+      },
+    },
+    {
+      $unwind: "$productDetails", 
+    },
+    {
+      $lookup: {
+        from: "perfume_categories",
+        localField: "productDetails.category",
+        foreignField: "_id",
+        as: "categoryDetails", 
+      },
+    },
+    {
+      $unwind: "$categoryDetails", 
+    },
+    {
+      $group: {
+        _id: "$_id", 
+        products: {
+          $push: {
+            product_id: "$productDetails._id",
+            name: "$productDetails.name",
+            category: "$productDetails.category",
+            category_name: "$categoryDetails.name", 
+            quantity: "$products.quantity",
+            option: "$products.option",
+            price: "$products.price",
+          },
+        },
+        customer: { $first: "$customer" },
+        totalAmount: { $first: "$totalAmount" },
+        discount: { $first: "$discount" },
+        orderStatus: { $first: "$orderStatus" },
+        shippingAddress: { $first: "$shippingAddress" },
+        createdAt: { $first: "$createdAt" },
+        updatedAt: { $first: "$updatedAt" },
+      },
+    },
+  ];
+
   try {
-    const order = await Order.findOne({_id: orderId})
-    return res.status(200).json(order)
-  } catch(err) {
-    return res.status(500).json(err)
+    const order = await Order.aggregate(pipeline);
+    return res.status(200).json(order);
+  } catch (err) {
+    return res.status(500).json(err);
   }
-}
+};
 
 module.exports = {
   placeOrder,
@@ -202,5 +257,5 @@ module.exports = {
   getOrders,
   getUserOrders,
   changeOrderStatus,
-  getUserOrderById
+  getUserOrderById,
 };

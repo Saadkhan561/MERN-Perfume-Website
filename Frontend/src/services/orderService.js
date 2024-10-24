@@ -32,3 +32,12 @@ export const getUserOrders = async (params) => {
     throw new Error(err.message);
   }
 };
+
+export const getUserOrderById = async(params) => {
+  try {
+    const res = await axiosInstance.get(`/getUserOrderById?orderId=${params.orderId}`)
+    return res.data
+  } catch(err) {
+    throw new Error(err.message)
+  }
+} 

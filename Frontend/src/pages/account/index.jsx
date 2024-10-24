@@ -13,7 +13,6 @@ const Account = () => {
   const [addressForm, setAddressForm] = useState(false);
   const { currentUser } = useUserStore();
 
-  // console.log(currentUser)
 
   const { data: orders, isLoading: isOrdersLoading } = useGetUserOrders(
     currentUser?.user?._id && {
@@ -60,9 +59,10 @@ const Account = () => {
                         <span className="font-normal">{order._id}</span>
                       </p>
                       <Dialog
+                    
                         onOpenChange={(isOpen) => {
                           if (!isOpen) {
-                            clearQueryParam(); // Clear query param when dialog is closed
+                            clearQueryParam(); 
                           }
                         }}
                       >

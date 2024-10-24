@@ -1,4 +1,8 @@
-import { getOrders, getUserOrders } from "@/services/orderService";
+import {
+  getOrders,
+  getUserOrderById,
+  getUserOrders,
+} from "@/services/orderService";
 import {
   fetchAllCategories,
   fetchAllproducts,
@@ -6,7 +10,7 @@ import {
   fetchProductById,
   fetchProductImages,
   fetchTrendingProducts,
-  searchResults
+  searchResults,
 } from "@/services/productService";
 import { fetchUser } from "@/services/userService";
 import { useQuery } from "@tanstack/react-query";
@@ -23,7 +27,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useFetchAllProducts = (params, options) => {
   return useQuery({
     ...options,
-    queryKey: ["products",params],
+    queryKey: ["products", params],
     queryFn: () => fetchAllproducts(params),
   });
 };
@@ -31,18 +35,18 @@ export const useFetchAllProducts = (params, options) => {
 export const useFetchNonFilteredProducts = (params, options) => {
   return useQuery({
     ...options,
-    queryFn:() => fetchNonFilteredProducts(params),
-    queryKey: ["Non filtered products", params]
-  })
-}
+    queryFn: () => fetchNonFilteredProducts(params),
+    queryKey: ["Non filtered products", params],
+  });
+};
 
 export const useFetchTrendingProducts = (options) => {
   return useQuery({
     ...options,
     queryKey: ["trendingProducts"],
-    queryFn: fetchTrendingProducts
-  })
-}
+    queryFn: fetchTrendingProducts,
+  });
+};
 
 export const useFetchAllCategories = (options) => {
   return useQuery({
@@ -55,38 +59,46 @@ export const useFetchProductById = (id, options) => {
   return useQuery({
     ...options,
     queryKey: ["product", id],
-    queryFn: () => fetchProductById(id)
-  })
-}
+    queryFn: () => fetchProductById(id),
+  });
+};
 
 export const useFetchProductImages = (params, options) => {
   return useQuery({
     ...options,
     queryKey: ["product_images", params.category, params.productName],
     queryFn: () => fetchProductImages(params),
-  })
-}
+  });
+};
 
-export const useFetchSearchResults = (param, options) =>  {
+export const useFetchSearchResults = (param, options) => {
   return useQuery({
     ...options,
     queryKey: ["searchResults", param],
-    queryFn: () => searchResults(param)
-  })
-}
+    queryFn: () => searchResults(param),
+  });
+};
 
 export const useFetchOrders = (params, options) => {
   return useQuery({
     ...options,
     queryKey: ["orders", params],
-    queryFn: () => getOrders(params)
-  })
-}
+    queryFn: () => getOrders(params),
+  });
+};
 
-export const useGetUserOrders = (params,options) => {
+export const useGetUserOrders = (params, options) => {
   return useQuery({
     ...options,
     queryKey: ["user_orders", params],
-    queryFn: () => getUserOrders(params)
-  })
-}
+    queryFn: () => getUserOrders(params),
+  });
+};
+
+export const useGetUserOrderById = (params, options) => {
+  return useQuery({
+    ...options,
+    queryKey: ["user_single_order", params],
+    queryFn: () => getUserOrderById(params),
+  });
+};
