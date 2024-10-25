@@ -9,8 +9,8 @@ const OrderItemCard = ({ product, productName, category }) => {
   });
 
   return (
-    <div className="p-2 rounded-lg border w-[250px] xl:w-[300px] bg-white flex h-max gap-2 shadow-md">
-      <div className="flex justify-center h-[100px] xl:h-[150px] w-[100px] xl:w-[150px]">
+    <div className="p-2 rounded-lg border md:w-[250px] lg:w-[300px] w-full bg-white flex h-max gap-2 shadow-md">
+      <div className="flex justify-center h-[100px] lg:h-[130px] xl:h-[150px] w-[100px] lg:w-[130px] xl:w-[150px]">
         <Image
           className="group-hover:opacity-90 duration-200 p-1"
           src={`data:image/jpeg;base64,${productImages && productImages[0]}`}
@@ -21,8 +21,8 @@ const OrderItemCard = ({ product, productName, category }) => {
         />
       </div>
       <div>
-        <p className="font-semibold text-lg">{product.name}</p>
-        <p className="text-gray-500 "> Rs. {product.price}</p>
+        <p className="font-semibold text-sm md:text-lg">{product.name}</p>
+        <p className="text-gray-500 text-xs md:text-sm"> Rs. {product.price}</p>
         <p className="text-gray-500 text-sm">({product.option} ml)</p>
       </div>
     </div>

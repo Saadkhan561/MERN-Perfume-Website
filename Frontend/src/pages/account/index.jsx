@@ -13,7 +13,6 @@ const Account = () => {
   const [addressForm, setAddressForm] = useState(false);
   const { currentUser } = useUserStore();
 
-
   const { data: orders, isLoading: isOrdersLoading } = useGetUserOrders(
     currentUser?.user?._id && {
       userId: currentUser?.user?._id,
@@ -39,30 +38,29 @@ const Account = () => {
 
   return (
     <Layout>
-      <div className="flex justify-center w-full">
-        <div className="w-4/5 p-10 flex flex-col gap-10 h-screen">
+      <div className="flex justify-center w-full ">
+        <div className="sm:w-11/12 w-full p-10 flex flex-col gap-10 h-full">
           <p className="text-5xl">My Account</p>
-          <div className="flex">
+          <div className="flex lg:flex-row flex-col-reverse lg:gap-0 gap-14">
             <div className="w-full  font-semibold ">
               <div className="text-xl">My Order History</div>
-              <div className="overflow-y-auto max-h-[430px] p-4">
+              <div className="overflow-y-auto max-h-[430px] sm:p-4 p-2">
                 {isOrdersLoading ? (
                   <div>Loading...</div>
                 ) : (
                   orders?.orders?.map((order) => (
                     <div
                       key={order._id}
-                      className="border shadow-sm mt-4 text-sm border-slate-200 p-4 rounded-lg flex justify-between items-center"
+                      className="border shadow-sm mt-4 text-sm border-slate-200  sm:p-4 p-2 rounded-lg flex justify-between items-center"
                     >
                       <p>
                         Order Id :{" "}
                         <span className="font-normal">{order._id}</span>
                       </p>
                       <Dialog
-                    
                         onOpenChange={(isOpen) => {
                           if (!isOpen) {
-                            clearQueryParam(); 
+                            clearQueryParam();
                           }
                         }}
                       >
@@ -85,15 +83,17 @@ const Account = () => {
                 )}
               </div>
               <div className="w-full text-center">
-                <button
-                  onClick={() => setLimit(limit + 5)}
-                  className="w-max text-center rounded-lg p-1 border-2"
-                >
-                  Load more...
-                </button>
+                {orders?.load && (
+                  <button
+                    onClick={() => setLimit(limit + 5)}
+                    className="w-max text-center rounded-lg p-1 border-2"
+                  >
+                    Load more...
+                  </button>
+                )}
               </div>
             </div>
-            <div className="w-full flex flex-col items-end gap-2 ml-10">
+            <div className="w-full flex flex-col items-start lg:items-end gap-2 md:ml-10 lg-0">
               <div className="flex flex-col gap-2">
                 <p className="text-3xl font-semibold mb-5">Account Details</p>
                 <p className="text-lg font-semibold">

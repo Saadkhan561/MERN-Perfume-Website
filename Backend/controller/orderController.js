@@ -160,15 +160,21 @@ const getUserOrders = async (req, res) => {
     { $sort: { createdAt: -1 } },
   ];
 
+  
   if (limitInt) {
     pipeline.push({ $limit: limitInt });
   }
   try {
+    const orderCount = await Order.find({customer: id})
     const orders = await Order.aggregate(pipeline);
     if (orders.length <= 0) {
       return res.json({ message: "You have no orders..." });
     }
+   if (orders.length < orderCount.length) {
+    return res.json({ message: "Orders", orders: orders, load: true });
+   } else {
     return res.json({ message: "Orders", orders: orders });
+   }
   } catch (err) {
     return res.json(err);
   }

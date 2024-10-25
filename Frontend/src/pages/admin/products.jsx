@@ -32,6 +32,8 @@ import {
 } from "@/hooks/mutation";
 import { ClipLoader } from "react-spinners";
 import useUserStore from "@/store/user";
+import { useRouter } from "next/router";
+import ProductEditForm from "@/components/adminPanel/productEditForm";
 
 const Products = () => {
   const [filterDropdown, setFilterDropdown] = useState(false);
@@ -219,6 +221,22 @@ const Products = () => {
     }
   };
 
+  const router = useRouter();
+
+  const clearQueryParam = () => {
+    const updatedQuery = { ...router.query };
+    delete updatedQuery.id;
+
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: updatedQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
+
   return (
     <AdminLayout>
       <div className="p-4 bg-slate-200 h-full ">
@@ -395,16 +413,37 @@ const Products = () => {
                                   className="flex items-center gap-3"
                                 >
                                   <p>{value.quantityAvailable}</p>
-                                  <Pencil
-                                    onClick={() =>
-                                      handleRestock(
-                                        index,
-                                        option,
-                                        value.quantityAvailable
-                                      )
-                                    }
-                                    className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
-                                  />
+                                  <Dialog
+                                    onOpenChange={(isOpen) => {
+                                      if (!isOpen) {
+                                        clearQueryParam();
+                                      }
+                                    }}
+                                    className="w-4/5"
+                                  >
+                                    <DialogTrigger asChild>
+                                      <Pencil
+                                        // onClick={() =>
+                                        //   handleRestock(
+                                        //     index,
+                                        //     option,
+                                        //     value.quantityAvailable
+                                        //   )
+                                        // }
+                                        onClick={() =>
+                                          router.push(
+                                            `?id=${product._id}`,
+                                            undefined,
+                                            {
+                                              shallow: true,
+                                            }
+                                          )
+                                        }
+                                        className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
+                                      />
+                                    </DialogTrigger>
+                                    <ProductEditForm />
+                                  </Dialog>
                                 </div>
                               );
                             }
@@ -515,7 +554,7 @@ const Products = () => {
                                         id: product._id,
                                         discount: discountVal,
                                         role: role,
-                                        option: option
+                                        option: option,
                                       })
                                     }
                                     className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-blue-500"
@@ -545,7 +584,13 @@ const Products = () => {
                                     <p className="text-xl">-</p>
                                   )}
                                   <Pencil
-                                    onClick={() => handleDiscount(index, option, value.discount)}
+                                    onClick={() =>
+                                      handleDiscount(
+                                        index,
+                                        option,
+                                        value.discount
+                                      )
+                                    }
                                     className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
                                   />
                                 </div>
