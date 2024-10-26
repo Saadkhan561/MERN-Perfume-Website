@@ -9,8 +9,8 @@ import useUserStore from "@/store/user";
 
 const ProductEditForm = ({ refetchProducts }) => {
   const router = useRouter();
-  const {currentUser} = useUserStore()
-  const role = currentUser?.user.role
+  const { currentUser } = useUserStore();
+  const role = currentUser?.user.role;
 
   const { data: product, isLoading: isProductLoading } = useFetchProductById(
     router.query.id && router.query.id
@@ -57,6 +57,22 @@ const ProductEditForm = ({ refetchProducts }) => {
         toast.error(err.error);
       },
     });
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      editProduct({
+        id: product?._id,
+        option: option,
+        price: priceInputVal,
+        quantity: restockInputVal,
+        discount: discountVal,
+        status: pinnedStatus,
+        productStatus: productStatus,
+        role: role,
+      });
+    }
+  };
   return (
     <DialogContent className="bg-white w-max h-max font-sans">
       <div className="mt-4  flex flex-col gap-8">
@@ -146,9 +162,10 @@ const ProductEditForm = ({ refetchProducts }) => {
                 discount: discountVal,
                 status: pinnedStatus,
                 productStatus: productStatus,
-                role: role
+                role: role,
               })
             }
+            onKeyDown={handleKeyPress}
           >
             {isEditProductPending ? (
               <div className="flex justify-center">

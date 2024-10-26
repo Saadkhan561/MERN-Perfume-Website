@@ -28,6 +28,7 @@ export const fetchNonFilteredProducts = async (params) => {
 };
 
 export const addProduct = async (data) => {
+  console.log(data)
   try {
     const res = await axiosInstance.post("/addProduct", data);
     return res.data;

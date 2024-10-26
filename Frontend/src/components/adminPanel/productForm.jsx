@@ -4,11 +4,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Bounce, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { productFormSchema } from "@/validationSchema/productFormSchema";
-import { Plus, Trash, X } from "lucide-react";
+import { Minus, Plus, Trash, X } from "lucide-react";
 import { useAddProduct } from "@/hooks/mutation";
 import { ClipLoader } from "react-spinners";
+import { useFetchAllCategories } from "@/hooks/query";
 
 const ProductForm = () => {
+  const [newCategory, setNewCategory] = useState(false);
   const [options, setOptions] = useState({});
   const [newOption, setNewOption] = useState({
     amount: "",
@@ -17,7 +19,9 @@ const ProductForm = () => {
   });
   const [optionError, setOptionError] = useState(null);
 
-  console.log(options, optionError)
+  // QUERY TO FETCH ALL CATEGORIES
+  const { data: categories, isLoading: isCategoriesLoading } =
+    useFetchAllCategories();
 
   const [images, setImages] = useState([]);
   const [imgError, setImgError] = useState(null);
@@ -68,10 +72,12 @@ const ProductForm = () => {
     handleSubmit,
     reset,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: yupResolver(productFormSchema),
   });
   const onSubmit = (data) => {
+    console.log(data);
     if (images.length === 0) {
       setImgError("Please upload at least one image");
       return;
@@ -167,7 +173,7 @@ const ProductForm = () => {
   const validateImages = (files) => {
     if (files.length > 5) {
       setImgLengthError("Only three images must be uploaded for a product");
-      return false
+      return false;
     } else {
       setImgLengthError(null);
     }
@@ -183,6 +189,11 @@ const ProductForm = () => {
       }
     }
     return true;
+  };
+
+  const handleNewCategory = () => {
+    setNewCategory(!newCategory);
+    setValue(category, "");
   };
 
   return (
@@ -233,12 +244,53 @@ const ProductForm = () => {
             >
               Enter category
             </label>
-            <input
-              className="product_input"
-              type="text"
-              id="category"
+            <select
               {...register("category")}
-            />
+              className={`product_input uppercase ${
+                newCategory
+                  ? "opacity-50 duration-200 cursor-default"
+                  : "cursor-pointer "
+              }`}
+              disabled={newCategory}
+            >
+              {categories?.map((category) => (
+                <option
+                  key={category._id}
+                  value={category.name}
+                  className="uppercase p-1 text-xs rounded-none rounded-t-none"
+                >
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            <hr />
+            <p className="text-center text-sm font-semibold">Or</p>
+            <hr />
+            <div className="flex gap-4 text-sm font-semibold">
+              <p>Add a new category</p>
+              <button
+                type="button"
+                className="p-1 rounded-lg border border-slate-300 bg-slate-100 cursor-pointer"
+                onClick={() => setNewCategory(!newCategory)}
+              >
+                {newCategory ? (
+                  <Minus size={15} className="text-blue-500" />
+                ) : (
+                  <Plus size={15} className="text-blue-500" />
+                )}
+              </button>
+            </div>
+            {newCategory && (
+              <div>
+                <input
+                  className="product_input"
+                  type="text"
+                  id="category"
+                  {...register("category")}
+                  placeholder="Enter new category"
+                />
+              </div>
+            )}
             {errors.category && (
               <p className="text-red-500 text-xs">{errors.category.message}</p>
             )}
@@ -321,9 +373,7 @@ const ProductForm = () => {
                       </td>
                     </tr>
                   ))}
-                  {optionError && (
-                    <p>{optionError}</p>
-                  )}
+                {optionError && <p>{optionError}</p>}
               </tbody>
             </table>
           )}
@@ -388,7 +438,13 @@ const ProductForm = () => {
             disabled={isPending}
             className="p-1 w-24 text-sm rounded-lg cursor-pointer text-center bg-black text-white "
           >
-            {isPending ? <ClipLoader size={15} color="white" /> : "Submit"}
+            {isPending ? (
+              <div className="flex justify-center">
+                <ClipLoader size={15} color="white" />
+              </div>
+            ) : (
+              "Submit"
+            )}
           </button>
         </div>
       </form>

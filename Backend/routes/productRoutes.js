@@ -25,20 +25,35 @@ const storage = multer.diskStorage({
     try {
       const category = await Category.findOne({ name: req.body.category });
       if (!category) {
-        console.log("Category not found");
-        return cb(new Error("Category not found"), null);
-      }
-      const uploadDir = path.join(
-        __dirname,
-        "../images",
-        category.name,
-        req.body.name
-      );
+        const { category } = req.body;
+        console.log("Creating new category");
+        // return cb(new Error("Category not found"), null);
+        const newCategory = await Category.create({
+          name: category,
+        });
+        const uploadDir = path.join(
+          __dirname,
+          "../images",
+          category,
+          req.body.name
+        );
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+      } else {
+        const uploadDir = path.join(
+          __dirname,
+          "../images",
+          category.name,
+          req.body.name
+        );
 
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
       }
-      cb(null, uploadDir);
     } catch (error) {
       console.error("Error fetching category:", error);
       cb(error, null);
@@ -61,7 +76,7 @@ router.get("/getProductById/:id", getProductById);
 router.get("/search", searchResults);
 
 router.put("/updateProduct/:id", authenticateToken, isAdmin, updateProduct);
-router.put("/editProduct", authenticateToken,isAdmin, editProduct);
+router.put("/editProduct", authenticateToken, isAdmin, editProduct);
 
 router.post("/addProduct", uploadImages.array("images", 3), postProduct);
 //router.post('/addProduct', authenticateToken, isAdmin, postProduct)

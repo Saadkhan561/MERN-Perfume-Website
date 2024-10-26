@@ -13,9 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronLeft, Filter, Pencil, Pin, Search, Trash } from "lucide-react";
+import { ChevronLeft, Filter,Pin, Search, } from "lucide-react";
 
-import { Bounce, toast } from "react-toastify";
 
 import {
   Dialog,
@@ -24,12 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ProductForm from "@/components/adminPanel/productForm";
-import {
-  useRestock,
-  useSetDiscount,
-  useTogglePinStatus,
-  useToggleProductStatus,
-} from "@/hooks/mutation";
+
 import { ClipLoader } from "react-spinners";
 import useUserStore from "@/store/user";
 import { useRouter } from "next/router";
@@ -39,28 +33,11 @@ const Products = () => {
   const [filterDropdown, setFilterDropdown] = useState(false);
   const [filterVal, setFilterVal] = useState(null);
 
-  // STATES FOR RESTOCK PRODUCT QUANTITY
-  // const [restock, setRestock] = useState(false);
-  // const [restockId, setRestockId] = useState(null);
-  // const [restockOption, setRestockOption] = useState(null);
-  // const [restockInputVal, setRestockInputVal] = useState(null);
-
-  // const [pinId, setPinId] = useState(null);
-  // const [deleteId, setDeleteId] = useState(null);
-
-  // STATES FOR SETTING PRODUCTS DISCOUNT
-  // const [discountVal, setDiscountVal] = useState(null);
-  // const [discountId, setDiscountId] = useState(null);
-  // const [discoutOption, setDiscountOption] = useState(null);
-
   const [skip, setSkip] = useState(0);
   const [searchVal, setSearchVal] = useState("");
 
   const [query, setQuery] = useState("");
 
-  const { currentUser } = useUserStore();
-  const accessToken = currentUser?.token;
-  const role = currentUser?.user.role;
 
   const {
     data: products,
@@ -74,144 +51,6 @@ const Products = () => {
 
   const { data: categories, isLoading: isCategoriesLoading } =
     useFetchAllCategories();
-
-  // const handleRestock = (index, option, value) => {
-  //   setRestockId(index);
-  //   setRestockOption(option);
-  //   setRestock(true);
-  //   setRestockInputVal(value);
-  // };
-
-  // const handleDiscount = (index, option, value) => {
-  //   setDiscountId(index);
-  //   setDiscountOption(option);
-  //   setDiscountVal(value);
-  // };
-
-  // MUTATION TO RESTOCK PRODUCT
-  // const { mutate: restockQuantity, isPending: isRestockPending } = useRestock({
-  //   onSuccess(data) {
-  //     refetchProducts();
-  //     setRestock(false);
-  //     toast.success(data.message, {
-  //       autoClose: 2000,
-  //       hideProgressBar: true,
-  //       closeOnClick: true,
-  //       pauseOnHover: false,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "dark",
-  //       transition: Bounce,
-  //     });
-  //   },
-  //   onError(error) {
-  //     console.log(error);
-  //     toast.error("Error occured" + error, {
-  //       autoClose: 1000,
-  //       hideProgressBar: true,
-  //       closeOnClick: true,
-  //       pauseOnHover: false,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "dark",
-  //       transition: Bounce,
-  //     });
-  //   },
-  // });
-
-  // MUTATION TO PIN PRODUCT
-  // const { mutate: togglePinStatus, isPending: isPinStatusPending } =
-  //   useTogglePinStatus({
-  //     onSuccess(data) {
-  //       toast.success(data.message, {
-  //         autoClose: 2000,
-  //         hideProgressBar: true,
-  //         closeOnClick: true,
-  //         pauseOnHover: false,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "dark",
-  //         transition: Bounce,
-  //       });
-  //       refetchProducts();
-  //     },
-  //     onError(error) {
-  //       console.log(error);
-  //       toast.error("Error occured" + error, {
-  //         autoClose: 1000,
-  //         hideProgressBar: true,
-  //         closeOnClick: true,
-  //         pauseOnHover: false,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "dark",
-  //         transition: Bounce,
-  //       });
-  //     },
-  //   });
-
-  // MUTATION TO INACTIVATE PRODUCT
-  // const { mutate: deleteProduct, isPending: isDeletePending } =
-  //   useToggleProductStatus({
-  //     onSuccess(data) {
-  //       toast.success(data.message, {
-  //         autoClose: 2000,
-  //         hideProgressBar: true,
-  //         closeOnClick: true,
-  //         pauseOnHover: false,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "dark",
-  //         transition: Bounce,
-  //       });
-  //       refetchProducts();
-  //     },
-  //     onError(error) {
-  //       console.log(error);
-  //       toast.error("Error occured", {
-  //         autoClose: 1000,
-  //         hideProgressBar: true,
-  //         closeOnClick: true,
-  //         pauseOnHover: false,
-  //         draggable: true,
-  //         progress: undefined,
-  //         theme: "dark",
-  //         transition: Bounce,
-  //       });
-  //     },
-  //   });
-
-  // MUTATION TO SET DISCOUNT
-  // const { mutate: setDiscount, isPending: isDiscountPending } = useSetDiscount({
-  //   onSuccess(data) {
-  //     toast.success(data.message, {
-  //       autoClose: 2000,
-  //       hideProgressBar: true,
-  //       closeOnClick: true,
-  //       pauseOnHover: false,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "dark",
-  //       transition: Bounce,
-  //     });
-  //     refetchProducts();
-  //     setDiscountId(null);
-  //     setDiscountVal(null);
-  //   },
-  //   onError(error) {
-  //     console.log(error);
-  //     toast.error("Error occured", {
-  //       autoClose: 1000,
-  //       hideProgressBar: true,
-  //       closeOnClick: true,
-  //       pauseOnHover: false,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "dark",
-  //       transition: Bounce,
-  //     });
-  //   },
-  // });
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
