@@ -143,11 +143,10 @@ const ProductForm = () => {
 
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
-
     // Validate the selected images before setting them in state
     if (validateImages(selectedFiles)) {
-      if (images.length + selectedFiles.length > 3) {
-        setImgLengthError("Only three images must be uploaded for a product");
+      if (images.length + selectedFiles.length > 5) {
+        setImgLengthError("Only five images must be uploaded for a product");
       } else {
         setImages((prev) => [...prev, ...selectedFiles]);
         setImgError(null);

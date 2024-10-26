@@ -1,6 +1,7 @@
 import { changeOrderStatus } from "@/services/orderService";
 import {
   addProduct,
+  editProduct,
   paymenyHook,
   placeOrder,
   restockQuantityAvailable,
@@ -46,33 +47,12 @@ export const useAddProduct = (options) => {
   });
 };
 
-export const useRestock = (options) => {
+export const useEditProduct = (options) => {
   return useMutation({
-    mutationFn: restockQuantityAvailable,
-    ...options,
-  });
-};
-
-export const useTogglePinStatus = (options) => {
-  return useMutation({
-    mutationFn: togglePinStatus,
-    ...options,
-  });
-};
-
-export const useToggleProductStatus = (options) => {
-  return useMutation({
-    mutationFn: toggleProductStatus,
-    ...options,
-  });
-};
-
-export const useSetDiscount = (options) => {
-  return useMutation({
-    mutationFn: setDiscount,
-    ...options,
-  });
-};
+    mutationFn: editProduct,
+    ...options
+  })
+}
 
 export const useChangeOrderStatus = (options) => {
   return useMutation({

@@ -40,18 +40,18 @@ const Products = () => {
   const [filterVal, setFilterVal] = useState(null);
 
   // STATES FOR RESTOCK PRODUCT QUANTITY
-  const [restock, setRestock] = useState(false);
-  const [restockId, setRestockId] = useState(null);
-  const [restockOption, setRestockOption] = useState(null);
-  const [restockInputVal, setRestockInputVal] = useState(null);
+  // const [restock, setRestock] = useState(false);
+  // const [restockId, setRestockId] = useState(null);
+  // const [restockOption, setRestockOption] = useState(null);
+  // const [restockInputVal, setRestockInputVal] = useState(null);
 
-  const [pinId, setPinId] = useState(null);
-  const [deleteId, setDeleteId] = useState(null);
+  // const [pinId, setPinId] = useState(null);
+  // const [deleteId, setDeleteId] = useState(null);
 
   // STATES FOR SETTING PRODUCTS DISCOUNT
-  const [discountVal, setDiscountVal] = useState(null);
-  const [discountId, setDiscountId] = useState(null);
-  const [discoutOption, setDiscountOption] = useState(null);
+  // const [discountVal, setDiscountVal] = useState(null);
+  // const [discountId, setDiscountId] = useState(null);
+  // const [discoutOption, setDiscountOption] = useState(null);
 
   const [skip, setSkip] = useState(0);
   const [searchVal, setSearchVal] = useState("");
@@ -75,143 +75,143 @@ const Products = () => {
   const { data: categories, isLoading: isCategoriesLoading } =
     useFetchAllCategories();
 
-  const handleRestock = (index, option, value) => {
-    setRestockId(index);
-    setRestockOption(option);
-    setRestock(true);
-    setRestockInputVal(value);
-  };
+  // const handleRestock = (index, option, value) => {
+  //   setRestockId(index);
+  //   setRestockOption(option);
+  //   setRestock(true);
+  //   setRestockInputVal(value);
+  // };
 
-  const handleDiscount = (index, option, value) => {
-    setDiscountId(index);
-    setDiscountOption(option);
-    setDiscountVal(value);
-  };
+  // const handleDiscount = (index, option, value) => {
+  //   setDiscountId(index);
+  //   setDiscountOption(option);
+  //   setDiscountVal(value);
+  // };
 
   // MUTATION TO RESTOCK PRODUCT
-  const { mutate: restockQuantity, isPending: isRestockPending } = useRestock({
-    onSuccess(data) {
-      refetchProducts();
-      setRestock(false);
-      toast.success(data.message, {
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-    },
-    onError(error) {
-      console.log(error);
-      toast.error("Error occured" + error, {
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-    },
-  });
+  // const { mutate: restockQuantity, isPending: isRestockPending } = useRestock({
+  //   onSuccess(data) {
+  //     refetchProducts();
+  //     setRestock(false);
+  //     toast.success(data.message, {
+  //       autoClose: 2000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "dark",
+  //       transition: Bounce,
+  //     });
+  //   },
+  //   onError(error) {
+  //     console.log(error);
+  //     toast.error("Error occured" + error, {
+  //       autoClose: 1000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "dark",
+  //       transition: Bounce,
+  //     });
+  //   },
+  // });
 
   // MUTATION TO PIN PRODUCT
-  const { mutate: togglePinStatus, isPending: isPinStatusPending } =
-    useTogglePinStatus({
-      onSuccess(data) {
-        toast.success(data.message, {
-          autoClose: 2000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-        });
-        refetchProducts();
-      },
-      onError(error) {
-        console.log(error);
-        toast.error("Error occured" + error, {
-          autoClose: 1000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-        });
-      },
-    });
+  // const { mutate: togglePinStatus, isPending: isPinStatusPending } =
+  //   useTogglePinStatus({
+  //     onSuccess(data) {
+  //       toast.success(data.message, {
+  //         autoClose: 2000,
+  //         hideProgressBar: true,
+  //         closeOnClick: true,
+  //         pauseOnHover: false,
+  //         draggable: true,
+  //         progress: undefined,
+  //         theme: "dark",
+  //         transition: Bounce,
+  //       });
+  //       refetchProducts();
+  //     },
+  //     onError(error) {
+  //       console.log(error);
+  //       toast.error("Error occured" + error, {
+  //         autoClose: 1000,
+  //         hideProgressBar: true,
+  //         closeOnClick: true,
+  //         pauseOnHover: false,
+  //         draggable: true,
+  //         progress: undefined,
+  //         theme: "dark",
+  //         transition: Bounce,
+  //       });
+  //     },
+  //   });
 
   // MUTATION TO INACTIVATE PRODUCT
-  const { mutate: deleteProduct, isPending: isDeletePending } =
-    useToggleProductStatus({
-      onSuccess(data) {
-        toast.success(data.message, {
-          autoClose: 2000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-        });
-        refetchProducts();
-      },
-      onError(error) {
-        console.log(error);
-        toast.error("Error occured", {
-          autoClose: 1000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          transition: Bounce,
-        });
-      },
-    });
+  // const { mutate: deleteProduct, isPending: isDeletePending } =
+  //   useToggleProductStatus({
+  //     onSuccess(data) {
+  //       toast.success(data.message, {
+  //         autoClose: 2000,
+  //         hideProgressBar: true,
+  //         closeOnClick: true,
+  //         pauseOnHover: false,
+  //         draggable: true,
+  //         progress: undefined,
+  //         theme: "dark",
+  //         transition: Bounce,
+  //       });
+  //       refetchProducts();
+  //     },
+  //     onError(error) {
+  //       console.log(error);
+  //       toast.error("Error occured", {
+  //         autoClose: 1000,
+  //         hideProgressBar: true,
+  //         closeOnClick: true,
+  //         pauseOnHover: false,
+  //         draggable: true,
+  //         progress: undefined,
+  //         theme: "dark",
+  //         transition: Bounce,
+  //       });
+  //     },
+  //   });
 
   // MUTATION TO SET DISCOUNT
-  const { mutate: setDiscount, isPending: isDiscountPending } = useSetDiscount({
-    onSuccess(data) {
-      toast.success(data.message, {
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-      refetchProducts();
-      setDiscountId(null);
-      setDiscountVal(null);
-    },
-    onError(error) {
-      console.log(error);
-      toast.error("Error occured", {
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        transition: Bounce,
-      });
-    },
-  });
+  // const { mutate: setDiscount, isPending: isDiscountPending } = useSetDiscount({
+  //   onSuccess(data) {
+  //     toast.success(data.message, {
+  //       autoClose: 2000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "dark",
+  //       transition: Bounce,
+  //     });
+  //     refetchProducts();
+  //     setDiscountId(null);
+  //     setDiscountVal(null);
+  //   },
+  //   onError(error) {
+  //     console.log(error);
+  //     toast.error("Error occured", {
+  //       autoClose: 1000,
+  //       hideProgressBar: true,
+  //       closeOnClick: true,
+  //       pauseOnHover: false,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "dark",
+  //       transition: Bounce,
+  //     });
+  //   },
+  // });
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -226,6 +226,7 @@ const Products = () => {
   const clearQueryParam = () => {
     const updatedQuery = { ...router.query };
     delete updatedQuery.id;
+    delete updatedQuery.option;
 
     router.replace(
       {
@@ -239,7 +240,7 @@ const Products = () => {
 
   return (
     <AdminLayout>
-      <div className="p-4 bg-slate-200 h-full ">
+      <div className="p-4 bg-slate-200 h-full">
         <div className="bg-white rounded-lg">
           <div className="flex items-center p-4 justify-between">
             <p className="text-xl">Products</p>
@@ -360,290 +361,75 @@ const Products = () => {
                       </TableCell>
                       <TableCell>
                         {Object.entries(product.options).map(
-                          ([option, value]) => {
-                            if (
-                              restock &&
-                              index === restockId &&
-                              option === restockOption
-                            ) {
-                              return (
-                                <div
-                                  key={option}
-                                  className="flex items-center gap-2 mb-1"
-                                >
-                                  <input
-                                    className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                    type="number"
-                                    value={restockInputVal}
-                                    onChange={(e) =>
-                                      setRestockInputVal(e.target.value)
-                                    }
-                                  />
-                                  <div className="text-xs text-white flex items-center gap-2">
-                                    <button
-                                      onClick={() =>
-                                        restockQuantity({
-                                          id: product._id,
-                                          option: option,
-                                          quantity: restockInputVal,
-                                        })
-                                      }
-                                      className="rounded-sm p-1 text-center cursor-pointer duration-200 bg-blue-500"
-                                      disabled={isRestockPending}
-                                    >
-                                      {isRestockPending ? (
-                                        <ClipLoader size={15} color="white" />
-                                      ) : (
-                                        "Done"
-                                      )}
-                                    </button>
-                                    <button
-                                      onClick={() => setRestock(false)}
-                                      className="rounded-sm p-1 text-center cursor-pointer bg-red-500 "
-                                    >
-                                      Cancel
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            } else {
-                              return (
-                                <div
-                                  key={option}
-                                  className="flex items-center gap-3"
-                                >
-                                  <p>{value.quantityAvailable}</p>
-                                  <Dialog
-                                    onOpenChange={(isOpen) => {
-                                      if (!isOpen) {
-                                        clearQueryParam();
-                                      }
-                                    }}
-                                    className="w-4/5"
-                                  >
-                                    <DialogTrigger asChild>
-                                      <Pencil
-                                        // onClick={() =>
-                                        //   handleRestock(
-                                        //     index,
-                                        //     option,
-                                        //     value.quantityAvailable
-                                        //   )
-                                        // }
-                                        onClick={() =>
-                                          router.push(
-                                            `?id=${product._id}`,
-                                            undefined,
-                                            {
-                                              shallow: true,
-                                            }
-                                          )
-                                        }
-                                        className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
-                                      />
-                                    </DialogTrigger>
-                                    <ProductEditForm />
-                                  </Dialog>
-                                </div>
-                              );
-                            }
-                          }
+                          ([option, value]) => (
+                            <div
+                              key={option}
+                              className="flex items-center gap-3"
+                            >
+                              <p>{value.quantityAvailable}</p>
+                            </div>
+                          )
                         )}
                       </TableCell>
                       <TableCell>
                         {product.pinned ? (
-                          <button
-                            onClick={() => {
-                              togglePinStatus({
-                                id: product._id,
-                                status: product.pinned,
-                              });
-                              setPinId(product._id);
-                            }}
-                            className="p-1 text-sm cursor-pointer bg-blue-500 text-white w-max rounded-lg"
-                            disabled={isPinStatusPending}
-                          >
-                            {isPinStatusPending && product._id === pinId ? (
-                              <ClipLoader size={15} color="white" />
-                            ) : (
-                              <div className="flex items-center gap-2">
-                                <p>Pinned</p>
-                                <Pin className="h-3 w-3 cursor-pointer" />
-                              </div>
-                            )}
-                          </button>
+                          <div className="flex items-center justify-between gap-1 w-20 p-1 rounded-lg bg-blue-700 text-white">
+                            <p>Pinned</p>
+                            <Pin size={12} />
+                          </div>
                         ) : (
-                          <button
-                            onClick={() => {
-                              togglePinStatus({
-                                id: product._id,
-                                status: product.pinned,
-                              });
-                              setPinId(product._id);
-                            }}
-                            className="p-1 text-sm cursor-pointer bg-slate-100 w-max rounded-lg"
-                            disabled={isPinStatusPending}
-                          >
-                            {isPinStatusPending && product._id === pinId ? (
-                              <ClipLoader size={15} color="black" />
-                            ) : (
-                              <div className="flex items-center gap-2">
-                                <p>Not pinned</p>
-                                <Pin className="h-3 w-3 cursor-pointer" />
-                              </div>
-                            )}
-                          </button>
+                          <p className="p-1 text-center rounded-lg w-20 border border-slate-300 bg-slate-100">
+                            Not pinned
+                          </p>
                         )}
                       </TableCell>
                       <TableCell className="w-max">
-                        <div className="hover:bg-slate-100 rounded-full duration-200 p-1 w-max">
-                          {isDeletePending && product._id === deleteId ? (
-                            <ClipLoader size={15} color="black" />
-                          ) : product.productStatus ? (
-                            <Trash
-                              disabled={isDeletePending}
-                              onClick={() => {
-                                deleteProduct({
-                                  id: product._id,
-                                  productStatus: product.productStatus,
-                                  token: accessToken,
-                                  role: role,
-                                });
-                                setDeleteId(product._id);
-                              }}
-                              className="h-4 w-4 cursor-pointer text-red-500"
-                            />
-                          ) : (
-                            <p
-                              onClick={() => {
-                                deleteProduct({
-                                  id: product._id,
-                                  productStatus: product.productStatus,
-                                  token: accessToken,
-                                  role: role,
-                                });
-                                setDeleteId(product._id);
-                              }}
-                              className="p-1 rounded-lg text-center text-white bg-red-500 cursor-pointer"
-                            >
-                              In active
-                            </p>
-                          )}
-                        </div>
+                        <p
+                          className={`p-1 rounded-lg ${
+                            product.productStatus
+                              ? "bg-blue-700 text-white"
+                              : "bg-slate-100 border border-slate-500 text-black"
+                          } text-sm w-20 text-center`}
+                        >
+                          {product.productStatus ? "Active" : "In Active"}
+                        </p>
                       </TableCell>
                       <TableCell>
                         {Object.entries(product.options).map(
-                          ([option, value]) => {
-                            if (
-                              index === discountId &&
-                              option === discoutOption
-                            ) {
-                              return (
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm "
-                                    value={discountVal}
-                                    type="text"
-                                    onChange={(e) =>
-                                      setDiscountVal(e.target.value)
-                                    }
-                                  />
-                                  <button
-                                    onClick={() =>
-                                      setDiscount({
-                                        id: product._id,
-                                        discount: discountVal,
-                                        role: role,
-                                        option: option,
-                                      })
-                                    }
-                                    className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-blue-500"
-                                  >
-                                    {isDiscountPending ? (
-                                      <ClipLoader size={15} color="white" />
-                                    ) : (
-                                      "Done"
-                                    )}
-                                  </button>
-                                  <button
-                                    onClick={() => setDiscountId(null)}
-                                    className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-red-500"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              );
-                            } else {
-                              return (
-                                <div className="flex items-center gap-4">
-                                  {value.discount ? (
-                                    <p className="text-sm font-semibold text-gray-600">
-                                      {value.discount}%
-                                    </p>
-                                  ) : (
-                                    <p className="text-xl">-</p>
-                                  )}
-                                  <Pencil
-                                    onClick={() =>
-                                      handleDiscount(
-                                        index,
-                                        option,
-                                        value.discount
-                                      )
-                                    }
-                                    className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
-                                  />
-                                </div>
-                              );
-                            }
-                          }
+                          ([option, value]) => (
+                            <p key={option}>
+                              {value.discount !== 0
+                                ? value.discount + " %"
+                                : "-"}
+                            </p>
+                          )
                         )}
-                        {/* {Object.entries(product.options).map(([option, value]) => )  (
-                          <div className="flex items-center gap-2">
-                            <input
-                              className="p-1 w-8 text-center focus:outline-slate-400 duration-200 border border-slate-300 rounded-md text-sm "
-                              value={discountVal}
-                              type="text"
-                              onChange={(e) => setDiscountVal(e.target.value)}
-                            />
+                      </TableCell>
+                      <TableCell>
+                        <Dialog
+                          onOpenChange={(isOpen) => {
+                            if (!isOpen) {
+                              clearQueryParam();
+                            }
+                          }}
+                          className="w-4/5"
+                        >
+                          <DialogTrigger asChild>
                             <button
                               onClick={() =>
-                                setDiscount({
-                                  id: product._id,
-                                  discount: discountVal,
-                                  role: role,
-                                })
+                                router.push(
+                                  `?id=${product._id}`,
+                                  undefined,
+                                  {
+                                    shallow: true,
+                                  }
+                                )
                               }
-                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-blue-500"
-                            >
-                              {isDiscountPending ? (
-                                <ClipLoader size={15} color="white" />
-                              ) : (
-                                "Done"
-                              )}
-                            </button>
-                            <button
-                              onClick={() => setDiscountId(null)}
-                              className="rounded-sm text-xs text-white p-1 text-center cursor-pointer duration-200 bg-red-500"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-4">
-                            {product.discount ? (
-                              <p className="text-sm font-semibold text-gray-600">
-                                {product.discount}%
-                              </p>
-                            ) : (
-                              <p className="text-xl">-</p>
-                            )}
-                            <Pencil
-                              onClick={() => setDiscountId(product._id)}
-                              className="h-3 w-3 cursor-pointer hover:bg-slate-100 duration-200"
-                            />
-                          </div>
-                        )} */}
+                              className="text-sm p-1 rounded-lg text-white text-center bg-blue-700 w-16"
+                            >Edit</button>
+                          </DialogTrigger>
+                          <ProductEditForm refetchProducts={refetchProducts} />
+                        </Dialog>
                       </TableCell>
                     </TableRow>
                   ))

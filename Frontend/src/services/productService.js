@@ -85,41 +85,15 @@ export const fetchTrendingProducts = async () => {
   }
 };
 
-export const restockQuantityAvailable = async (data) => {
+// SINGLE FUNCTION FOR EDITING PRODUCT FIELDS
+export const editProduct = async(data) => {
   try {
-    const res = await axiosInstance.put("/reStock", data);
-    return res.data;
-  } catch (err) {
-    throw new Error(err.msg);
+    const res = await axiosInstance.put("/editProduct", data)
+    return res.data
+  } catch(err) {
+    throw new Error(err)
   }
-};
-
-export const togglePinStatus = async (data) => {
-  try {
-    const res = await axiosInstance.put("/pinProduct", data);
-    return res.data;
-  } catch (err) {
-    throw new Error(err.msg);
-  }
-};
-
-export const toggleProductStatus = async (data) => {
-  try {
-    const res = await axiosInstance.put("/deleteProduct", data);
-    return res.data;
-  } catch (err) {
-    throw new Error(err.msg);
-  }
-};
-
-export const setDiscount = async (data) => {
-  try {
-    const res = await axiosInstance.put("/setDiscount", data);
-    return res.data;
-  } catch (err) {
-    throw new Error(err.msg);
-  }
-};
+} 
 
 export const fetchProductImages = async (data) => {
   if (data) {

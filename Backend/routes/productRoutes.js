@@ -9,13 +9,10 @@ const {
   updateProduct,
   searchResults,
   trendingProducts,
-  deleteProduct,
   getProductsByCategory,
-  reStock,
-  setDiscount,
-  pinProduct,
   getProductImages,
   getProducts,
+  editProduct,
 } = require("../controller/productController");
 const { authenticateToken, isAdmin } = require("../Middleware/auth");
 const path = require("path");
@@ -57,27 +54,14 @@ const uploadImages = multer({ storage: storage });
 router.get("/getProductsByCategory/:id", getProductsByCategory);
 router.get("/getProducts", getAllProducts);
 // FOR FETCHING NON FILTERED PRODUCTS
-router.get("/getAllProducts",authenticateToken, getProducts);
+router.get("/getAllProducts", authenticateToken, getProducts);
 router.get("/trendingProducts", trendingProducts);
 router.get("/images/:category/:productName", getProductImages);
 router.get("/getProductById/:id", getProductById);
 router.get("/search", searchResults);
 
 router.put("/updateProduct/:id", authenticateToken, isAdmin, updateProduct);
-router.put(
-  "/deleteProduct",
-  authenticateToken,
-  isAdmin,
-  deleteProduct
-);
-router.put("/reStock", reStock, authenticateToken, isAdmin);
-router.put(
-  "/setDiscount",
-  authenticateToken,
-  isAdmin,
-  setDiscount
-);
-router.put("/pinProduct", pinProduct);
+router.put("/editProduct", authenticateToken,isAdmin, editProduct);
 
 router.post("/addProduct", uploadImages.array("images", 3), postProduct);
 //router.post('/addProduct', authenticateToken, isAdmin, postProduct)

@@ -67,7 +67,7 @@ const getAllProducts = async (req, res) => {
     } else {
       pipeline.push({
         $project: {
-          products: 1, 
+          products: 1,
         },
       });
       const products = await Products.aggregate(pipeline);
@@ -395,50 +395,35 @@ const postProduct = async (req, res) => {
   }
 };
 
-const reStock = async (req, res) => {
-  const { id, option, quantity } = req.body;
+const editProduct = async (req, res) => {
+  const { id, option, price, quantity, discount, status, productStatus } =
+    req.body;
+  const productId = ObjectId.createFromHexString(id);
+
+  if (!id) {
+    return res.status(400).json({ message: "Product ID is required" });
+  }
+
   try {
+    const product = await Products.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
     await Products.updateOne(
-      { _id: id },
-      { $set: { [`options.${option}.quantityAvailable`]: quantity } }
-    );
-    return res.json({ message: "Updated" });
-  } catch (err) {
-    return res.json(err);
-  }
-};
-
-const setDiscount = async (req, res) => {
-    const { id, option, discount } = req.body;
-  try {
-    await Products.updateOne(
-      { _id: req.body.id },
-      { $set: { [`options.${option}.discount`]: discount } }
+      { _id: productId },
+      {
+        $set: {
+          [`options.${option}.quantityAvailable`]: quantity,
+          [`options.${option}.discount`]: discount,
+          [`options.${option}.price`]: price,
+          pinned: status,
+          productStatus: productStatus
+        },
+      }
     );
     return res.status(200).json({ message: "Updated" });
   } catch (err) {
-    return res.json(err);
-  }
-};
-
-const pinProduct = async (req, res) => {
-  const { id, status } = req.body;
-  try {
-    await Products.updateOne({ _id: id }, { pinned: !status });
-    return res.status(200).json({ message: "Updated" });
-  } catch (err) {
-    return res.json(err);
-  }
-};
-
-
-const deleteProduct = async (req, res) => {
-  const { id, productStatus } = req.body;
-  try {
-    await Products.updateOne({ _id: id }, { productStatus: !productStatus });
-    return res.status(200).json({ message: "Updated" });
-  } catch (err) {
-    return res.json(err);
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -580,11 +565,8 @@ module.exports = {
   getProductById,
   getProductsByCategory,
   getProductImages,
-  reStock,
-  pinProduct,
-  setDiscount,
   searchResults,
   trendingProducts,
-  deleteProduct,
   updateProduct,
+  editProduct,
 };
