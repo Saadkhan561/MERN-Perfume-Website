@@ -57,6 +57,18 @@ const Sidebar = () => {
             <p>Orders</p>
           </li>
         </Link>
+        <Link href={"/admin/categories"}>
+          <li
+            className={`sidebar_li   ${
+              pathName.includes("categories") && pathName.includes("categories")
+                ? "text-blue-600"
+                : ""
+            }`}
+          >
+            <ShoppingCart className="h-5 w-5" />
+            <p>Categories</p>
+          </li>
+        </Link>
         <div onClick={handleLogout} className="sidebar_li text-red-500">
           <LogOut className="h-4 w-4" />
           Logout

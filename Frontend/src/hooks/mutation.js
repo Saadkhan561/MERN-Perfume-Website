@@ -1,13 +1,10 @@
+import { addCategory, deleteCategory } from "@/services/categoryService";
 import { changeOrderStatus } from "@/services/orderService";
 import {
   addProduct,
   editProduct,
   paymenyHook,
   placeOrder,
-  restockQuantityAvailable,
-  setDiscount,
-  togglePinStatus,
-  toggleProductStatus,
 } from "@/services/productService";
 import { addAddress, loginUser, resetPassword, signupUser } from "@/services/userService";
 import { useMutation } from "@tanstack/react-query";
@@ -71,6 +68,20 @@ export const useResetPassword = (options) => {
 export const useAddAddress = (options) => {
   return useMutation({
     mutationFn: addAddress,
+    ...options
+  })
+}
+
+export const useAddCategory = (options) => {
+  return useMutation({
+    mutationFn: addCategory,
+    ...options
+  })
+}
+
+export const useDeleteCategory = ( options) =>{ 
+  return useMutation({
+    mutationFn: deleteCategory,
     ...options
   })
 }

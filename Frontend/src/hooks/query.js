@@ -1,3 +1,4 @@
+import { fetchCategoryById } from "@/services/categoryService";
 import {
   getOrders,
   getUserOrderById,
@@ -50,10 +51,19 @@ export const useFetchTrendingProducts = (options) => {
 
 export const useFetchAllCategories = (options) => {
   return useQuery({
+    ...options,
     queryKey: ["categories"],
     queryFn: fetchAllCategories,
   });
 };
+
+export const useFetchCategoryById = (params, options) => {
+  return useQuery({
+    ...options,
+    queryKey: ["category", params],
+    queryFn:() => fetchCategoryById(params)
+  })
+}
 
 export const useFetchProductById = (id, options) => {
   return useQuery({
@@ -102,3 +112,4 @@ export const useGetUserOrderById = (params, options) => {
     queryFn: () => getUserOrderById(params),
   });
 };
+

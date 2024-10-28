@@ -1,17 +1,19 @@
 import Card from "@/components/cards/product-card";
-import { useFetchAllCategories, useFetchAllProducts } from "@/hooks/query";
+import {
+  useFetchAllProducts,
+  useFetchCategoryById,
+} from "@/hooks/query";
 import Layout from "@/layout/layout";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 
 const Products = () => {
-  const [selected, setSelected] = useState(0);
   const categoryId = useSearchParams().get("id");
-
-  const { data: categories, isLoading: isCategoryLoading } =
-    useFetchAllCategories();
+  const { data: category } = useFetchCategoryById(
+    { id: categoryId }
+  );
 
   const { data: products, isLoading: isProductsLoading } = useFetchAllProducts({
     categoryId: categoryId,
@@ -35,7 +37,7 @@ const Products = () => {
                   Home
                 </Link>
                 <p>&gt;</p>
-                <Link className="hover:underliner" href="/categories">
+                <Link className="hover:underline" href="/categories">
                   Categories
                 </Link>
                 <p>&gt;</p> Products
@@ -55,13 +57,13 @@ const Products = () => {
                   </div>
                 </div>
               ) : (
-                categories &&
+                category &&
                 products[0].products?.map((item) => (
                   <Card
                     key={item._id}
                     id={item._id}
                     product={item}
-                    category={categories[selected].name}
+                    category={category.name}
                   />
                 ))
               )}
