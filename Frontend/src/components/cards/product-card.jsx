@@ -1,6 +1,5 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { Heart } from "lucide-react";
 import { useFetchProductImages } from "@/hooks/query";
 import Image from "next/image";
 
@@ -15,6 +14,8 @@ const Card = ({ product, category }) => {
       : undefined;
 
   const router = useRouter();
+
+  console.log(product)
 
   return (
     <>
@@ -35,7 +36,7 @@ const Card = ({ product, category }) => {
         </div>
         <div className="p-2 flex flex-col gap-1">
           <p className="font-semibold text-lg">{product?.name}</p>
-          {Object.entries(product?.options).map(([option, value]) => (
+          {Object.entries(product?.options).slice(0, 1).map(([option, value]) => (
             <div
               key={option}
               className="flex text-gray-700 text-xs font-semibold justify-between"

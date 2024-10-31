@@ -544,6 +544,7 @@ const searchResults = async (req, res) => {
           price: 1,
           imagePaths: 1,
           discount: 1,
+          options: 1,
           "categoryDetails.name": 1,
         },
       },

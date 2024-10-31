@@ -7,6 +7,7 @@ const {
   getOrders,
   changeOrderStatus,
   getUserOrderById,
+  sendEmail,
 } = require("../controller/orderController");
 const { authenticateToken, isAdmin } = require("../Middleware/auth");
 const router = express.Router();
@@ -18,5 +19,6 @@ router.get("/getUserOrder", authenticateToken, getUserOrders);
 router.get("/getOrders", authenticateToken, getOrders);
 router.put("/orderStatus", authenticateToken, isAdmin, changeOrderStatus);
 router.get("/getUserOrderById", authenticateToken, getUserOrderById);
+router.post("/sendEmail",authenticateToken, isAdmin, sendEmail)
 
 module.exports = router;

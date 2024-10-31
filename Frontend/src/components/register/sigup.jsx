@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useSignupMutation } from "@/hooks/mutation";
 import { useRouter } from "next/router";
 
@@ -24,7 +23,6 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
     values: initialValues,

@@ -42,7 +42,6 @@ const createUser = async (req, res) => {
         from: process.env.GMAIL, // Sender's email address
         to: existedUser.email, // Recipient's email address
         subject: "Set your password!", // Email subject
-        // text: `Click the link below to access: \n\n${link}`, // Plain text message
         html: `<p>Click the link below to access:</p><a href="${link}">${link}</a>`, // HTML formatted message
       };
 

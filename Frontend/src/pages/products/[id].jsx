@@ -244,6 +244,7 @@ const ProductDetails = () => {
                     key={item._id}
                     id={item._id}
                     product={item}
+                    // options=
                     category={item.categoryDetails.name}
                   />
                 </div>

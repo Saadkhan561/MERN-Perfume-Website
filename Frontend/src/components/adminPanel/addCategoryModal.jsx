@@ -5,7 +5,7 @@ import { DialogContent } from "../ui/dialog";
 import { ClipLoader } from "react-spinners";
 import useUserStore from "@/store/user";
 
-const AddCagtegory = (refetchCategories) => {
+const AddCagtegory = ({refetchCategories}) => {
   const [category, setCategory] = useState("");
   const [categoryError, setCategoryError] = useState("");
   const {currentUser} = useUserStore()

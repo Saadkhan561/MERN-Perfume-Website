@@ -1,5 +1,6 @@
 const Order = require("../models/orderModel");
 const { ObjectId } = require("mongodb");
+const nodemailer = require("nodemailer");
 
 const placeOrder = async (req, res) => {
   try {
@@ -160,21 +161,20 @@ const getUserOrders = async (req, res) => {
     { $sort: { createdAt: -1 } },
   ];
 
-  
   if (limitInt) {
     pipeline.push({ $limit: limitInt });
   }
   try {
-    const orderCount = await Order.find({customer: id})
+    const orderCount = await Order.find({ customer: id });
     const orders = await Order.aggregate(pipeline);
     if (orders.length <= 0) {
       return res.json({ message: "You have no orders..." });
     }
-   if (orders.length < orderCount.length) {
-    return res.json({ message: "Orders", orders: orders, load: true });
-   } else {
-    return res.json({ message: "Orders", orders: orders });
-   }
+    if (orders.length < orderCount.length) {
+      return res.json({ message: "Orders", orders: orders, load: true });
+    } else {
+      return res.json({ message: "Orders", orders: orders });
+    }
   } catch (err) {
     return res.json(err);
   }
@@ -199,39 +199,39 @@ const getUserOrderById = async (req, res) => {
       $match: { _id: orderId },
     },
     {
-      $unwind: "$products", 
+      $unwind: "$products",
     },
     {
       $lookup: {
         from: "perfume_products",
-        localField: "products.product", 
+        localField: "products.product",
         foreignField: "_id",
         as: "productDetails",
       },
     },
     {
-      $unwind: "$productDetails", 
+      $unwind: "$productDetails",
     },
     {
       $lookup: {
         from: "perfume_categories",
         localField: "productDetails.category",
         foreignField: "_id",
-        as: "categoryDetails", 
+        as: "categoryDetails",
       },
     },
     {
-      $unwind: "$categoryDetails", 
+      $unwind: "$categoryDetails",
     },
     {
       $group: {
-        _id: "$_id", 
+        _id: "$_id",
         products: {
           $push: {
             product_id: "$productDetails._id",
             name: "$productDetails.name",
             category: "$productDetails.category",
-            category_name: "$categoryDetails.name", 
+            category_name: "$categoryDetails.name",
             quantity: "$products.quantity",
             option: "$products.option",
             price: "$products.price",
@@ -256,6 +256,58 @@ const getUserOrderById = async (req, res) => {
   }
 };
 
+const sendEmail = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL,
+        pass: process.env.GMAIL_PASSWORD,
+      },
+    });
+
+    let mailOptions = {
+      from: process.env.GMAIL,
+      to: email,
+      subject: "Your order tracking ID.",
+      html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tracking Information</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+          <h2 style="color: #333;">Your Order Tracking Information</h2>
+          <p>Dear Customer,</p>
+          <p>Thank you for choosing us! Your order has been processed and is on its way.</p>
+          <p>To keep you informed, here is your tracking information:</p>
+          <p><strong>Tracking ID:</strong> <span style="color: #0073e6;">090078601</span></p>
+          <p>You can use this tracking ID to monitor the status of your package on our website or through our shipping partner’s tracking page.</p>
+          <p>If you have any questions or need further assistance, feel free to reply to this email.</p>
+          <p style="margin-top: 30px;">Best regards,</p>
+          <p>
+            <strong>Perfume Shop</strong><br>
+            03237092577<br>
+            <a href="mailto:support@yourcompany.com" style="color: #0073e6;">support@yourcompany.com</a>
+          </p>
+        </div>
+      </body>
+      </html>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Email sent to the customer!" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 module.exports = {
   placeOrder,
   cancelOrder,
@@ -264,4 +316,5 @@ module.exports = {
   getUserOrders,
   changeOrderStatus,
   getUserOrderById,
+  sendEmail
 };

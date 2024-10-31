@@ -1,7 +1,7 @@
 "use client";
 
 import useUserStore from "@/store/user";
-import { LayoutDashboard, LogOut, ShoppingCart } from "lucide-react";
+import { ChartBarStacked, LayoutDashboard, ListCollapse, LogOut, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -41,7 +41,7 @@ const Sidebar = () => {
                 : ""
             }`}
           >
-            <LayoutDashboard className="h-5 w-5" />
+            <ListCollapse className="h-5 w-5" />
             <p>Products</p>
           </li>
         </Link>
@@ -65,7 +65,7 @@ const Sidebar = () => {
                 : ""
             }`}
           >
-            <ShoppingCart className="h-5 w-5" />
+           <ChartBarStacked className="h-5 w-5" />
             <p>Categories</p>
           </li>
         </Link>

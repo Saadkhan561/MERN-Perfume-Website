@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "./layout";
-import {
-  ChevronLeft,
-  Ellipsis,
-  Filter,
-  Search,
-} from "lucide-react";
+import { ChevronLeft, Ellipsis, Search } from "lucide-react";
 
 import {
   Table,
@@ -20,6 +15,8 @@ import { ClipLoader } from "react-spinners";
 import { useChangeOrderStatus } from "@/hooks/mutation";
 import { Bounce, toast } from "react-toastify";
 import useUserStore from "@/store/user";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import SendEmail from "@/components/adminPanel/sendEmailModal";
 
 const Orders = () => {
   const [searchVal, setSearchVal] = useState("");
@@ -205,7 +202,7 @@ const Orders = () => {
                                       changeOrderStatus({
                                         id: order._id,
                                         orderStatus: status,
-                                        role: role
+                                        role: role,
                                       })
                                     }
                                   >
@@ -225,6 +222,16 @@ const Orders = () => {
                           }}
                           className="h-3 w-3 cursor-pointer text-gray-500"
                         />
+                      </TableCell>
+                      <TableCell>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <button className="p-1 rounded-lg text-sm bg-blue-700 text-white text-center w-24">
+                              Send Email
+                            </button>
+                          </DialogTrigger>
+                          <SendEmail />
+                        </Dialog>
                       </TableCell>
                     </TableRow>
                   ))
