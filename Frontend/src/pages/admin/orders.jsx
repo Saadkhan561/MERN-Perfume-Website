@@ -230,7 +230,7 @@ const Orders = () => {
                               Send Email
                             </button>
                           </DialogTrigger>
-                          <SendEmail />
+                          <SendEmail customerId={order.customerDetails._id} />
                         </Dialog>
                       </TableCell>
                     </TableRow>

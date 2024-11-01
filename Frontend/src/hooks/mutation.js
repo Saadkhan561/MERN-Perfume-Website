@@ -1,5 +1,5 @@
 import { addCategory, deleteCategory, udpateCategory } from "@/services/categoryService";
-import { changeOrderStatus } from "@/services/orderService";
+import { changeOrderStatus, sendEmail } from "@/services/orderService";
 import {
   addProduct,
   editProduct,
@@ -89,6 +89,13 @@ export const useDeleteCategory = ( options) =>{
 export const useUpdateCategory = (options) => {
   return useMutation({
     mutationFn: udpateCategory,
+    ...options
+  })
+}
+
+export const useSendEmail =(options) => {
+  return useMutation({
+    mutationFn: sendEmail,
     ...options
   })
 }

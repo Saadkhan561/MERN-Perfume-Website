@@ -1,4 +1,5 @@
 const Order = require("../models/orderModel");
+const User = require("../models/userModel")
 const { ObjectId } = require("mongodb");
 const nodemailer = require("nodemailer");
 
@@ -257,8 +258,10 @@ const getUserOrderById = async (req, res) => {
 };
 
 const sendEmail = async (req, res) => {
-  const { email } = req.body;
+  const { customerId, subject,trackingId } = req.body;
+  const id = ObjectId.createFromHexString(customerId)
   try {
+    const user = await User.findOne({_id: id})
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -269,8 +272,8 @@ const sendEmail = async (req, res) => {
 
     let mailOptions = {
       from: process.env.GMAIL,
-      to: email,
-      subject: "Your order tracking ID.",
+      to: user?.email,
+      subject: subject,
       html: `
       <!DOCTYPE html>
       <html lang="en">
@@ -281,11 +284,11 @@ const sendEmail = async (req, res) => {
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
-          <h2 style="color: #333;">Your Order Tracking Information</h2>
+          <h2 style="color: #333;">${subject}</h2>
           <p>Dear Customer,</p>
           <p>Thank you for choosing us! Your order has been processed and is on its way.</p>
           <p>To keep you informed, here is your tracking information:</p>
-          <p><strong>Tracking ID:</strong> <span style="color: #0073e6;">090078601</span></p>
+          <p><strong>Tracking ID:</strong> <span style="color: #0073e6;">${trackingId}</span></p>
           <p>You can use this tracking ID to monitor the status of your package on our website or through our shipping partner’s tracking page.</p>
           <p>If you have any questions or need further assistance, feel free to reply to this email.</p>
           <p style="margin-top: 30px;">Best regards,</p>
@@ -302,7 +305,7 @@ const sendEmail = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.status(200).json({ message: "Email sent to the customer!" });
+    res.status(200).json({ message: `Email sent to ${user.email}` });
   } catch (err) {
     res.status(500).json(err);
   }

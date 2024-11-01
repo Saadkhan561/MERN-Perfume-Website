@@ -26,18 +26,32 @@ export const changeOrderStatus = async (data) => {
 
 export const getUserOrders = async (params) => {
   try {
-    const res = await axiosInstance.get(`/getUserOrder?userId=${params.userId}&limit=${params.limit}`);
+    const res = await axiosInstance.get(
+      `/getUserOrder?userId=${params.userId}&limit=${params.limit}`
+    );
     return res.data;
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
-export const getUserOrderById = async(params) => {
+export const getUserOrderById = async (params) => {
   try {
-    const res = await axiosInstance.get(`/getUserOrderById?orderId=${params.orderId}`)
-    return res.data
-  } catch(err) {
-    throw new Error(err.message)
+    const res = await axiosInstance.get(
+      `/getUserOrderById?orderId=${params.orderId}`
+    );
+    return res.data;
+  } catch (err) {
+    throw new Error(err.message);
   }
-} 
+};
+
+export const sendEmail = async (data) => {
+  console.log(data)
+  try {
+    const res = await axiosInstance.post("/sendEmail", data);
+    return res.data;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};

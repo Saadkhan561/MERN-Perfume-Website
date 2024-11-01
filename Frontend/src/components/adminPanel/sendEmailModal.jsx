@@ -3,22 +3,45 @@ import { DialogContent } from "../ui/dialog";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { sendEmailSchema } from "@/schema/sendEmailSchema";
+import { useSendEmail } from "@/hooks/mutation";
+import { toast } from "react-toastify";
+import useUserStore from "@/store/user";
+import { ClipLoader } from "react-spinners";
 
-const SendEmail = () => {
-    // const initialValues ={
+const SendEmail = ({ customerId }) => {
+  const { currentUser } = useUserStore();
+  const role = currentUser?.user.role;
 
-    // }
+  const { mutate: sendEmail, isPending: isSendEmailPending } = useSendEmail({
+    onSuccess(data) {
+      toast.success(data.message);
+      reset()
+    },
+    onError(err) {
+      toast.error(err);
+    },
+  });
+  const initialValues = {
+    subject: "",
+    trackingId: "",
+  };
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm({
-    // initialValues: initialValues,
+    initialValues: initialValues,
     resolver: yupResolver(sendEmailSchema),
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    sendEmail({
+      customerId: customerId,
+      subject: data.subject,
+      trackingId: data.trackingId,
+      role: role,
+    });
   };
   return (
     <DialogContent className="pt-10 w-2/5 font-sans">
@@ -37,17 +60,30 @@ const SendEmail = () => {
           )}
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-gray-500 text-sm">Enter email body</label>
-          <textarea
-            type="text"
-            placeholder="Enter a body..."
-            className="cart_input_field h-[300px]"
-            {...register("body")}
+          <label className="text-gray-500 text-sm">Enter tracking ID</label>
+          <input
+            type="number"
+            placeholder="Enter tracking ID..."
+            className="cart_input_field"
+            {...register("trackingId")}
           />
-          {errors.body && <p className="text-red-500 text-sm">{errors.body.message}</p>}
+          {errors.trackingId && (
+            <p className="text-red-500 text-sm">{errors.trackingId.message}</p>
+          )}
         </div>
-        <button type="submit" className="text-white p-1 rounded-lg bg-black">
-          Send
+        <button
+          disabled={isSendEmailPending}
+          type="submit"
+          className="text-white p-1 rounded-lg bg-black"
+        >
+          {isSendEmailPending ? (
+            <div className="flex justify-center w-full">
+              {" "}
+              <ClipLoader size={15} color="white" />
+            </div>
+          ) : (
+            "Send"
+          )}
         </button>
       </form>
     </DialogContent>
