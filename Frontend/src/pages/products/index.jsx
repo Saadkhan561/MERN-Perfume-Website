@@ -1,8 +1,6 @@
 import Card from "@/components/cards/product-card";
-import {
-  useFetchAllProducts,
-  useFetchCategoryById,
-} from "@/hooks/query";
+import { ProductCardSkeleton } from "@/components/loadingSkeletons/productCardSkeleton";
+import { useFetchAllProducts, useFetchCategoryById } from "@/hooks/query";
 import Layout from "@/layout/layout";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,9 +9,7 @@ import React from "react";
 
 const Products = () => {
   const categoryId = useSearchParams().get("id");
-  const { data: category } = useFetchCategoryById(
-    { id: categoryId }
-  );
+  const { data: category } = useFetchCategoryById({ id: categoryId });
 
   const { data: products, isLoading: isProductsLoading } = useFetchAllProducts({
     categoryId: categoryId,
@@ -49,7 +45,13 @@ const Products = () => {
           <div className="flex flex-col flex-start w-4/5">
             <div className="flex gap-4 mt-10 flex-wrap mob_display:justify-center mob_display_product:flex-col">
               {isProductsLoading ? (
-                <div>Loading...</div>
+                <div className="flex gap-4">
+                  <ProductCardSkeleton />
+                  <ProductCardSkeleton />
+                  <ProductCardSkeleton />
+                  <ProductCardSkeleton />
+                  <ProductCardSkeleton />
+                </div>
               ) : products?.message ? (
                 <div className="flex justify-center items-center w-full h-full">
                   <div className="flex justify-center p-4 gap-2 items-center">

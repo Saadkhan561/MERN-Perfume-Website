@@ -8,10 +8,6 @@ const Card = ({ product, category }) => {
     category,
     productName: product.name,
   });
-  const price =
-    product?.options && Object.keys(product.options).length > 0
-      ? product.options[Object.keys(product.options)[0]].price
-      : undefined;
 
   const router = useRouter();
 

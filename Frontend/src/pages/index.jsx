@@ -19,6 +19,8 @@ import ReviewCard from "@/components/cards/review-card";
 import ServiceCard from "@/components/cards/service-card";
 import { settings } from "../../carouselConfig";
 import CategoryCard from "@/components/cards/categoryCard";
+import { ProductCardSkeleton } from "@/components/loadingSkeletons/productCardSkeleton";
+import CategoryCardSkeleton from "@/components/loadingSkeletons/categoryCardSkeleton";
 
 export default function Home() {
   const [selected, setSelected] = useState(0);
@@ -75,11 +77,11 @@ export default function Home() {
 
         <div className="flex justify-center h-max mob_display:pt-0">
           <Slider
-            className="w-full sm:h-[300px] md:h-[400px] h-[200px] z-20"
+            className="w-full sm:h-[300px] md:h-[400px] h-[250px] z-20"
             {...settings}
           >
             <Image
-              className="sm:h-[300px] md:h-[400px] h-[200px] w-full"
+              className="sm:h-[300px] md:h-[400px] h-[250px] w-full"
               src="/images/ad_1.jpg"
               alt=""
               width={1600}
@@ -87,7 +89,7 @@ export default function Home() {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <Image
-              className="sm:h-[300px] md:h-[400px] h-[200px] w-full"
+              className="sm:h-[300px] md:h-[400px] h-[250px] w-full"
               src="/images/ad_2.jpg"
               alt=""
               width={1600}
@@ -95,7 +97,7 @@ export default function Home() {
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <Image
-              className="sm:h-[300px] md:h-[400px] h-[200px] w-full"
+              className="sm:h-[300px] md:h-[400px] h-[250px] w-full"
               src="/images/ad_3.jpg"
               alt=""
               width={1600}
@@ -115,7 +117,13 @@ export default function Home() {
               </div>
               <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
                 {trendingProductsLoading ? (
-                  <div>Loading...</div>
+                  <div className="flex flex-wrap mob_display:justify-center mob_display_product:flex-col mob_display_product:items-center gap-4 mt-6">
+                    <ProductCardSkeleton />
+                    <ProductCardSkeleton />
+                    <ProductCardSkeleton />
+                    <ProductCardSkeleton />
+                    <ProductCardSkeleton />
+                  </div>
                 ) : trendingProducts?.message ? (
                   <div className="flex w-full justify-center items-center text-xl">
                     <p>{trendingProducts?.message}</p>
@@ -139,7 +147,10 @@ export default function Home() {
               </p>
               <div className="flex w-full justify-evenly flex-wrap">
                 {isCategoryLoading ? (
-                  <div></div>
+                  <div className="flex w-full justify-evenly flex-wrap">
+                    <CategoryCardSkeleton />
+                    <CategoryCardSkeleton />
+                  </div>
                 ) : (
                   categories?.map((category, index) => (
                     <CategoryCard

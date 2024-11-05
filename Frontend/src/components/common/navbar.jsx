@@ -56,22 +56,6 @@ const Navbar = () => {
         <div className="text-3xl font-didot">Perfume Shop</div>
         <div>
           <ul className="flex items-center gap-6 p-1 text-lg">
-            {/* <li>
-              <Link
-                className="hover:underline duration-200 cursor-pointer"
-                href={"/"}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                className="hover:underline duration-200 cursor-pointer"
-                href={"/products"}
-              >
-                Products
-              </Link>
-            </li> */}
             <li>
               <Link href={"/cart"} className="relative">
                 <div className="absolute -top-2 -right-2 font-semibold border bg-black text-white p-1 text-center rounded-full text-xs">

@@ -4,6 +4,7 @@ import CategoryCard from "@/components/cards/categoryCard";
 import { useFetchAllCategories } from "@/hooks/query";
 import Image from "next/image";
 import Link from "next/link";
+import CategoryCardSkeleton from "@/components/loadingSkeletons/categoryCardSkeleton";
 
 const Categories = () => {
   const { data: categories, isLoading: isCategoryLoading } =
@@ -33,7 +34,10 @@ const Categories = () => {
         </div>
         <div className="flex gap-4 w-full flex-wrap justify-evenly p-8">
           {isCategoryLoading ? (
-            <div></div>
+            <div className="flex gap-4 w-full flex-wrap justify-evenly p-8">
+              <CategoryCardSkeleton />
+              <CategoryCardSkeleton />
+            </div>
           ) : (
             categories?.map((category, index) => (
               <CategoryCard

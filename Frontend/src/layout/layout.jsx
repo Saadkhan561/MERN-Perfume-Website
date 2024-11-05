@@ -6,9 +6,12 @@ import PaymentOption from "@/components/paymentOption";
 import SideBar from "@/components/common/side-bar";
 import Link from "next/link";
 import { Bounce, ToastContainer } from "react-toastify";
+import { useFetchAllCategories } from "@/hooks/query";
 
 const Layout = ({ children }) => {
   const router = useRouter();
+
+  const {data: categories, isLoading: isCategoriesLoading} = useFetchAllCategories()
 
   return (
     <div className="w-full h-sreen relative overflow-x-hidden font-sans">
@@ -29,8 +32,8 @@ const Layout = ({ children }) => {
           <div className="border-b border-slate-400 w-full flex justify-center">
             <Navbar />
           </div>
-          <div className="flex justify-center bg-white w-full h-max">
-            <ul className="flex items-center gap-4 text-lg ">
+          <div className="flex justify-center bg-white w-full h-max p-4 ">
+            <ul className="flex items-center gap-4 uppercase sm:text-base text-sm">
               <Link
                 className="hover:border-b border-slate-500 duration-100"
                 href="/"
@@ -43,6 +46,11 @@ const Layout = ({ children }) => {
               >
                 Categories
               </Link>
+              {categories?.map((category) => (
+                <Link key={category._id} href={`/products?id=${category._id}`} className="hover:border-b border-slate-500 duration-100">
+                  {category.name}
+                </Link>
+              ))}
             </ul>
           </div>
         </div>
