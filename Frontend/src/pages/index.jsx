@@ -7,13 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-
-import { useRouter } from "next/router";
-import {
-  useFetchAllCategories,
-  useFetchAllProducts,
-  useFetchTrendingProducts,
-} from "@/hooks/query";
+import { useFetchAllCategories, useFetchTrendingProducts } from "@/hooks/query";
 import Image from "next/image";
 import ReviewCard from "@/components/cards/review-card";
 import ServiceCard from "@/components/cards/service-card";
@@ -21,9 +15,10 @@ import { settings } from "../../carouselConfig";
 import CategoryCard from "@/components/cards/categoryCard";
 import { ProductCardSkeleton } from "@/components/loadingSkeletons/productCardSkeleton";
 import CategoryCardSkeleton from "@/components/loadingSkeletons/categoryCardSkeleton";
+import Meta from "@/components/metaTags/meta";
+import SliderImageCard from "@/components/cards/sliderImageCard";
 
 export default function Home() {
-  const [selected, setSelected] = useState(0);
 
   const { data: categories, isLoading: isCategoryLoading } =
     useFetchAllCategories();
@@ -36,51 +31,22 @@ export default function Home() {
 
   return (
     <Layout>
+      <Meta
+        title="Perfume Shop - Luxury Fragrances"
+        description="Discover luxury perfumes and fragrances at the Perfume Shop. Shop the latest collections and exclusive scents."
+        keywords="perfume, fragrance, luxury perfume, perfume shop"
+      />
       <div className="w-full flex flex-col gap-4 sm:gap-8">
         {/* MAIN AD DIV */}
-        {/* <div className="flex mob_display:mt-0 mob_display:flex-col mob_display:gap-20 rounded-lg h-screen">
-          <div className="flex flex-col mob_display:items-center gap-2 justify-center pt-10 pl-10 w-full">
-            <div className="text-5xl mob_display:text-3xl uppercase">
-              Discover the Scent of Luxury
-            </div>
-            <div className="pl-2 border-l-slate-800 border-l-2 mob_display:border-none mob_display:text-center mob_display:text-sm">
-              Indulge in our exclusive collection of premium perfumes. Free
-              shipping on orders over $50. Find your signature scent today!
-            </div>
-            <Link
-              href={"/products"}
-              className="mt-4 text-center mob_display:text-sm border border-slate-800 rounded-lg p-2 hover:bg-slate-800 hover:text-white w-max duration-200 cursor-pointer "
-            >
-              <button>Shop Now</button>
-            </Link>
-          </div>
-          <div className="flex justify-center pt-40 mob_display:pt-0 w-full">
-            <Slider className="h-[300px] w-[300px]" {...settings}>
-              <img
-                className="aspect-square object-contain"
-                src="/images/per_test.jpg"
-                alt=""
-              />
-              <img
-                className="aspect-square object-contain"
-                src="/images/per_test.jpg"
-                alt=""
-              />
-              <img
-                className="aspect-square object-contain"
-                src="/images/per_test.jpg"
-                alt=""
-              />
-            </Slider>
-          </div>
-        </div> */}
-
         <div className="flex justify-center h-max mob_display:pt-0">
           <Slider
             className="w-full sm:h-[300px] md:h-[400px] h-[250px] z-20"
             {...settings}
           >
-            <Image
+            {Array.from({length: 3}).map((img, index) => (
+              <SliderImageCard key={index} imgName={index+1} />
+            ))}
+            {/* <Image
               className="sm:h-[300px] md:h-[400px] h-[250px] w-full"
               src="/images/ad_1.jpg"
               alt=""
@@ -103,11 +69,11 @@ export default function Home() {
               width={1600}
               height={900}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
+            /> */}
           </Slider>
         </div>
         <div className="flex justify-center gap-16 mob_display:items-center mob_display:mt-20">
-          <div className="w-11/12 flex flex-col items-center gap-32 ">
+          <div className="w-11/12 flex flex-col items-center gap-28">
             {/* TRENDING DIV */}
             <div>
               <div className="flex flex-col items-center gap-3">
@@ -142,10 +108,7 @@ export default function Home() {
             </div>
             {/* PRODUCTS DIV */}
             <div className="flex flex-col items-center gap-3 w-full">
-              <p className="text-4xl mb-4 mob_display:text-2xl underline">
-                View By Categories
-              </p>
-              <div className="flex w-full justify-evenly flex-wrap">
+              <div className="flex w-full justify-around flex-wrap">
                 {isCategoryLoading ? (
                   <div className="flex w-full justify-evenly flex-wrap">
                     <CategoryCardSkeleton />

@@ -1,3 +1,4 @@
+import Meta from "@/components/metaTags/meta";
 import Login from "@/components/register/login";
 import SignUp from "@/components/register/sigup";
 import { useRouter } from "next/router";
@@ -33,6 +34,11 @@ const Register = () => {
 
   return (
     <div className="flex justify-center items-center h-screen font-sans">
+      <Meta
+        title={isLogin ? "Login - Perfume Shop" : "Register - Perfume Shop"}
+        description="Create an account or log in to access the best perfumes and exclusive offers."
+        keywords="perfume register, perfume login, sign in, sign up"
+      />
       <ToastContainer
         position="top-center"
         transition={Bounce}
@@ -40,7 +46,7 @@ const Register = () => {
         hideProgressBar={true}
       />
       {/* MAIN DIV FOR FULL SCREEN */}
-      <div className="relative w-4/5 h-[640px] rounded-md shadow-2xl bg-slate-100 register_small_div:hidden">
+      <div className="relative w-4/5 h-[640px] rounded-md p-4 shadow-2xl bg-slate-100 register_small_div:hidden">
         <div className="flex">
           {/* LOGIN DIV */}
           <Login />

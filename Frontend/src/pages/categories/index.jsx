@@ -5,6 +5,7 @@ import { useFetchAllCategories } from "@/hooks/query";
 import Image from "next/image";
 import Link from "next/link";
 import CategoryCardSkeleton from "@/components/loadingSkeletons/categoryCardSkeleton";
+import Meta from "@/components/metaTags/meta";
 
 const Categories = () => {
   const { data: categories, isLoading: isCategoryLoading } =
@@ -12,6 +13,11 @@ const Categories = () => {
 
   return (
     <Layout>
+      <Meta
+        title="Perfume Categories - Perfume Shop"
+        description="Browse through our wide range of perfume categories, including floral, oriental, fresh, and more."
+        keywords="perfume categories, fragrance types, floral perfumes"
+      />
       <div className="flex flex-col items-center w-full h-auto mb-20">
         <div className="w-full h-[250px] relative">
           <Image
@@ -32,7 +38,7 @@ const Categories = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-4 w-full flex-wrap justify-evenly p-8">
+        <div className="flex gap-4 w-full flex-wrap justify-around p-8">
           {isCategoryLoading ? (
             <div className="flex gap-4 w-full flex-wrap justify-evenly p-8">
               <CategoryCardSkeleton />

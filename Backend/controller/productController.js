@@ -8,78 +8,93 @@ const fs = require("fs");
 
 //get pinned product first
 const getAllProducts = async (req, res) => {
-  let { categoryId } = req.query;
-  if (categoryId === "null" || categoryId === "") {
-    categoryId = null;
-  } else {
-    categoryId = ObjectId.createFromHexString(categoryId);
-  }
-  const pipeline = [
-    {
-      $match: {
-        productStatus: true,
-        ...(categoryId && { category: categoryId }),
-      },
-    },
-    {
-      $lookup: {
-        from: "perfume_categories",
-        localField: "category",
-        foreignField: "_id",
-        as: "categoryDetails",
-      },
-    },
-    {
-      $unwind: "$categoryDetails",
-    },
-    {
-      $sort: {
-        pinned: -1, // Sort pinned products first (assuming pinned is a boolean)
-        createdAt: -1, // Then sort by creation date (most recent first)
-      },
-    },
-    {
-      $group: {
-        _id: "$categoryDetails._id",
-        category_name: { $first: "$categoryDetails.name" },
-        products: { $push: "$$ROOT" },
-      },
-    },
-  ];
+  let { categoryId, skip=0, limit = 10 } = req.query;
+  console.log(req.query)
+
   try {
-    if (categoryId) {
-      console.log("inside category");
-      pipeline.push({
-        $project: {
-          category: "$categoryDetails._id",
-          category_name: 1,
-          products: 1,
-        },
-      });
-      const products = await Products.aggregate(pipeline);
-      if (products.length === 0) {
-        return res
-          .status(200)
-          .json({ message: "No products for this category" });
-      } else {
-        return res.status(200).json(products);
-      }
+    skip = parseInt(skip, 10);
+    limit = parseInt(limit, 10);
+
+    if (categoryId === "null" || categoryId === "") {
+      categoryId = null;
     } else {
-      pipeline.push({
-        $project: {
-          products: 1,
-        },
-      });
-      const products = await Products.aggregate(pipeline);
-      return res.status(200).json(products);
+      try {
+        categoryId = ObjectId.createFromHexString(categoryId);
+      } catch (error) {
+        return res.status(400).json({ message: "Invalid category ID" });
+      }
     }
 
-    // const productsWithImages = products.map(product => ({
-    //   ...product.toObject(),
-    //   imageUrls: product.imagePaths.map(path => `${req.protocol}://${req.get('host')}/uploads/${path.split('/').pop()}`)
-    // }));
+    // Base pipeline
+    const basePipeline = [
+      {
+        $match: {
+          productStatus: true,
+          ...(categoryId && { category: categoryId }), // Filter by category if provided
+        },
+      },
+      {
+        $lookup: {
+          from: "perfume_categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "categoryDetails",
+        },
+      },
+      {
+        $unwind: "$categoryDetails",
+      },
+      {
+        $sort: {
+          pinned: -1,
+          createdAt: -1,
+        },
+      },
+    ];
 
-    // res.json(productsWithImages);
+    // Total count pipeline
+    const countPipeline = [...basePipeline, { $count: "totalProducts" }];
+    const countResult = await Products.aggregate(countPipeline);
+    const totalProducts =
+      countResult.length > 0 ? countResult[0].totalProducts : 0;
+
+    // Pagination logic
+    const totalPages = Math.ceil(totalProducts / limit);
+    const currentPage = Math.ceil(skip / limit) + 1;
+
+    // Add pagination stages to the pipeline
+    const productPipeline = [
+      ...basePipeline,
+      { $skip: skip },
+      { $limit: limit },
+    ];
+
+    if (categoryId) {
+      // Group products by category
+      productPipeline.push({
+        $group: {
+          _id: "$categoryDetails._id",
+          category_name: { $first: "$categoryDetails.name" },
+          products: { $push: "$$ROOT" },
+        },
+      });
+    }
+
+    const products = await Products.aggregate(productPipeline);
+
+    // Handle empty products
+    if (products.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "No products found", products: [] });
+    }
+
+    return res.status(200).json({
+      products,
+      totalProducts,
+      totalPages,
+      currentPage,
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -417,7 +432,7 @@ const editProduct = async (req, res) => {
           [`options.${option}.discount`]: discount,
           [`options.${option}.price`]: price,
           pinned: status,
-          productStatus: productStatus
+          productStatus: productStatus,
         },
       }
     );

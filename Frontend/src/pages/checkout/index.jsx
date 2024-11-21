@@ -12,6 +12,7 @@ import Layout from "@/layout/layout";
 import { House, Mail, MapPinHouse, Phone, User } from "lucide-react";
 import { deliverySchema, guestDeliverySchema } from "@/schema/orderSchema";
 import { MoonLoader } from "react-spinners";
+import Meta from "@/components/metaTags/meta";
 
 const Checkout = () => {
   const router = useRouter();
@@ -130,6 +131,11 @@ const Checkout = () => {
 
   return (
     <Layout>
+      <Meta
+        title="Checkout - Perfume Shop"
+        description="Complete your purchase and enjoy your luxurious new perfume."
+        keywords="perfume checkout, purchase, perfume shop"
+      />
       <div className="flex justify-center items-center w-full h-full">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -152,9 +158,9 @@ const Checkout = () => {
                     >
                       Enter first name
                     </label>
-                    <div className="flex gap-1 items-center border rounded-lg p-2 border-b-slate-300">
+                    <div className="cart_input_field">
                       <input
-                        className="cart_input_field"
+                        className="w-full focus:outline-none"
                         type="text"
                         id="first_name"
                         placeholder="First name"
@@ -175,9 +181,9 @@ const Checkout = () => {
                     >
                       Enter last name
                     </label>
-                    <div className="flex gap-1 items-center border p-2 rounded-lg border-b-slate-300">
+                    <div className="cart_input_field">
                       <input
-                        className="cart_input_field"
+                        className="w-full focus:outline-none"
                         type="text"
                         id="last_name"
                         placeholder="Last name"
@@ -199,9 +205,9 @@ const Checkout = () => {
                   >
                     Enter your email
                   </label>
-                  <div className="flex gap-1 items-center border p-2 rounded-lg border-b-slate-300">
+                  <div className="cart_input_field">
                     <input
-                      className="cart_input_field"
+                      className="w-full focus:outline-none"
                       type="email"
                       id="email"
                       placeholder="Enter email"
@@ -222,9 +228,9 @@ const Checkout = () => {
                   >
                     Enter Phone No.
                   </label>
-                  <div className="flex gap-1 items-center border p-2 rounded-lg border-b-slate-300">
+                  <div className="cart_input_field">
                     <input
-                      className="cart_input_field"
+                      className="w-full focus:outline-none"
                       type="number"
                       id="ph_no"
                       placeholder="Enter phone no."
@@ -246,9 +252,9 @@ const Checkout = () => {
                   >
                     Enter your address
                   </label>
-                  <div className="flex gap-1 items-center border p-2 rounded-lg border-b-slate-300">
+                  <div className="cart_input_field">
                     <input
-                      className="cart_input_field"
+                      className="w-full focus:outline-none"
                       type="text"
                       placeholder="Enter address"
                       {...register("address")}
@@ -268,9 +274,9 @@ const Checkout = () => {
                   >
                     Enter your city
                   </label>
-                  <div className="flex gap-1 items-center border p-2 rounded-lg border-b-slate-300">
+                  <div className="cart_input_field">
                     <input
-                      className="cart_input_field"
+                      className="w-full focus:outline-none"
                       type="text"
                       placeholder="Enter address"
                       {...register("city")}
@@ -299,8 +305,16 @@ const Checkout = () => {
               <div className="flex gap-2 items-center w-full">
                 <button
                   type="submit"
-                  disabled={isOrderPending || isUserPending || Object.keys(cart).length === 0}
-                  className={` bg-black text-white text-base w-full font-semibold duration-200 flex justify-center mob_display:text-sm p-1 ${Object.keys(cart).length === 0 ? "opacity-50 ":"hover:bg-gray-700  hover:cursor-pointer "}`}
+                  disabled={
+                    isOrderPending ||
+                    isUserPending ||
+                    Object.keys(cart).length === 0
+                  }
+                  className={` bg-black text-white text-base w-full font-semibold duration-200 flex justify-center mob_display:text-sm p-1 ${
+                    Object.keys(cart).length === 0
+                      ? "opacity-50 "
+                      : "hover:bg-gray-700  hover:cursor-pointer "
+                  }`}
                 >
                   {isOrderPending || isUserPending ? (
                     <MoonLoader size={15} color="white" />

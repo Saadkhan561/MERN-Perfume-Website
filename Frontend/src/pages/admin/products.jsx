@@ -13,8 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronLeft, Filter,Pin, Search, } from "lucide-react";
-
+import { ChevronLeft, Filter, Pin, Search } from "lucide-react";
 
 import {
   Dialog,
@@ -27,6 +26,7 @@ import ProductForm from "@/components/adminPanel/productForm";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/router";
 import ProductEditForm from "@/components/adminPanel/productEditForm";
+import Meta from "@/components/metaTags/meta";
 
 const Products = () => {
   const [filterDropdown, setFilterDropdown] = useState(false);
@@ -36,7 +36,6 @@ const Products = () => {
   const [searchVal, setSearchVal] = useState("");
 
   const [query, setQuery] = useState("");
-
 
   const {
     data: products,
@@ -78,6 +77,10 @@ const Products = () => {
 
   return (
     <AdminLayout>
+      <Meta
+        title="Admin Products - Perfume Shop"
+        description="Manage the product listings for the Perfume Shop."
+      />
       <div className="p-4 bg-slate-200 h-full">
         <div className="bg-white rounded-lg">
           <div className="flex items-center p-4 justify-between">
@@ -255,16 +258,14 @@ const Products = () => {
                           <DialogTrigger asChild>
                             <button
                               onClick={() =>
-                                router.push(
-                                  `?id=${product._id}`,
-                                  undefined,
-                                  {
-                                    shallow: true,
-                                  }
-                                )
+                                router.push(`?id=${product._id}`, undefined, {
+                                  shallow: true,
+                                })
                               }
                               className="text-sm p-1 rounded-lg text-white text-center bg-blue-700 w-16"
-                            >Edit</button>
+                            >
+                              Edit
+                            </button>
                           </DialogTrigger>
                           <ProductEditForm refetchProducts={refetchProducts} />
                         </Dialog>

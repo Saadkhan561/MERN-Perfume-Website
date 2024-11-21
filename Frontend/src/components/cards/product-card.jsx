@@ -11,7 +11,7 @@ const Card = ({ product, category }) => {
 
   const router = useRouter();
 
-  console.log(product)
+  console.log("product", product)
 
   return (
     <>
@@ -24,10 +24,11 @@ const Card = ({ product, category }) => {
           <Image
             className="group-hover:opacity-90 duration-200 border rounded-lg p-1"
             src={`data:image/jpeg;base64,${data && data[0]}`}
-            alt={`Product Image`}
+            alt='Luxury perfume bottle with a floral scent'
             height={900}
             width={1600}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            priority
           />
         </div>
         <div className="p-2 flex flex-col gap-1">

@@ -4,7 +4,7 @@ import axiosInstance from "../../axiosConfig";
 
 export const fetchAllproducts = async (params) => {
   try {
-    const products = await axiosInstance.get(`/getProducts?categoryId=${params.categoryId}`);
+    const products = await axiosInstance.get(`/getProducts?categoryId=${params.categoryId}&skip=${params.skip}`);
     return products.data;
   } catch (err) {
     throw new Error(err.message);

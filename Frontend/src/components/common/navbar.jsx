@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useFetchAllCategories } from "@/hooks/query";
 import useCartStore from "@/store/cart";
 import useUserStore from "@/store/user";
-import { Menu, ShoppingCart, UserRound } from "lucide-react";
+import { LogOut, Menu, Settings, ShoppingCart, User, UserRound } from "lucide-react";
 import SearchDiv from "../search";
 // import { Link } from "next/link";
 const Navbar = () => {
@@ -71,21 +71,30 @@ const Navbar = () => {
                 <ul
                   className={
                     accountDiv
-                      ? "absolute top-12 shadow-2xl -left-5 bg-white text-sm w-[120px] p-2"
-                      : "absolute hidden top-12 shadow-2xl -left-5 bg-white text-sm w-[120px] p-2"
+                      ? "absolute top-12 shadow-2xl -left-5 bg-white text-sm w-[180px] p-2 flex flex-col gap-2 rounded-lg"
+                      : "absolute hidden top-12 shadow-2xl -left-5 bg-white text-sm w-[180px] p-2 rounded-lg"
                   }
                 >
+                  <li className="p-1 text-lg font-semibold border-b border-b-slate-200">
+                    {currentUser.user.first_name + " " + currentUser.user.last_name}
+                  </li>
                   <li
                     onClick={() => router.push("/account")}
-                    className="cursor-pointer text-black hover:bg-slate-100 duration-200 p-1 rounded-lg"
+                    className="cursor-pointer text-black flex gap-2 items-center hover:bg-slate-100 duration-200 p-1 rounded-lg border-b border-b-slate-200"
                   >
-                    My Account
+                    <User size={15} />My Account
+                  </li>
+                  <li
+                    onClick={() => router.push("/settings")}
+                    className="cursor-pointer text-black flex gap-2 items-center hover:bg-slate-100 duration-200 p-1 rounded-lg border-b border-b-slate-200"
+                  >
+                    <Settings size={15} />Settings
                   </li>
                   <li
                     onClick={logout}
-                    className="cursor-pointer text-red-500 hover:bg-slate-100  duration-200 p-1 rounded-lg"
+                    className="cursor-pointer text-red-500 flex items-center gap-2 hover:bg-slate-100  duration-200 p-1 rounded-lg"
                   >
-                    Logout
+                    <LogOut  size={15}/>Logout
                   </li>
                 </ul>
                 <div

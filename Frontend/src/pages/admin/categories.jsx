@@ -15,6 +15,7 @@ import { useDeleteCategory, useUpdateCategory } from "@/hooks/mutation";
 import { ClipLoader } from "react-spinners";
 import useUserStore from "@/store/user";
 import { toast } from "react-toastify";
+import Meta from "@/components/metaTags/meta";
 
 const Categories = () => {
   const [isEdit, setIsEdit] = useState(false);
@@ -57,7 +58,7 @@ const Categories = () => {
     });
 
   const handleEditCategory = (categoryId) => {
-    console.log("Category", categoryInput)
+    console.log("Category", categoryInput);
     if (categoryInput === "") {
       setCategoryError("Field must not be empty!");
     } else {
@@ -68,6 +69,10 @@ const Categories = () => {
 
   return (
     <AdminLayout>
+      <Meta
+        title="Admin Categories - Perfume Shop"
+        description="Manage product categories for the Perfume Shop."
+      />
       <div className="p-4 bg-slate-200 h-full">
         <div className="bg-white rounded-lg p-4">
           <div className="flex justify-between items-center">

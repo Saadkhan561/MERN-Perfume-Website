@@ -48,7 +48,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-1/2 register_small_div:w-full pt-10">
+    <div className="flex flex-col items-center justify-center w-1/2 register_small_div:w-full">
       <div className="text-3xl font-semibold register_mini_div:text-2xl">
         Sign Up
       </div>

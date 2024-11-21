@@ -17,6 +17,7 @@ import { Bounce, toast } from "react-toastify";
 import useUserStore from "@/store/user";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import SendEmail from "@/components/adminPanel/sendEmailModal";
+import Meta from "@/components/metaTags/meta";
 
 const Orders = () => {
   const [searchVal, setSearchVal] = useState("");
@@ -74,6 +75,10 @@ const Orders = () => {
 
   return (
     <AdminLayout>
+      <Meta
+        title="Admin Orders - Perfume Shop"
+        description="View and manage customer orders for the Perfume Shop."
+      />
       <div className="p-4 bg-slate-200 h-[90%] ">
         <div className="bg-white rounded-lg">
           <div className="flex items-center p-4 justify-between">

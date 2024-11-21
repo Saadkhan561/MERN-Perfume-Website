@@ -6,6 +6,7 @@ import CartItem from "@/components/cartComponents/cartItems";
 import CartItemDetails from "@/components/cartComponents/cartItemDetails";
 import Link from "next/link";
 import Image from "next/image";
+import Meta from "@/components/metaTags/meta";
 
 const Cart = () => {
   const [isClient, setIsClient] = useState(false);
@@ -30,6 +31,11 @@ const Cart = () => {
 
   return (
     <Layout>
+      <Meta
+        title="Your Cart - Perfume Shop"
+        description="View the items in your cart and proceed to checkout to complete your purchase."
+        keywords="perfume cart, shopping cart, perfume checkout"
+      />
       <div className="flex flex-col items-center w-full">
         <div className="w-full h-[250px] relative">
           <Image
@@ -65,7 +71,10 @@ const Cart = () => {
               {cartLength === 0 ? (
                 <div className="flex flex-col gap-2">
                   <p className="text-lg font-semibold">Your cart is empty</p>
-                  <Link className="p-1 text-sm font-semibold border-2 rounded-lg w-max" href="/categories">
+                  <Link
+                    className="p-1 text-sm font-semibold border-2 rounded-lg w-max"
+                    href="/categories"
+                  >
                     Back to shopping
                   </Link>
                 </div>

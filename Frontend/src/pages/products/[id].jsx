@@ -19,6 +19,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Minus, Plus } from "lucide-react";
 import ProductDetailsSkeleton from "@/components/loadingSkeletons/productDetailsSkeleton";
+import Meta from "@/components/metaTags/meta";
 
 const ProductDetails = () => {
   const [counter, setCounter] = useState(1);
@@ -102,7 +103,14 @@ const ProductDetails = () => {
 
   return (
     <Layout>
-      {isProductLoading? (
+      <Meta
+        title={`${product?.name} - Perfume Shop`}
+        description={`Discover ${product?.name} - ${product?.description}`}
+        keywords={`${product?.categoryDetails.name}, perfume`}
+        // image={product.image}
+        // url={`https://yourwebsite.com/products/${query.id}`}
+      />
+      {isProductLoading ? (
         <ProductDetailsSkeleton />
       ) : (
         <div className="w-11/12 mob_display:w-full flex flex-col gap-32 h-full">

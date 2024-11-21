@@ -17,6 +17,6 @@ const userSchema = mongoose.Schema({
   isGuest: { type: Boolean, default: false },
   passwordResetToken: { type: String, default: undefined },
   passwordResetExpiry: { type: Date, default: undefined },
-});
+}, {timestamp: true});
 
 module.exports = mongoose.model("perfume_users", userSchema);

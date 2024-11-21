@@ -52,9 +52,9 @@ const AddressForm = ({ setAddressForm, addressForm }) => {
       <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-1">
           <label className="text-gray-500">Enter your complete current address</label>
-          <div className="flex gap-1 items-center border p-2 rounded-lg border-b-slate-300">
+          <div className="cart_input_field">
             <input
-              className="cart_input_field"
+              className=""
               type="text"
               placeholder="Enter address"
               {...register("address")}

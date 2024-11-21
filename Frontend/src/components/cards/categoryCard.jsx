@@ -6,15 +6,16 @@ import { useRouter } from "next/navigation";
 const CategoryCard = ({ name, index, id }) => {
   const router = useRouter()
   return (
-    <div onClick={() => router.push(`/products?id=${id}`)} className="sm:w-[500px] w-[400px] rounded-lg flex flex-col gap-4 items-center p-4 hover:scale-105 cursor-pointer duration-500 group">
-      <p className="text-3xl font-semibold">{name}</p>
+    <div onClick={() => router.push(`/products?id=${id}`)} className="sm:w-[600px] w-[400px] rounded-lg flex flex-col gap-4 items-center p-4 hover:scale-105 cursor-pointer duration-500 group">
+      <p className="text-xl font-semibold uppercase underline">{name}</p>
       <Image
         className="aspect-square group-hover:opacity-90 duration-200"
         src={`/images/${categoryImages[index]}.jpg`}
-        alt="product"
+        alt={`Collection of luxury ${name}`}
         width={1600}
         height={900}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        priority
       />
       <p className="text-gray-500 text-sm text-center" >
         Discover the essence of luxury with our exclusive range of perfumes.
